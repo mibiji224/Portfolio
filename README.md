@@ -1,11 +1,48 @@
-⚡ Personal Portfolio
-<!--  -->A high-performance, responsive, and aesthetically pleasing personal portfolio website built with React (Vite) and Tailwind CSS.It features a glassmorphism UI, a fully functional contact form powered by serverless functions, and a seamless mobile-first design.🚀 Features⚡ Blazing Fast: Built with Vite for instant server start and hot module replacement.🎨 Modern UI: Sleek dark mode design with glassmorphism effects and Tailwind CSS styling.📱 Fully Responsive: Optimized for all devices, from large desktops to mobile phones.📧 Functional Contact Form: Serverless API endpoint included to receive emails directly from your site.✨ Smooth Animations: Subtle interactions and hover states for a polished feel.🧩 Modular Code: Clean component structure using functional React components.🛠️ Tech StackFrontend: React, ViteStyling: Tailwind CSSIcons: Lucide ReactBackend (API): Vercel Serverless Functions (Node.js)Deployment: Vercel📂 Project Structure├── api/                # Serverless functions (backend for email)
-│   └── send-email.js   # The logic to send emails using Nodemailer
-├── public/             # Static assets (Favicon, images)
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── App.jsx         # Main application logic
-│   ├── index.css       # Tailwind directives and global styles
-│   └── main.jsx        # Entry point
-├── .env                # Environment variables (do not commit this)
-└── package.json        # Dependencies
+<!-- Back to Top Link -->
+
+<a name="readme-top"></a>
+
+<div align="center">
+
+<!-- PROJECT LOGO -->
+
+<br />
+<!-- Uncomment the below line after adding your preview.png to the public folder -->
+<!-- <img src="public/preview.png" alt="Project Screenshot" width="700" height="auto" /> -->
+
+<br />
+
+<h1>⚡ Personal Portfolio</h1>
+
+<p align="center">
+A high-performance, glassmorphism-styled portfolio template.
+
+
+
+
+Fully responsive, mobile-first, and ready for deployment.
+<br />
+<br />
+<a href="desireesoronio.vercel.app"><strong>View Demo »</strong></a>
+
+</p>
+</div>
+
+<!-- BADGES -->
+
+<br />
+
+✨ Features
+
+This portfolio is built with modern web standards to ensure speed, accessibility, and ease of use.
+
+⚡ Blazing Fast: Powered by Vite for instant Hot Module Replacement (HMR).
+
+🎨 Modern Design: Features dark mode, trendy glassmorphism UI, and smooth animations.
+
+📱 Fully Responsive: Flawless layout on mobile, tablet, and desktop devices.
+
+📧 Contact Ready: Integrated serverless API (Nodemailer) for handling real emails.
+
+🧩 Modular Architecture: Clean, component-based structure makes extending the app easy.
+
