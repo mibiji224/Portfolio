@@ -1,6 +1,7 @@
 import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { X, User, Code, Palette, Heart } from 'lucide-react';
+// Added Award, CheckCircle2, Coffee, Sparkles to the imports
+import { X, User, Code, Palette, Heart, Award, CheckCircle2, Coffee, Sparkles } from 'lucide-react';
 // Ensure these paths match your project structure
 import RippleBackground from './RippleBackground';
 import profileImage from '/mbj.jpg';
@@ -110,12 +111,13 @@ const AboutModal = ({ isOpen, onClose }) => {
                         </div>
                         <p className="text-gray-400 leading-relaxed">
                             I am a multidisciplinary creative and developer based in the Philippines, operating in the sweet spot where logic meets imagination. I don’t just build websites; I craft digital experiences that tell a story.
-<br/>
-<br/>
-My journey wasn't linear. I began as a dreamer with a paintbrush, envisioning a future in the fine arts. However, I became captivated by the tech industry’s constant evolution—realizing that code, like paint, is a medium for creation. Transitioning from the intuitive freedom of art to the rigid structures of computer science was a humbling challenge. I started behind the curve, facing a steep learning curve that tested my resolve. Yet, that feeling of being an underdog didn't stop me; it fueled me.
-<br/>
-<br/>
-Today, I am a multifaceted professional who blends these two worlds. My expertise spans software development, digital illustration, marketing, and project management. I channel this diverse background into leadership, having risen from a student council secretary to the President of the computing department. I am no longer just a lady who paints; I am a leader and developer dedicated to blending art with logic for everyone's efficiency and betterment. </p>
+                            <br/>
+                            <br/>
+                            My journey wasn't linear. I began as a dreamer with a paintbrush, envisioning a future in the fine arts. However, I became captivated by the tech industry’s constant evolution—realizing that code, like paint, is a medium for creation. Transitioning from the intuitive freedom of art to the rigid structures of computer science was a humbling challenge. I started behind the curve, facing a steep learning curve that tested my resolve. Yet, that feeling of being an underdog didn't stop me; it fueled me.
+                            <br/>
+                            <br/>
+                            Today, I am a multifaceted professional who blends these two worlds. My expertise spans software development, digital illustration, marketing, and project management. I channel this diverse background into leadership, having risen from a student council secretary to the President of the computing department. I am no longer just a lady who paints; I am a leader and developer dedicated to blending art with logic for everyone's efficiency and betterment. 
+                        </p>
                     </div>
 
                     {/* Section 2: The Journey */}
@@ -147,8 +149,72 @@ Today, I am a multifaceted professional who blends these two worlds. My expertis
                             "Technology without design is functional but boring. Design without technology is beautiful but static. I strive to combine both."
                         </p>
                     </div>
+                    
+                    {/* Section 5: Credentials & Interests (NEW ADDITION) */}
+                    <div className="modal-child space-y-6 pt-4 border-t border-white/5">
+                        
+                        {/* Certifications Area */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
+                                <Award className="w-4 h-4" /> Certifications & Awards
+                            </div>
+                            <div className="grid grid-cols-1 gap-3">
+                                {/* Certification Item 1 */}
+                                <div className="flex items-start gap-3 p-3 bg-white/5 border border-white/5 rounded-lg hover:border-[#db0a0a]/30 transition-colors group">
+                                    <CheckCircle2 className="w-4 h-4 text-[#db0a0a] mt-1" />
+                                    <div>
+                                        <h4 className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Responsive Web Design</h4>
+                                        <p className="text-xs text-gray-500">freeCodeCamp • 2024</p>
+                                    </div>
+                                </div>
+                                {/* Certification Item 2 */}
+                                <div className="flex items-start gap-3 p-3 bg-white/5 border border-white/5 rounded-lg hover:border-[#db0a0a]/30 transition-colors group">
+                                    <CheckCircle2 className="w-4 h-4 text-[#db0a0a] mt-1" />
+                                    <div>
+                                        <h4 className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Student Council Leadership Award</h4>
+                                        <p className="text-xs text-gray-500">University of Mindanao • 2023</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Split Row for Hobbies & Personality */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            {/* Hobbies */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
+                                    <Coffee className="w-4 h-4" /> Hobbies
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {['Digital Painting', 'Fitness', 'Reading', 'Cybersecurity'].map((hobby) => (
+                                        <span key={hobby} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs text-gray-400 hover:text-white hover:border-[#db0a0a]/50 transition-all cursor-default">
+                                            {hobby}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Personality */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
+                                    <Sparkles className="w-4 h-4" /> Personality
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {['INTJ-T', 'Detail-Oriented', 'Creative Strategist', 'Resilient'].map((trait) => (
+                                        <span key={trait} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs text-gray-400 hover:text-white hover:border-[#db0a0a]/50 transition-all cursor-default">
+                                            {trait}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
+
+                
             </div>
 
             {/* Inline Styles for Custom Scrollbar within this component */}
