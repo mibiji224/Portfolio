@@ -309,7 +309,7 @@ const Projects = () => {
             <div className="w-20 h-1 bg-[#db0a0a]"></div>
           </div>
 
-          <div className="bg-[#1a1a1a] p-1.5 rounded-xl inline-flex flex-wrap gap-1 border border-white/5">
+          <div className="bg-[#1a1a1a] p-1.5 rounded-xl w-full md:w-auto grid grid-cols-3 md:flex gap-1 border border-white/5">
             {['dev', 'art', 'graphics'].map((tab) => (
               <button
                 key={tab}

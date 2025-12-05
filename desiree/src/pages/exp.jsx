@@ -19,7 +19,7 @@ const About = () => {
             title: "Administrative Secretary",
             company: "Department of Education Region XI - Office of the Assistant Regional Director",
             date: "July 2025",
-            type: "LATEST",
+            type: "Present",
             description: "Handling administrative tasks, document processing, and scheduling for the Assistant Regional Director office."
         },
         {
@@ -187,7 +187,7 @@ const About = () => {
                                                     {item.date}
                                                 </span>
                                                 {item.type && (
-                                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${item.type === 'LATEST' ? 'bg-[#db0a0a] text-white' : 'bg-white text-black'}`}>
+                                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${item.type === 'Present' ? 'bg-[#db0a0a] text-white' : 'bg-white text-black'}`}>
                                                         {item.type}
                                                     </span>
                                                 )}
