@@ -91,7 +91,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                 <div className="flex items-center justify-between p-2 border-b border-white/5 bg-[#1a1a1a] rounded-t-2xl z-20">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                         <span className="w-1 h-8 bg-[#db0a0a] rounded-full"></span>
-                        About Me
+                        Read More
                     </h2>
                     <button 
                         onClick={onClose}
