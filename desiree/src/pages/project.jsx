@@ -1,9 +1,11 @@
 import {
   ArrowLeft, ChevronLeft, ChevronRight, Code, ExternalLink,
-  GitBranch, Image as ImageIcon, Maximize2, Palette,
-  PenTool, X, Loader2
+  GitBranch, Image as ImageIcon,
+  Loader2,
+  Maximize2, Palette,
+  PenTool, X
 } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // ==========================================
 // 1. CUSTOM COMPONENT: SMART CAROUSEL LOADER
@@ -621,266 +623,266 @@ const artProjectsData = [
   },
   {
     id: "art-8",
-    title: "Project Title 008",
-    category: "Category Here",
+    title: "Shoto",
+    category: "Illustration",
     description: "Description for artwork 008...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/008.jpg"
   },
   {
     id: "art-9",
-    title: "Project Title 009",
-    category: "Category Here",
+    title: "Open the door",
+    category: "Illustration",
     description: "Description for artwork 009...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/009.jpg"
   },
   {
     id: "art-10",
-    title: "Project Title 010",
-    category: "Category Here",
+    title: "Spill of Light",
+    category: "Illustration",
     description: "Description for artwork 010...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0010.jpg"
   },
   {
     id: "art-11",
-    title: "Project Title 011",
-    category: "Category Here",
+    title: "The Wind",
+    category: "Illustration",
     description: "Description for artwork 011...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0011.jpg"
   },
   {
     id: "art-12",
-    title: "Project Title 012",
-    category: "Category Here",
+    title: "Katsuki Bakuguo",
+    category: "Illustration",
     description: "Description for artwork 012...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0012.jpg"
   },
   {
     id: "art-13",
-    title: "Project Title 013",
-    category: "Category Here",
+    title: "Deku",
+    category: "Illustration",
     description: "Description for artwork 013...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0013.jpg"
   },
   {
     id: "art-14",
-    title: "Project Title 014",
-    category: "Category Here",
+    title: "The Art Master",
+    category: "Illustration",
     description: "Description for artwork 014...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0014.jpg"
   },
   {
     id: "art-15",
-    title: "Project Title 015",
-    category: "Category Here",
+    title: "Spy",
+    category: "Illustration",
     description: "Description for artwork 015...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0015.jpg"
   },
   {
     id: "art-16",
-    title: "Project Title 016",
-    category: "Category Here",
+    title: "Three Young Women Who Gave Life To Heroes",
+    category: "Illustration",
     description: "Description for artwork 016...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0016.jpg"
   },
   {
     id: "art-17",
-    title: "Project Title 017",
-    category: "Category Here",
+    title: "Birthday Boy",
+    category: "Illustration",
     description: "Description for artwork 017...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0017.jpg"
   },
   {
     id: "art-18",
-    title: "Project Title 018",
-    category: "Category Here",
+    title: "Shota",
+    category: "Illustration",
     description: "Description for artwork 018...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0018.jpg"
   },
   {
     id: "art-19",
-    title: "Project Title 019",
-    category: "Category Here",
+    title: "Stranger Things (Deku)",
+    category: "Illustration",
     description: "Description for artwork 019...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: ["/arts/0019.jpg", "/arts/0020.jpg"]
   },
   {
     id: "art-21",
-    title: "Project Title 021",
-    category: "Category Here",
+    title: "Basketball Game",
+    category: "Illustration",
     description: "Description for artwork 021...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0021.jpg"
   },
   {
     id: "art-22",
-    title: "Project Title 022",
-    category: "Category Here",
+    title: "Blood Sucker",
+    category: "Illustration",
     description: "Description for artwork 022...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0022.jpg"
   },
   {
     id: "art-23",
-    title: "Project Title 023",
-    category: "Category Here",
+    title: "Umbrella",
+    category: "Illustration",
     description: "Description for artwork 023...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0023.jpg"
   },
   {
     id: "art-24",
-    title: "Project Title 024",
-    category: "Category Here",
+    title: "The Trio",
+    category: "Illustration",
     description: "Description for artwork 024...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0024.jpg"
   },
   {
     id: "art-25",
-    title: "Project Title 025",
-    category: "Category Here",
+    title: "Fair Skin",
+    category: "Illustration",
     description: "Description for artwork 025...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0025.jpg"
   },
   {
     id: "art-26",
-    title: "Project Title 026",
-    category: "Category Here",
+    title: "Basketball Game",
+    category: "Illustration",
     description: "Description for artwork 026...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0026.jpg"
   },
   {
     id: "art-27",
-    title: "Project Title 027",
-    category: "Category Here",
+    title: "Red Eyes",
+    category: "Commissioned",
     description: "Description for artwork 027...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0027.jpg"
   },
   {
     id: "art-28",
-    title: "Project Title 028",
-    category: "Category Here",
+    title: "Anya's Mischievous Smile",
+    category: "Illustration",
     description: "Description for artwork 028...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0028.jpg"
   },
   {
     id: "art-29",
-    title: "Project Title 029",
-    category: "Category Here",
+    title: "Yor",
+    category: "Illustration",
     description: "Description for artwork 029...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0029.jpg"
   },
   {
     id: "art-30",
-    title: "Project Title 030",
-    category: "Category Here",
+    title: "Blood",
+    category: "Commissioned",
     description: "Description for artwork 030...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0030.jpg"
   },
   {
     id: "art-31",
-    title: "Project Title 031",
-    category: "Category Here",
+    title: "Golden Child",
+    category: "Commissioned",
     description: "Description for artwork 031...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0031.jpg"
   },
   {
     id: "art-32",
-    title: "Project Title 032",
-    category: "Category Here",
+    title: "Female Version",
+    category: "Commissioned",
     description: "Description for artwork 032...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0032.jpg"
   },
   {
     id: "art-33",
-    title: "Project Title 033",
-    category: "Category Here",
+    title: "Bike Boy",
+    category: "Illustration",
     description: "Description for artwork 033...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0033.jpg"
   },
   {
     id: "art-34",
-    title: "Project Title 034",
-    category: "Category Here",
+    title: "Guitarist",
+    category: "Illustration",
     description: "Description for artwork 034...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0034.jpg"
   },
   {
     id: "art-35",
-    title: "Project Title 035",
-    category: "Category Here",
+    title: "Mr. Doctor",
+    category: "Illustration",
     description: "Description for artwork 035...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0035.jpg"
   },
   {
     id: "art-36",
-    title: "Project Title 036",
-    category: "Category Here",
+    title: "Crawling Out",
+    category: "Commissioned",
     description: "Description for artwork 036...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0036.jpg"
   },
   {
     id: "art-37",
-    title: "Project Title 037",
-    category: "Category Here",
+    title: "Before Shigaraki",
+    category: "Illustration",
     description: "Description for artwork 037...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0037.jpg"
   },
   {
     id: "art-38",
-    title: "Project Title 038",
-    category: "Category Here",
+    title: "Toga",
+    category: "Illustration",
     description: "Description for artwork 038...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0038.jpg"
   },
   {
     id: "art-39",
-    title: "Project Title 039",
-    category: "Category Here",
+    title: "Spike",
+    category: "Commissioned",
     description: "Description for artwork 039...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0039.jpg"
   },
   {
     id: "art-40",
-    title: "Project Title 040",
-    category: "Category Here",
+    title: "Uraraka and Katsuki",
+    category: "Illustration",
     description: "Description for artwork 040...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0040.jpg"
   },
   {
     id: "art-41",
-    title: "Project Title 041",
-    category: "Category Here",
+    title: "Cold Night",
+    category: "Illustration",
     description: "Description for artwork 041...",
-    tools: "Tool Used",
+    tools: "iArtBook",
     image: "/arts/0041.jpg"
   }
 ];
