@@ -1,7 +1,7 @@
-import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 // Added Award, CheckCircle2, Coffee, Sparkles to the imports
-import { X, User, Code, Palette, Heart, Award, CheckCircle2, Coffee, Sparkles } from 'lucide-react';
+import { Award, CheckCircle2, Code, Coffee, Heart, Palette, Sparkles, User, X } from 'lucide-react';
 // Ensure these paths match your project structure
 import RippleBackground from './RippleBackground';
 import profileImage from '/mbj.jpg';
@@ -38,22 +38,22 @@ const AboutModal = ({ isOpen, onClose }) => {
                 duration: 0.4,
                 ease: "power2.out"
             })
-            // Animate Modal "Pop"
-            .from(modalRef.current, {
-                scale: 0.5,      // Start smaller
-                opacity: 0,
-                y: 50,           // Start slightly lower
-                duration: 0.5,
-                ease: "back.out(1.7)" // <--- This creates the "POP" effect
-            }, "-=0.3")          // Overlap with backdrop animation
-            // Animate Content Stagger
-            .from(".modal-child", {
-                y: 20,
-                opacity: 0,
-                duration: 0.4,
-                stagger: 0.1,    // Delay between each section
-                ease: "power2.out"
-            }, "-=0.3");
+                // Animate Modal "Pop"
+                .from(modalRef.current, {
+                    scale: 0.5,      // Start smaller
+                    opacity: 0,
+                    y: 50,           // Start slightly lower
+                    duration: 0.5,
+                    ease: "back.out(1.7)" // <--- This creates the "POP" effect
+                }, "-=0.3")          // Overlap with backdrop animation
+                // Animate Content Stagger
+                .from(".modal-child", {
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.4,
+                    stagger: 0.1,    // Delay between each section
+                    ease: "power2.out"
+                }, "-=0.3");
 
         }, containerRef);
 
@@ -75,25 +75,25 @@ const AboutModal = ({ isOpen, onClose }) => {
         // Added ref={containerRef} for GSAP scope
         <div ref={containerRef} className="fixed inset-0 z-[100] h-screen w-screen flex items-center justify-center p-4">
             {/* Backdrop - Added ref={overlayRef} and removed tailwind animate classes */}
-            <div 
+            <div
                 ref={overlayRef}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                 onClick={onClose}
             ></div>
 
             {/* Modal Content - Added ref={modalRef} and removed tailwind animate classes */}
-            <div 
+            <div
                 ref={modalRef}
                 className="relative w-full max-w-2xl max-h-[85vh] m-auto bg-[#0d0c0c] border border-white/10 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col"
             >
-                
+
                 {/* Header */}
                 <div className="flex items-center justify-between p-2 border-b border-white/5 bg-[#1a1a1a] rounded-t-2xl z-20">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                         <span className="w-1 h-8 bg-[#db0a0a] rounded-full"></span>
                         Read More
                     </h2>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
                     >
@@ -103,40 +103,34 @@ const AboutModal = ({ isOpen, onClose }) => {
 
                 {/* Scrollable Body */}
                 <div className="overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-8">
-                    
-                    {/* Section 1: Introduction */}
+
+                    {/* Section 1: Who I Am */}
                     <div className="modal-child space-y-4">
                         <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
                             <User className="w-4 h-4" /> Who I Am
                         </div>
-                        <p className="text-gray-400 leading-relaxed">
-                            I am a multidisciplinary creative and developer based in the Philippines, operating in the sweet spot where logic meets imagination. I don’t just build websites; I craft digital experiences that tell a story.
-                            <br/>
-                            <br/>
-                            My journey wasn't linear. I began as a dreamer with a paintbrush, envisioning a future in the fine arts. However, I became captivated by the tech industry’s constant evolution—realizing that code, like paint, is a medium for creation. Transitioning from the intuitive freedom of art to the rigid structures of computer science was a humbling challenge. I started behind the curve, facing a steep learning curve that tested my resolve. Yet, that feeling of being an underdog didn't stop me; it fueled me.
-                            <br/>
-                            <br/>
-                            Today, I am a multifaceted professional who blends these two worlds. My expertise spans software development, digital illustration, marketing, and project management. I channel this diverse background into leadership, having risen from a student council secretary to the President of the computing department. I am no longer just a lady who paints; I am a leader and developer dedicated to blending art with logic for everyone's efficiency and betterment. 
+                        <p className="text-gray-400 leading-relaxed max-w-2xl">
+                            I am a Philippines-based creative and developer operating where logic meets imagination. My journey began with a paintbrush—envisioning a career in Fine Arts before discovering that code, like paint, is a powerful medium for creation. Transitioning from the freedom of art to the structure of Computer Science was a challenge that fueled my growth from an underdog to a leader.
                         </p>
                     </div>
 
-                    {/* Section 2: The Journey */}
+                    {/* Section 2: The Developer Side */}
                     <div className="modal-child space-y-4">
                         <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
                             <Code className="w-4 h-4" /> The Developer Side
                         </div>
                         <p className="text-gray-400 leading-relaxed">
-                            My journey into tech wasn't a straight line. I started exploring code to bring my designs to life, and I fell in love with the problem-solving aspect of development. Today, I specialize in building responsive SPAs using <strong>React</strong>, managing data with <strong>SQL</strong>, and styling with <strong>Tailwind CSS</strong>. I believe that clean code is just as important as a clean design.
+                            I specialize in building responsive SPAs using <strong>React</strong>, <strong>SQL</strong>, and <strong>Tailwind CSS</strong>. I fell in love with code while trying to bring my designs to life, and I now believe that clean code is just as essential as clean design.
                         </p>
                     </div>
 
-                    {/* Section 3: The Creative Side */}
+                    {/* Section 3: The Artistic Side */}
                     <div className="modal-child space-y-4">
                         <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
                             <Palette className="w-4 h-4" /> The Artistic Side
                         </div>
                         <p className="text-gray-400 leading-relaxed">
-                            Before I wrote my first line of code, I was holding a stylus. Digital art, branding, and UI design are my roots. Whether it's creating publication materials for organizations or sketching character concepts, I bring an artistic eye to every technical project I touch. This duality allows me to bridge the gap between design teams and engineering teams effectively.
+                            Digital art and UI design are my roots. Whether I'm branding an organization or sketching character concepts, I bring a designer's eye to every technical project. This duality allows me to effectively bridge the gap between design and engineering teams.
                         </p>
                     </div>
 
@@ -149,30 +143,30 @@ const AboutModal = ({ isOpen, onClose }) => {
                             "Technology without design is functional but boring. Design without technology is beautiful but static. I strive to combine both."
                         </p>
                     </div>
-                    
+
                     {/* Section 5: Credentials & Interests (NEW ADDITION) */}
                     <div className="modal-child space-y-6 pt-4 border-t border-white/5">
-                        
+
                         {/* Certifications Area */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
                                 <Award className="w-4 h-4" /> Certifications & Awards
                             </div>
                             <div className="grid grid-cols-1 gap-3">
-                                {/* Certification Item 1 */}
-                                <div className="flex items-start gap-3 p-3 bg-white/5 border border-white/5 rounded-lg hover:border-[#db0a0a]/30 transition-colors group">
-                                    <CheckCircle2 className="w-4 h-4 text-[#db0a0a] mt-1" />
-                                    <div>
-                                        <h4 className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Responsive Web Design</h4>
-                                        <p className="text-xs text-gray-500">freeCodeCamp • 2024</p>
-                                    </div>
-                                </div>
+                                
                                 {/* Certification Item 2 */}
                                 <div className="flex items-start gap-3 p-3 bg-white/5 border border-white/5 rounded-lg hover:border-[#db0a0a]/30 transition-colors group">
                                     <CheckCircle2 className="w-4 h-4 text-[#db0a0a] mt-1" />
                                     <div>
-                                        <h4 className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Student Council Leadership Award</h4>
-                                        <p className="text-xs text-gray-500">University of Mindanao • 2023</p>
+                                        <h4 className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Leadership Award</h4>
+                                        <p className="text-xs text-gray-500">Philippine Society of Information Technology Student Region XI • 2024</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3 p-3 bg-white/5 border border-white/5 rounded-lg hover:border-[#db0a0a]/30 transition-colors group">
+                                    <CheckCircle2 className="w-4 h-4 text-[#db0a0a] mt-1" />
+                                    <div>
+                                        <h4 className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Responsive Web Design</h4>
+                                        <p className="text-xs text-gray-500">freeCodeCamp • 2022</p>
                                     </div>
                                 </div>
                             </div>
@@ -180,7 +174,7 @@ const AboutModal = ({ isOpen, onClose }) => {
 
                         {/* Split Row for Hobbies & Personality */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
+
                             {/* Hobbies */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase">
@@ -214,7 +208,7 @@ const AboutModal = ({ isOpen, onClose }) => {
 
                 </div>
 
-                
+
             </div>
 
             {/* Inline Styles for Custom Scrollbar within this component */}
@@ -254,7 +248,7 @@ function Home() {
         let ctx = gsap.context(() => {
             const t1 = gsap.timeline();
             t1.from(".gsap-reveal", { y: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 })
-              .from(".gsap-image-reveal", { x: 100, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=1");
+                .from(".gsap-image-reveal", { x: 100, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=1");
         }, comp);
         return () => ctx.revert();
     }, []);
@@ -278,11 +272,19 @@ function Home() {
                         <span className="gsap-reveal block">Hello, I'm</span>
                         <span className="gsap-reveal block text-transparent bg-clip-text bg-gradient-to-r from-[#db0a0a] via-red-500 to-white drop-shadow-[0_0_20px_rgba(219,10,10,0.5)]">Desiree.</span>
                     </h1>
-                    <div className="gsap-reveal flex flex-col sm:flex-row items-center sm:items-baseline justify-center lg:justify-start gap-2 mt-2 sm:mt-4 text-xl sm:text-3xl lg:text-4xl font-semibold w-full">
+                    <div className="gsap-reveal flex flex-col sm:flex-row items-center sm:items-baseline justify-center lg:justify-start gap-1.5 mt-2 sm:mt-4 text-xl sm:text-3xl lg:text-4xl font-semibold w-full">
                         <span className="text-gray-300">I am</span>
-                        <div className="relative flex justify-center sm:justify-start sm:pl-2 sm:ml-4">
+                        <div className="relative flex justify-center sm:justify-start">
+                            {/* This invisible span acts as a placeholder for the layout */}
                             <span className="invisible opacity-0" aria-hidden="true">a Web Developer</span>
-                            <span key={currentRoleIndex} className="absolute left-0 sm:left-auto top-0 text-[#db0a0a] drop-shadow-[0_0_10px_rgba(219,10,10,0.8)] animate-[textCycle_4s_ease-in-out_forwards] whitespace-nowrap">{roles[currentRoleIndex]}</span>
+
+                            {/* Increased ml-2 to ml-3 for a slightly wider gap */}
+                            <span
+                                key={currentRoleIndex}
+                                className="absolute left-0 sm:left-auto top-0 ml-3 sm:ml-2 text-[#db0a0a] drop-shadow-[0_0_10px_rgba(219,10,10,0.8)] animate-[textCycle_4s_ease-in-out_forwards] whitespace-nowrap"
+                            >
+                                {roles[currentRoleIndex]}
+                            </span>
                         </div>
                     </div>
                     <p className="gsap-reveal text-gray-400 text-sm sm:text-base lg:text-lg leading-relaxed max-w-lg lg:max-w-2xl mt-6 mb-8 lg:mt-8 lg:mb-10 px-2 lg:px-0">
@@ -309,7 +311,7 @@ function Home() {
                 <div className="gsap-image-reveal flex-1 flex justify-center lg:justify-end relative group lg:-translate-x-10 mt-10 lg:mt-0">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-[350px] sm:h-[350px] bg-[#db0a0a] blur-[60px] lg:blur-[80px] rounded-full opacity-0 group-hover:opacity-50 transition-all duration-700 ease-in-out"></div>
                     <div className="relative z-10 animate-[float_6s_ease-in-out_infinite]">
-                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[350px] lg:h-[350px] rounded-full p-2 border-2 border-[#db0a0a]/30 bg-[#080707] transition-all duration-500 group-hover:border-[#db0a0a] group-hover:scale-105">
+                        <div className="relative w-70 h-70 sm:w-80 sm:h-80 lg:w-[350px] lg:h-[350px] rounded-full p-2 border-2 border-[#db0a0a]/30 bg-[#080707] transition-all duration-500 group-hover:border-[#db0a0a] group-hover:scale-105">
                             <img src={profileImage} alt="Desiree" className="w-full h-full object-cover rounded-full shadow-[0_0_15px_rgba(219,10,10,0.2)] group-hover:shadow-[0_0_50px_#db0a0a] transition-all duration-500" />
                         </div>
                     </div>

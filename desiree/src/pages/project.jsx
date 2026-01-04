@@ -143,7 +143,6 @@ const Projects = () => {
     return columns;
   };
 
-  // ✅ FIXED: Set back to 3 so pagination triggers (since you have 6 items)
   const itemsPerPage = 3;
 
   useEffect(() => {
@@ -167,17 +166,15 @@ const Projects = () => {
       description: "Bitetrack is a modern nutrition tracker developed with a clean UI. Users can record meals, monitor calories and macros, and view personalized progress analytics.",
       tags: ["PHP", "TailwindCSS", "JavaScript", "MySQL", "HTML", "CSS", "InfinityFree"],
       links: { demo: "https://bitetrack.page.gd/", github: "https://github.com/mibiji224/BiteTrack" },
-      image: [
-        "/img-bitetrack/01.jpg", "/img-bitetrack/02.jpg", "/img-bitetrack/03.jpg", "/img-bitetrack/04.jpg", "/img-bitetrack/05.jpg", "/img-bitetrack/06.jpg",
-      ]
+      image: [ "/img-bitetrack/01.jpg", "/img-bitetrack/02.jpg", "/img-bitetrack/03.jpg"]
     },
     {
       id: 2,
       title: "Personal Portfolio",
       description: "A responsive Single Page Application (SPA) designed to showcase my multidisciplinary work. Features include interactive modals, optimized image loading, and a custom dark aesthetic.",
-      tags: ["React", "TailwindCSS", "Vite", "Node.js", "Javascipt", "Vercel", "HTML", "CSS"],
+      tags: ["React", "TailwindCSS", "Vite", "Node.js", "Javascipt", "Vercel"],
       links: { demo: "https://desireesoronio.vercel.app/", github: "https://github.com/mibiji224/Portfolio" },
-      image: ["/img-drs/01.jpg", "/img-drs/02.jpg", "/img-drs/03.jpg", "/img-drs/04.jpg", "/img-drs/05.jpg"]
+      image: ["/img-drs/01.jpg", "/img-drs/02.jpg"]
     },
     {
       id: 3,
@@ -189,55 +186,31 @@ const Projects = () => {
     },
     {
       id: 4,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
+      title: "Coming Soon 4",
+      description: "A top-secret project currently under wraps.",
       tags: ["Confidential"],
       links: { demo: "#", github: "#" },
       image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
     },
     {
       id: 5,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
+      title: "Coming Soon 5",
+      description: "A top-secret project currently under wraps.",
       tags: ["Confidential"],
       links: { demo: "#", github: "#" },
       image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
     },
     {
       id: 6,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
-      tags: ["Confidential"],
-      links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
-    },
-    {
-      id: 7,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
-      tags: ["Confidential"],
-      links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
-    },
-    {
-      id: 8,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
-      tags: ["Confidential"],
-      links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
-    },
-    {
-      id: 9,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
+      title: "Coming Soon 6",
+      description: "A top-secret project currently under wraps.",
       tags: ["Confidential"],
       links: { demo: "#", github: "#" },
       image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
     }
   ];
 
-  const artProjects = artProjectsData; // Uses the data from bottom
+  const artProjects = artProjectsData; 
 
   const graphicProjects = [
     { title: "STEAM Empower Countdown", category: "Event Branding", tools: "Canva", image: "/graphics/01.jpg" },
@@ -255,6 +228,7 @@ const Projects = () => {
   const totalDevPages = Math.ceil(devProjects.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
+    if (pageNumber === currentDevPage) return;
     setDirection(pageNumber > currentDevPage ? 'right' : 'left');
     setCurrentDevPage(pageNumber);
   };
@@ -284,18 +258,22 @@ const Projects = () => {
         .modern-scrollbar::-webkit-scrollbar-thumb:hover { background: #ff1f1f; }
         
         .stagger-enter { animation-fill-mode: both; }
-        .perspective-1000 { perspective: 2000px; }
-        
-        .flip-enter-next { animation: flipInNext 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; transform-origin: center; }
-        .flip-enter-prev { animation: flipInPrev 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; transform-origin: center; }
 
-        @keyframes flipInNext {
-            0% { opacity: 0; transform: rotateY(-90deg) scale(0.9); }
-            100% { opacity: 1; transform: rotateY(0deg) scale(1); }
+        /* Slide Animations */
+        .slide-enter-right { 
+          animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
-        @keyframes flipInPrev {
-            0% { opacity: 0; transform: rotateY(90deg) scale(0.9); }
-            100% { opacity: 1; transform: rotateY(0deg) scale(1); }
+        .slide-enter-left { 
+          animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+
+        @keyframes slideInRight {
+          0% { opacity: 0; transform: translateX(30px); }
+          100% { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInLeft {
+          0% { opacity: 0; transform: translateX(-30px); }
+          100% { opacity: 1; transform: translateX(0); }
         }
         
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -332,23 +310,21 @@ const Projects = () => {
 
         {/* --- DEVELOPMENT TAB --- */}
         {activeTab === 'dev' && (
-          <div className="overflow-hidden min-h-[500px] perspective-1000">
+          <div className="overflow-hidden min-h-[500px]">
             {/* The Grid of Projects */}
             <div 
                 key={currentDevPage}
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ${direction === 'right' ? 'flip-enter-next' : 'flip-enter-prev'}`}
+                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ${direction === 'right' ? 'slide-enter-right' : 'slide-enter-left'}`}
             >
               {currentDevProjects.map((project, index) => (
                 <div 
                     key={project.id} 
                     onClick={() => setSelectedImage(project)}
-                    style={{ animationDelay: `${index * 150}ms` }}
-                    className="group bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden hover:border-[#db0a0a]/50 transition-all duration-300 hover:-translate-y-2 stagger-enter animate-in fade-in zoom-in-95 duration-500 cursor-pointer"
+                    className="group bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden hover:border-[#db0a0a]/50 transition-all duration-300 hover:-translate-y-2 cursor-pointer"
                 >
                   <div className="h-48 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] to-transparent z-10 opacity-60 pointer-events-none"></div>
                     
-                    {/* Carousel within the card */}
                     <ImageWithLoader
                       src={project.image}
                       alt={project.title}
@@ -377,7 +353,7 @@ const Projects = () => {
               ))}
             </div>
 
-            {/* Pagination Controls - Visible because totalDevPages > 1 */}
+            {/* Pagination Controls */}
             <div className="flex justify-center items-center gap-2 mt-8">
               <button onClick={prevPage} disabled={currentDevPage === 1} className={`flex items-center justify-center w-10 h-10 rounded-lg border border-white/5 transition-all ${currentDevPage === 1 ? 'text-gray-600 cursor-not-allowed bg-[#1a1a1a]' : 'text-gray-300 bg-[#1a1a1a] hover:bg-white/5 hover:text-white'}`}>
                 <ChevronLeft className="w-5 h-5" />
@@ -432,9 +408,7 @@ const Projects = () => {
 
       </div>
 
-      {/* ==========================================
-          MODAL / LIGHTBOX
-      ========================================== */}
+      {/* LIGHTBOX MODAL */}
       {selectedImage && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300"
@@ -518,7 +492,7 @@ const Projects = () => {
                   <div className="flex flex-col gap-3">
                     <button
                         onClick={() => setIsFullView(true)}
-                        className="inline-flex items-center justify-center w-full px-5 py-2.5 text-sm font-medium text-white bg-[#db0a0a] rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-900 transition-all shadow-lg hover:shadow-red-900/20"
+                        className="inline-flex items-center justify-center w-full px-5 py-2.5 text-sm font-medium text-white bg-[#db0a0a] rounded-lg hover:bg-red-700 transition-all shadow-lg hover:shadow-red-900/20"
                     >
                         View Full Image
                         <Maximize2 className="w-4 h-4 ml-2" />
@@ -545,6 +519,8 @@ const Projects = () => {
     </section>
   );
 };
+
+
 
 export default Projects;
 
