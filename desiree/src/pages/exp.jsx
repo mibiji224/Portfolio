@@ -1,25 +1,39 @@
 import React from 'react';
-import { 
-    Briefcase, 
-    GraduationCap, 
-    Code, 
-    Award, 
-    Database, 
-    Layout, 
-    Server, 
-    Wrench, 
-    Palette, 
-    FileText 
+import {
+    Briefcase,
+    GraduationCap,
+    Code,
+    Award,
+    Database,
+    Layout,
+    Server,
+    Wrench,
+    Palette,
+    FileText
 } from 'lucide-react';
 
 const About = () => {
     // DATA: Your specific details
     const experienceData = [
         {
+            title: "Executive Assistant",
+            company: "Inventiv Softwares",
+            date: "January 2025",
+            type: "Present",
+            description: "Serving as a versatile strategic partner to the CEO, managing the full spectrum of business operations—from orchestrating hiring pipelines and drafting business proposals to overseeing executive communications and brand presence on social media."
+        },
+        {
+            title: "Web Developer",
+            company: "Freelance",
+            date: "November 2025",
+            type: "Part Time",
+            description: "Developing custom, responsive web solutions using React and WordPress. Responsible for the full deployment lifecycle, including site optimization and hosting management via GoDaddy and Hostinger to ensure high performance and reliability."
+        },
+        {
             title: "Administrative Secretary",
             company: "Department of Education Region XI - Office of the Assistant Regional Director",
             date: "July 2025",
-            type: "Present",
+            type: null,
             description: "Handling administrative tasks, document processing, and scheduling for the Assistant Regional Director office."
         },
         {
@@ -137,7 +151,7 @@ const About = () => {
         { category: "Backend", icon: <Server size={14} />, items: ["JavaScript", "Python", "PHP", "Java", "Node.js", "REST API"] },
         { category: "Database", icon: <Database size={14} />, items: ["MySQL", "MongoDB", "Firebase", "PostgreSQL"] },
         { category: "Tech Tools", icon: <Wrench size={14} />, items: ["Git", "GitHub", "VSCode", "Eclipse", "NetBeans", "Xampp"] },
-        
+
         // Full width cards (Span 2) - Moved here for visual balance
         { category: "Creative Tools", icon: <Palette size={14} />, items: ["Figma", "Adobe Photoshop", "Canva", "Blender", "Procreate", "IbisPaint", "CapCut", "Photopea"], fullWidth: true },
         { category: "Office Tools", icon: <FileText size={14} />, items: ["Google Suite", "Excel", "Word", "Google Sheets", "Google Docs", "Notion", "Slack", "Trello", "Zoom", "GMeet", "Outlook", "Loom"], fullWidth: true }
@@ -280,12 +294,12 @@ const About = () => {
                                         <div className="w-1 h-1 bg-[#db0a0a] rounded-full"></div>
                                         Technical Proficiency
                                     </h4>
-                                    
+
                                     {/* Bento Grid Layout */}
                                     <div className="grid grid-cols-2 gap-2">
                                         {technicalSkills.map((group, index) => (
-                                            <div 
-                                                key={index} 
+                                            <div
+                                                key={index}
                                                 // If fullWidth is true (for Creative/Office), span 2 columns
                                                 className={`bg-[#0f0f0f] p-3 rounded-lg border border-white/5 hover:border-[#db0a0a]/30 transition-colors group ${group.fullWidth ? 'col-span-2' : 'col-span-1'}`}
                                             >
@@ -297,7 +311,7 @@ const About = () => {
                                                         {group.category}
                                                     </h5>
                                                 </div>
-                                                
+
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {group.items.map((skill, idx) => (
                                                         <span
