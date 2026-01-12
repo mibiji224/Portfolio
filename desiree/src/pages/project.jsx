@@ -213,7 +213,12 @@ const Projects = () => {
   const artProjects = artProjectsData; 
 
   const graphicProjects = [
-    { title: "STEAM Empower Countdown", category: "Event Branding", tools: "Canva", image: "/graphics/01.jpg" },
+    { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/09.jpg" },
+    { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/11.jpg" },
+    { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/10.jpg" },
+    { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/12.jpeg" },
+    { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/13.jpeg" },
+    { title: "STEAM Empower Countdown", category: "Event Branding", tools: "Canva", image: "/graphics/01.jpg" }, 
     { title: "Girl Up Davao Board Meeting", category: "Publication Material", tools: "Canva", image: "/graphics/02.jpg" },
     { title: "Board Members of Girl Up Davao", category: "Social Media", tools: "Canva", image: "/graphics/03.jpg" },
     { title: "Annual Report Layout", category: "Editorial", tools: "InDesign", image: "/graphics/04.png" },
