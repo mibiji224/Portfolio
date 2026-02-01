@@ -178,16 +178,16 @@ const Projects = () => {
     },
     {
       id: 3,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
-      tags: ["Confidential"],
+      title: "AMHere",
+      description: "A modern attendance tracking web application built with Next.js and PostgreSQL. Features real-time check-ins, user management, and analytics dashboard for monitoring attendance records.",
+      tags: ["Next.js", "PostgreSQL", "Prisma", "NeonDB", "TailwindCSS"],
       links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
+      image: ["/img-am-here/01.png", "/img-am-here/02.png", "/img-am-here/03.png", "/img-am-here/04.png", "/img-am-here/05.png", "/img-am-here/06.png", "/img-am-here/07.png", "/img-am-here/08.png", "/img-am-here/09.png", "/img-am-here/10.png", "/img-am-here/11.png", "/img-am-here/12.png", "/img-am-here/13.png"]
     },
     {
       id: 4,
-      title: "Coming Soon 4",
-      description: "A top-secret project currently under wraps.",
+      title: "Coming Soon...",
+      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
       tags: ["Confidential"],
       links: { demo: "#", github: "#" },
       image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]

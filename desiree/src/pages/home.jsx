@@ -235,7 +235,7 @@ const AboutModal = ({ isOpen, onClose }) => {
 // --- MAIN HOME COMPONENT ---
 function Home() {
     const comp = useRef(null);
-    const roles = ["a Web Developer", "a Leader", "a Tech Support", "an Assistant"];
+    const roles = ["a Web Developer", "a Leader", "a Developer", "an Assistant"];
     const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
     const [isAboutOpen, setIsAboutOpen] = useState(false);
 

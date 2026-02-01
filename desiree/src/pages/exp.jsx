@@ -16,102 +16,109 @@ const About = () => {
     // DATA: Your specific details
     const experienceData = [
         {
+            title: "Front End Developer / UIUX Designer",
+            company: "Inventiv Softwares",
+            date: "January 2025",
+            type: "Present",
+            description: "Building responsive and visually engaging user interfaces using React and modern design tools. Collaborating with cross-functional teams to translate design concepts into functional web applications while ensuring optimal user experience and performance."
+        },
+        {
             title: "Executive Assistant",
             company: "Inventiv Softwares",
             date: "January 2025",
             type: "Present",
-            description: "Serving as a versatile strategic partner to the CEO, managing the full spectrum of business operations—from orchestrating hiring pipelines and drafting business proposals to overseeing executive communications and brand presence on social media."
+            description: "Supporting executive leadership with strategic initiatives, stakeholder management, and operational excellence. Coordinating key business functions to drive organizational growth and efficiency."
         },
         {
             title: "Web Developer",
             company: "Freelance",
             date: "November 2025",
             type: "Part Time",
-            description: "Developing custom, responsive web solutions using React and WordPress. Responsible for the full deployment lifecycle, including site optimization and hosting management via GoDaddy and Hostinger to ensure high performance and reliability."
+            description: "Designing and deploying custom web applications with focus on performance and scalability. Managing hosting infrastructure and implementing best practices for site optimization."
         },
         {
             title: "Administrative Secretary",
             company: "Department of Education Region XI - Office of the Assistant Regional Director",
             date: "July 2025",
             type: null,
-            description: "Handling administrative tasks, document processing, and scheduling for the Assistant Regional Director office."
+            description: "Supporting administrative operations through document management, scheduling coordination, and office support services."
         },
         {
             title: "Customer Service Representative",
             company: "Awesome CX & Alorica Davao",
             date: "April 2025 - October 2025",
             type: null,
-            description: "Handled Inbound Voice Accounts. Resolved customer inquiries efficiently while maintaining high quality assurance scores."
+            description: "Delivered exceptional customer support through inbound voice channels while maintaining high performance standards and customer satisfaction metrics."
         },
         {
             title: "President",
             company: "College of Computing Education Student Government - University of Mindanao",
             date: "July 2024 - July 2025",
             type: "LEADERSHIP",
-            description: "Led the student body of the College of Computing Education. Organized events, facilitated student welfare programs, and bridged communication between students and faculty."
+            description: "Directed student governance initiatives, organized campus events, and advocated for student interests with faculty leadership."
         },
         {
             title: "External Vice President",
             company: "Council of College Student Governments - University of Mindanao",
             date: "July 2024 - July 2025",
             type: "LEADERSHIP",
-            description: "Led external affairs for the University of Mindanao’s central student government, representing the entire student body. I negotiated strategic partnerships and executed university-wide welfare programs to bridge student advocacy with administrative policy."
+            description: "Managed external relations and student advocacy initiatives, building partnerships to enhance institutional engagement and student welfare programs."
         },
         {
             title: "Marketing and Multimedia Unit Supervisor",
             company: "College of Computing Education Student Government - University of Mindanao",
             date: "July 2024 - July 2025",
             type: "LEADERSHIP",
-            description: "Led a team to manage marketing campaigns and multimedia content creation for student government events. Oversaw social media strategies, graphic design, and video production to enhance student engagement and event visibility."
+            description: "Oversaw creative content strategy and multimedia production to amplify student engagement and event reach across digital platforms."
         },
         {
             title: "Assistant Recreational Head",
             company: "Philippine Society of Information Technology Students Region XI",
             date: "August 2024 - May 2025",
             type: null,
-            description: "Assisted in organizing recreational activities and events for IT students across Region XI. Coordinated logistics, managed event schedules, and ensured participant engagement during regional IT student gatherings."
+            description: "Coordinated regional recreational events and activities for IT students, managing logistics and participant engagement."
         },
         {
             title: "Documentation Photographer",
             company: "Blockchain Campus Conference",
             date: "October 2024",
             type: "EVENT VOLUNTEER",
-            description: "Documented the conference proceedings through photography, capturing candid moments and staged shots of attendees and speakers."
+            description: "Captured conference highlights through professional photography, documenting key moments and attendee experiences."
         },
         {
             title: "Secretary",
             company: "College of Computing Education Student Government - University of Mindanao",
             date: "July 2023 - July 2024",
             type: null,
-            description: "Managed official documentation, meeting minutes, and correspondence for the student government. Ensured effective communication between student representatives and faculty members."
+            description: "Managed official records, coordinated communications, and maintained documentation for student government operations."
         },
         {
             title: "Assistant Secretary",
             company: "Philippine Society of Information Technology Students Region XI",
             date: "October 2023 - March 2024",
             type: null,
-            description: "Assisted in managing documentation and correspondence for the regional IT student organization. Supported event planning and communication efforts among member schools."
+            description: "Supported regional organization operations through documentation and communication coordination across member institutions."
         },
         {
             title: "Publication and Documentation Head",
             company: "United Nation's Girl Up Organization - Davao Chapter",
             date: "July 2023 - December 2023",
             type: null,
-            description: "Led the publication and documentation efforts for the Girl Up Davao Chapter. Managed content creation, social media updates, and event documentation to promote the organization's mission and activities."
+            description: "Directed content creation and digital communications to promote organizational initiatives and community engagement."
         },
         {
             title: "Digital Artist",
             company: "Freelance",
             date: "March 2020",
             type: null,
-            description: "Conceptualizing and executing custom digital artwork for global clients using industry-standard tools (e.g., Adobe Photoshop, Procreate, IbisPaint). Specializing in Character Design, Semi-Realism, Anime /2D Style, etc., I translate client ideas into compelling visual narratives with a focus on composition, color theory, and detail."
+            description: "Created custom digital artwork across multiple styles and genres, delivering compelling visual solutions tailored to client specifications using industry-standard software."
         },
         {
             title: "Personal Assistant",
             company: "Secondary Education English Teacher - Davao City National High School",
             date: "August 2018 - April 2021",
             type: null,
-            description: "Provided administrative support by managing student data entry and automated grade computations using spreadsheets. Oversaw document preparation and revisions, and designed visual aids, including PowerPoint presentations."
+            description: "Provided administrative support including student records management, grade tracking, and instructional materials preparation."
         }
     ];
 
