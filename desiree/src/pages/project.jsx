@@ -186,11 +186,21 @@ const Projects = () => {
     },
     {
       id: 4,
-      title: "Coming Soon...",
-      description: "A top-secret project currently under wraps. Access will be granted upon completion.",
-      tags: ["Confidential"],
-      links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
+      title: "XChange",
+      description: "A marketplace platform connecting influencers and businesses. XChange streamlines brand collaborations by enabling businesses to discover and partner with content creators, manage campaigns, and process transactions seamlessly.",
+      tags: ["Next.js", "Supabase", "Genkit", "GA4", "Square"],
+      links: { demo: "https://xchangecutie.online/", github: "#" },
+      image: [
+        "/img-xchange/01.png",
+        "/img-xchange/02.png",
+        "/img-xchange/03.png",
+        "/img-xchange/04.png",
+        "/img-xchange/05.png",
+        "/img-xchange/06.png",
+        "/img-xchange/07.png",
+        "/img-xchange/08.png",
+        "/img-xchange/09.png"
+      ]
     },
     {
       id: 5,
