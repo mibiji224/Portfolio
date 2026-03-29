@@ -4,6 +4,7 @@ import Home from './pages/home.jsx';
 
 const Exp = lazy(() => import('./pages/exp.jsx'));
 const Project = lazy(() => import('./pages/project.jsx'));
+const Certs = lazy(() => import('./pages/certs.jsx'));
 const Contact = lazy(() => import('./pages/connect.jsx'));
 const Footer = lazy(() => import('./components/Footer.jsx'));
 
@@ -23,6 +24,9 @@ function App() {
     </Suspense>
     <Suspense fallback={<SectionFallback />}>
       <Project/>
+    </Suspense>
+    <Suspense fallback={<SectionFallback />}>
+      <Certs/>
     </Suspense>
     <Suspense fallback={<SectionFallback />}>
       <Contact/>
