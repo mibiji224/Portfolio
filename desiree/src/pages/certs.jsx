@@ -6,12 +6,16 @@ import { Award } from 'lucide-react';
 // Use landscape orientation photos for best results
 // =============================================
 const certificates = [
-  { src: '/certs/01.jpg', alt: 'Google Project Management Professional Certificate' },
-  { src: '/certs/02.jpg', alt: 'Google UX Design Professional Certificate' },
-  { src: '/certs/03.jpg', alt: 'Introduction to Cybersecurity Tools & Cyber Attacks' },
-  { src: '/certs/04.jpg', alt: 'Introduction to Cybersecurity' },
-  { src: '/certs/05.jpg', alt: 'Leadership Award - PSITS Region XI' },
-  { src: '/certs/06.jpg', alt: 'Responsive Web Design - freeCodeCamp' },
+  { src: '/certs/Academic Excellence Award.jpg', alt: 'Academic Excellence Award' },
+  { src: '/certs/Certificate Of Recognition.jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certificate Of Recognition(1).jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certificate Of Recognition(2).jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certificate Of Recognition(3).jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certificate Of Recognition(4).jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certificate Of Recognition(5).jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certificate Of Recognition(6).jpg', alt: 'Certificate Of Recognition' },
+  { src: '/certs/Certification Of Achievement.jpg', alt: 'Certification Of Achievement' },
+  { src: '/certs/Senior High School Diploma.jpg', alt: 'Senior High School Diploma' },
 ];
 
 // Split into two rows for the dual-lane marquee
@@ -31,8 +35,11 @@ const MarqueeRow = ({ items, direction = 'left', speed = 30 }) => {
         {repeated.map((cert, i) => (
           <div
             key={i}
-            className="flex-shrink-0 w-[420px] h-[300px] rounded-2xl overflow-hidden border border-white/10 bg-[#111] group hover:border-[#db0a0a]/40 transition-all duration-300"
+            className="flex-shrink-0 w-[420px] h-[300px] rounded-2xl overflow-hidden bg-[#080707] group transition-all duration-300 relative"
           >
+            <div className="absolute inset-0 z-10 pointer-events-none" style={{
+              background: 'linear-gradient(to right, #080707, transparent 8%, transparent 92%, #080707)'
+            }} />
             <img
               src={cert.src}
               alt={cert.alt}

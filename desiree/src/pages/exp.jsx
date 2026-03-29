@@ -194,7 +194,7 @@ const About = () => {
                             <h3 className="text-xl font-bold text-gray-100">Experience</h3>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto pr-4 modern-scrollbar bg-[#0f0f0f]/50 rounded-xl p-4 border border-white/5 pb-6">
+                        <div className="flex-1 overflow-y-auto pr-4 modern-scrollbar bg-[#0f0f0f]/50 rounded-xl p-4 border border-white/5 pb-6" style={{ overscrollBehavior: 'contain' }}>
                             <ol className="relative border-l border-neutral-800 ml-3 space-y-8">
                                 {experienceData.map((item, index) => (
                                     <li key={index} className="relative ml-8 group">
@@ -278,7 +278,7 @@ const About = () => {
                             </div>
 
                             {/* Scrollable Content Area */}
-                            <div className="flex-1 overflow-y-auto pr-2 modern-scrollbar pb-6">
+                            <div className="flex-1 overflow-y-auto pr-2 modern-scrollbar pb-6" style={{ overscrollBehavior: 'contain' }}>
 
                                 {/* Core Skills Group */}
                                 <div className="mb-4">

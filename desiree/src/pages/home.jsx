@@ -102,7 +102,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Scrollable Body */}
-                <div className="overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-8">
+                <div className="overflow-y-auto p-6 md:p-8 custom-scrollbar space-y-8" style={{ overscrollBehavior: 'contain' }}>
 
                     {/* Section 1: Who I Am */}
                     <div className="modal-child space-y-4">

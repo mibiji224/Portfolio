@@ -19,7 +19,7 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
   const [currentSlide, setCurrentSlide] = useState(1);
   const scrollRef = useRef(null);
 
-  const isLoading = loadedCount < images.length;
+  const isLoading = loadedCount < 1;
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -179,7 +179,7 @@ const Projects = () => {
     return columns;
   };
 
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
 
   useEffect(() => {
     if (selectedImage) {
@@ -299,7 +299,7 @@ const Projects = () => {
   };
 
   return (
-    <section className="bg-[#080707] min-h-screen text-white pt-10 pb-20 px-2 lg:px-12 font-sans" id="projects">
+    <section className="bg-[#080707] text-white pt-10 pb-16 px-2 lg:px-12 font-sans" id="projects">
 
       {/* Styles for Animations & Scrollbars */}
       <style>{`
@@ -361,21 +361,20 @@ const Projects = () => {
 
         {/* --- DEVELOPMENT TAB --- */}
         {activeTab === 'dev' && (
-          <div className="overflow-hidden min-h-[500px]">
+          <div className="overflow-hidden">
             {/* The Grid of Projects */}
-            <div 
-                key={currentDevPage}
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ${direction === 'right' ? 'slide-enter-right' : 'slide-enter-left'}`}
+            <div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
             >
-              {currentDevProjects.map((project, index) => (
-                <div 
-                    key={project.id} 
+              {devProjects.map((project) => (
+                <div
+                    key={project.id}
                     onClick={() => setSelectedImage(project)}
-                    className="group bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden hover:border-[#db0a0a]/50 transition-all duration-300 hover:-translate-y-2 cursor-pointer"
+                    className="group bg-[#0f0f0f] border border-white/5 rounded-xl overflow-hidden hover:border-[#db0a0a]/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
-                  <div className="h-48 overflow-hidden relative">
+                  <div className="h-36 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] to-transparent z-10 opacity-60 pointer-events-none"></div>
-                    
+
                     <ImageWithLoader
                       src={project.image}
                       alt={project.title}
@@ -383,49 +382,32 @@ const Projects = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
 
-                    <div className="absolute top-4 right-4 z-20 p-2 bg-black/50 backdrop-blur-md rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Maximize2 className="w-4 h-4 text-[#db0a0a]" />
+                    <div className="absolute top-3 right-3 z-20 p-1.5 bg-black/50 backdrop-blur-md rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Maximize2 className="w-3.5 h-3.5 text-[#db0a0a]" />
                     </div>
                   </div>
-                  
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#db0a0a] transition-colors">{project.title}</h3>
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {project.tags.map((tag, idx) => (
-                        <span key={idx} className="text-xs font-mono text-[#db0a0a] bg-[#db0a0a]/10 px-2 py-1 rounded border border-[#db0a0a]/20">{tag}</span>
+
+                  <div className="p-4">
+                    <h3 className="text-base font-bold text-white mb-1 group-hover:text-[#db0a0a] transition-colors">{project.title}</h3>
+                    <p className="text-gray-400 text-xs mb-3 line-clamp-2">{project.description}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.tags.slice(0, 4).map((tag, idx) => (
+                        <span key={idx} className="text-[10px] font-mono text-[#db0a0a] bg-[#db0a0a]/10 px-1.5 py-0.5 rounded border border-[#db0a0a]/20">{tag}</span>
                       ))}
-                    </div>
-                    <div className="flex gap-4 pt-4 border-t border-white/5">
-                      <span className="flex items-center gap-2 text-sm text-gray-400 group-hover:text-white transition-colors"><GitBranch className="w-4 h-4" /> Details</span>
+                      {project.tags.length > 4 && (
+                        <span className="text-[10px] font-mono text-gray-500 px-1.5 py-0.5">+{project.tags.length - 4}</span>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="flex justify-center items-center gap-2 mt-8">
-              <button onClick={prevPage} disabled={currentDevPage === 1} className={`flex items-center justify-center w-10 h-10 rounded-lg border border-white/5 transition-all ${currentDevPage === 1 ? 'text-gray-600 cursor-not-allowed bg-[#1a1a1a]' : 'text-gray-300 bg-[#1a1a1a] hover:bg-white/5 hover:text-white'}`}>
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              
-              {[...Array(totalDevPages)].map((_, i) => (
-                <button key={i} onClick={() => paginate(i + 1)} className={`w-10 h-10 rounded-lg text-sm font-medium border transition-all ${currentDevPage === i + 1 ? 'bg-[#db0a0a] border-[#db0a0a] text-white scale-110' : 'bg-[#1a1a1a] border-white/5 text-gray-300 hover:bg-white/5 hover:text-white'}`}>
-                  {i + 1}
-                </button>
-              ))}
-              
-              <button onClick={nextPage} disabled={currentDevPage === totalDevPages} className={`flex items-center justify-center w-10 h-10 rounded-lg border border-white/5 transition-all ${currentDevPage === totalDevPages ? 'text-gray-600 cursor-not-allowed bg-[#1a1a1a]' : 'text-gray-300 bg-[#1a1a1a] hover:bg-white/5 hover:text-white'}`}>
-                <ChevronRight className="w-5 h-5" />
-              </button>
             </div>
           </div>
         )}
 
         {/* --- ARTS & GRAPHICS TABS (Masonry) --- */}
         {(activeTab === 'art' || activeTab === 'graphics') && (
-          <div className="h-[800px] overflow-y-auto modern-scrollbar pr-2">
+          <div className="h-[800px] overflow-y-auto modern-scrollbar pr-2" style={{ overscrollBehavior: 'contain' }}>
             <div className="flex gap-4 items-start animate-in fade-in slide-in-from-bottom-4 duration-500 pb-8">
               {getDistributedColumns(activeTab === 'art' ? artProjects : graphicProjects).map((columnItems, colIndex) => (
                 <div key={colIndex} className="flex-1 flex flex-col gap-4">
