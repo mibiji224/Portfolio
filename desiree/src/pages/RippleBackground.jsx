@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 const LiquidBackground = () => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
+  const isVisibleRef = useRef(true);
 
   // Track the previous position to draw lines between frames (prevents gaps on fast movement)
   const lastPos = useRef({ x: null, y: null });
@@ -77,6 +78,12 @@ const LiquidBackground = () => {
     };
 
     const loop = () => {
+      // Skip rendering when off-screen to save CPU
+      if (!isVisibleRef.current) {
+        animationRef.current = null;
+        return;
+      }
+
       // FLUID SIMULATION: Swap buffers
       const temp = buffer1;
       buffer1 = buffer2;
@@ -148,11 +155,23 @@ const LiquidBackground = () => {
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove);
-    
-    const handleMouseLeave = () => { 
+
+    const handleMouseLeave = () => {
       lastPos.current = { x: null, y: null };
     };
     document.addEventListener('mouseleave', handleMouseLeave);
+
+    // Pause animation when canvas is not visible (saves CPU/battery)
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && !animationRef.current) {
+          loop();
+        }
+      },
+      { threshold: 0 }
+    );
+    if (canvas) visibilityObserver.observe(canvas);
 
     loop();
 
@@ -161,7 +180,9 @@ const LiquidBackground = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
+      visibilityObserver.disconnect();
       cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
     };
   }, []);
 

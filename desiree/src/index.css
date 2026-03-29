@@ -1,7 +1,6 @@
-/* 1. Import the Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+/* Font is loaded via <link> in index.html for faster non-blocking load */
 
-/* 2. Initialize Tailwind */
+/* 1. Initialize Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

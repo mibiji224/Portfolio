@@ -6,6 +6,7 @@ import {
   PenTool, X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useLazyLoad } from '../hooks/useLazyLoad';
 
 // ==========================================
 // 1. CUSTOM COMPONENT: SMART CAROUSEL LOADER
@@ -91,6 +92,8 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
             <img
               src={imgSrc}
               alt={`${alt} - view ${index + 1}`}
+              loading="lazy"
+              decoding="async"
               onLoad={handleImageLoad}
               className={`${className} block`}
             />
@@ -103,6 +106,39 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
           {currentSlide} / {images.length}
         </div>
       )}
+    </div>
+  );
+};
+
+// ==========================================
+// 1b. LAZY MASONRY ITEM - only loads image when scrolled into view
+// ==========================================
+const LazyMasonryItem = ({ item, activeTab, onClick }) => {
+  const [ref, isVisible] = useLazyLoad({ rootMargin: '300px' });
+  return (
+    <div
+      ref={ref}
+      onClick={onClick}
+      className="group relative overflow-hidden rounded-xl bg-[#0f0f0f] border border-white/5 cursor-pointer"
+    >
+      {isVisible ? (
+        <ImageWithLoader
+          src={item.image}
+          alt={item.title}
+          className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+          containerClassName="w-full h-full"
+        />
+      ) : (
+        <div className="w-full aspect-[3/4] bg-[#1a1a1a]" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 z-20 pointer-events-none">
+        <span className="text-[#db0a0a] text-[10px] font-bold uppercase tracking-wider mb-1">{item.category}</span>
+        <h3 className="text-sm font-bold text-white mb-1 leading-tight">{item.title}</h3>
+        <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono border-t border-white/10 pt-2 mt-1">
+          {activeTab === 'art' ? <ImageIcon className="w-3 h-3" /> : <PenTool className="w-3 h-3" />}
+          {item.tools}
+        </div>
+      </div>
     </div>
   );
 };
@@ -394,26 +430,7 @@ const Projects = () => {
               {getDistributedColumns(activeTab === 'art' ? artProjects : graphicProjects).map((columnItems, colIndex) => (
                 <div key={colIndex} className="flex-1 flex flex-col gap-4">
                   {columnItems.map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => setSelectedImage(item)}
-                      className="group relative overflow-hidden rounded-xl bg-[#0f0f0f] border border-white/5 cursor-pointer"
-                    >
-                      <ImageWithLoader
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-                        containerClassName="w-full h-full"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 z-20 pointer-events-none">
-                        <span className="text-[#db0a0a] text-[10px] font-bold uppercase tracking-wider mb-1">{item.category}</span>
-                        <h3 className="text-sm font-bold text-white mb-1 leading-tight">{item.title}</h3>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono border-t border-white/10 pt-2 mt-1">
-                          {activeTab === 'art' ? <ImageIcon className="w-3 h-3" /> : <PenTool className="w-3 h-3" />} 
-                          {item.tools}
-                        </div>
-                      </div>
-                    </div>
+                    <LazyMasonryItem key={index} item={item} activeTab={activeTab} onClick={() => setSelectedImage(item)} />
                   ))}
                 </div>
               ))}
