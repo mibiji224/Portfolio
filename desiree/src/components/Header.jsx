@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Register GSAP plugin (safe to call multiple times)
 gsap.registerPlugin(ScrollToPlugin);
@@ -8,25 +8,50 @@ gsap.registerPlugin(ScrollToPlugin);
 function Head() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isHidden, setIsHidden] = useState(false);
+    const lastScrollY = useRef(0);
 
     // Toggle Mobile Menu
     const toggleMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
 
-    // Handle Scroll Effect (Glassmorphism)
+    // Handle Scroll — hide on scroll down, show on hover near top
     useEffect(() => {
         const handleScroll = () => {
-            // Trigger effect slightly earlier (20px) for smoother feel
-            if (window.scrollY > 20) {
+            const currentY = window.scrollY;
+
+            if (currentY > 20) {
                 setIsScrolled(true);
             } else {
                 setIsScrolled(false);
             }
+
+            if (currentY > lastScrollY.current && currentY > 80) {
+                // Scrolling down — hide navbar
+                setIsHidden(true);
+            } else {
+                // Scrolling up — show navbar
+                setIsHidden(false);
+            }
+
+            lastScrollY.current = currentY;
         };
 
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Show navbar when mouse enters the top 60px of the viewport
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (e.clientY <= 60) {
+                setIsHidden(false);
+            }
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
     // Navigation Links Data
@@ -63,9 +88,11 @@ function Head() {
     return (
         <header
             className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out font-['Poppins'] ${
-                isScrolled 
-                    ? 'bg-black/70 backdrop-blur-lg py-3 shadow-lg shadow-[#db0a0a]/5' 
+                isScrolled
+                    ? 'bg-black/70 backdrop-blur-lg py-3 shadow-lg shadow-[#db0a0a]/5'
                     : 'bg-transparent py-3'
+            } ${
+                isHidden ? '-translate-y-full' : 'translate-y-0'
             }`}
         >
             {/* ALIGNMENT FIX: 

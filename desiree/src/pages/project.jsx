@@ -225,7 +225,7 @@ const Projects = () => {
       title: "XChange",
       description: "A marketplace platform connecting influencers and businesses. XChange streamlines brand collaborations by enabling businesses to discover and partner with content creators, manage campaigns, and process transactions seamlessly.",
       tags: ["Next.js", "Supabase", "Genkit", "GA4", "Square"],
-      links: { demo: "https://xchangecutie.online/", github: "#" },
+      links: { demo: "https://app-delta-lemon-26.vercel.app/", github: "#" },
       image: [
         "/img-xchange/01.png",
         "/img-xchange/02.png",
