@@ -15,34 +15,55 @@
 <h1>⚡ Personal Portfolio</h1>
 
 <p align="center">
-A high-performance, glassmorphism-styled portfolio template.
+A high-performance, glassmorphism-styled personal portfolio.
 
-
-
-
-Fully responsive, mobile-first, and ready for deployment.
+Fully responsive, mobile-first, and deployed on Vercel.
 <br />
 <br />
-<a href="desireesoronio.vercel.app"><strong>View Demo »</strong></a>
+<a href="https://desireesoronio.vercel.app"><strong>View Live »</strong></a>
 
 </p>
 </div>
 
-<!-- BADGES -->
+<br />
+
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| Framework | React 19 |
+| Build Tool | Vite 6 |
+| Styling | Tailwind CSS 3 |
+| Animation | GSAP 3 |
+| Icons | Lucide React |
+| Email | Resend |
+| Linting | ESLint 9 |
+| Language | JavaScript (ES Modules) |
 
 <br />
 
-✨ Features
+## Sections
+
+- **Home** — Hero section with animated introduction
+- **Experience** — Work history and roles
+- **Projects** — Showcase of personal and professional projects
+- **Certificates** — Earned certifications and credentials
+- **Contact** — Email contact form powered by Resend
+- **Footer** — Links and closing info
+
+<br />
+
+## ✨ Features
 
 This portfolio is built with modern web standards to ensure speed, accessibility, and ease of use.
 
-⚡ Blazing Fast: Powered by Vite for instant Hot Module Replacement (HMR).
+⚡ **Blazing Fast** — Powered by Vite with lazy-loaded sections for optimal performance.
 
-🎨 Modern Design: Features dark mode, trendy glassmorphism UI, and smooth animations.
+🎨 **Modern Design** — Dark mode, glassmorphism UI, and smooth GSAP animations.
 
-📱 Fully Responsive: Flawless layout on mobile, tablet, and desktop devices.
+📱 **Fully Responsive** — Flawless layout on mobile, tablet, and desktop devices.
 
-📧 Contact Ready: Integrated serverless API (Nodemailer) for handling real emails.
+📧 **Contact Ready** — Integrated email sending via Resend API.
 
-🧩 Modular Architecture: Clean, component-based structure makes extending the app easy.
+🧩 **Modular Architecture** — Clean, component-based structure using React lazy + Suspense.
 
