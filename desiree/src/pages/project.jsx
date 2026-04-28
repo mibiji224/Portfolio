@@ -146,7 +146,7 @@ const LazyMasonryItem = ({ item, activeTab, onClick }) => {
 // ==========================================
 // 2. MAIN COMPONENT
 // ==========================================
-const Projects = () => {
+const Projects = ({ projectsData }) => {
   const [activeTab, setActiveTab] = useState('dev');
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFullView, setIsFullView] = useState(false);
@@ -195,7 +195,8 @@ const Projects = () => {
   // ==========================================
   // DATA SECTIONS
   // ==========================================
-  const devProjects = [
+  // Uses Supabase data when available; falls back to hardcoded array while DB is empty.
+  const _hardcodedDevProjects = [
     {
       id: 1,
       title: "BiteTrack",
@@ -254,9 +255,28 @@ const Projects = () => {
       links: { demo: "#", github: "#" },
       image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
     }
-  ];
+  ]
 
-  const artProjects = artProjectsData; 
+  // Supabase dev projects are mapped to the same shape the carousel expects
+  const supabaseDevProjects = projectsData
+    ?.filter((p) => p.category === 'development')
+    .map((p) => ({
+      id: p.id,
+      title: p.title,
+      subtitle: p.subtitle || '',
+      description: p.description || '',
+      tags: Array.isArray(p.tech_stack) ? p.tech_stack : [],
+      image: Array.isArray(p.images)
+        ? p.images.map((img) => (typeof img === 'string' ? img : img.src))
+        : [],
+      links: { demo: p.demo_url || '#', github: p.github_url || '#' },
+      isComingSoon: p.is_coming_soon,
+    }))
+
+  const devProjects =
+    supabaseDevProjects?.length ? supabaseDevProjects : _hardcodedDevProjects
+
+  const artProjects = artProjectsData;
 
   const graphicProjects = [
     { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/09.jpg" },

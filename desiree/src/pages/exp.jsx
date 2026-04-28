@@ -12,9 +12,10 @@ import {
     FileText
 } from 'lucide-react';
 
-const About = () => {
-    // DATA: Your specific details
-    const experienceData = [
+const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) => {
+    // DATA: Falls back to hardcoded values when Supabase has no data yet.
+    // Once you populate the DB, pass props from App.jsx and these inline arrays can be removed.
+    const experienceData = expProp?.length ? expProp : [
         {
             title: "Front End Developer / UIUX Designer",
             company: "Inventiv Softwares",
@@ -120,9 +121,9 @@ const About = () => {
             type: null,
             description: "Provided administrative support including student records management, grade tracking, and instructional materials preparation."
         }
-    ];
+    ]
 
-    const educationData = [
+    const educationData = eduProp?.length ? eduProp : [
         {
             school: "University of Mindanao",
             degree: "Bachelor of Science in Computer Science",
@@ -135,7 +136,7 @@ const About = () => {
             year: "2018 - 2022",
             status: "With High Honors"
         }
-    ];
+    ]
 
     // UPDATED SKILLS DATA WITH ICONS AND SPAN LOGIC
     const coreSkills = [

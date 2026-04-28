@@ -16,7 +16,7 @@ const LiquidBackground = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     
     let width, height;
     let buffer1 = [];
