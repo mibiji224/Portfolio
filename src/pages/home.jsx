@@ -2,7 +2,6 @@ import gsap from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 // Ensure these paths match your project structure
 import RippleBackground from './RippleBackground';
-import profileImage from '/mbj.jpg';
 import { Button } from '@/components/ui/button'
 
 // --- MAIN HOME COMPONENT ---
@@ -96,8 +95,7 @@ function Home({ onReadMore, isExpanded = false }) {
     useLayoutEffect(() => {
         let ctx = gsap.context(() => {
             const t1 = gsap.timeline();
-            t1.from(".gsap-reveal", { y: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 })
-                .from(".gsap-image-reveal", { x: 100, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=1");
+            t1.from(".gsap-reveal", { y: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 });
         }, comp);
         return () => ctx.revert();
     }, []);
@@ -107,7 +105,6 @@ function Home({ onReadMore, isExpanded = false }) {
             <RippleBackground />
             <style>{`
                 @keyframes caretBlink { 0%, 49% { opacity:1; } 50%, 100% { opacity:0; } }
-                @keyframes float { 0% { transform:translateY(0px); } 50% { transform:translateY(-20px); } 100% { transform:translateY(0px); } }
                 @keyframes readMorePulse {
                     0%, 100% { transform: scale(1); box-shadow: var(--shadow-accent); }
                     25% { transform: scale(1.09); box-shadow: var(--shadow-accent-lg), var(--accent-ring); }
@@ -123,9 +120,8 @@ function Home({ onReadMore, isExpanded = false }) {
             <div className="absolute inset-0 bg-grid z-0 pointer-events-none"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 lg:w-96 lg:h-96 bg-primary opacity-30 blur-[100px] lg:blur-[150px] rounded-full z-0"></div>
 
-            <section className="relative z-10 min-h-[100dvh] flex flex-col-reverse lg:flex-row items-center justify-center px-4 sm:px-8 lg:px-20 gap-0 sm:gap-8 lg:gap-20 py-12 lg:py-0" id="home">
-                {/* LEFT CONTENT */}
-                <div className="flex-none sm:flex-1 flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-none">
+            <section className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-4 sm:px-8 lg:px-20 py-12 lg:py-0" id="home">
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-4xl">
                     <span className="gsap-reveal text-primary font-bold tracking-widest uppercase text-xs sm:text-sm lg:text-base mb-3 lg:mb-4 block">Welcome to my Portfolio</span>
                     <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold leading-tight tracking-tight">
                         <span className="gsap-reveal block">Hello, I'm</span>
@@ -172,15 +168,6 @@ function Home({ onReadMore, isExpanded = false }) {
                             <a href="https://github.com/mibiji224" target="_blank" rel="noopener noreferrer" className="relative overflow-hidden group w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-primary/30 flex items-center justify-center text-primary-strong hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 hover:shadow-accent">
                                 <svg className="relative z-10" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
                             </a>
-                        </div>
-                    </div>
-                </div>
-                {/* RIGHT IMAGE */}
-                <div className="gsap-image-reveal hidden sm:flex flex-1 justify-center lg:justify-end relative group lg:-translate-x-10 mt-10 lg:mt-0">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-primary blur-[60px] lg:blur-[80px] rounded-full opacity-0 group-hover:opacity-60 transition-all duration-700 ease-in-out"></div>
-                    <div className="relative z-10 animate-[float_6s_ease-in-out_infinite]">
-                        <div className="relative w-80 h-80 lg:w-[350px] lg:h-[350px] rounded-full p-2 border-2 border-primary/25 bg-card transition-all duration-500 group-hover:border-primary group-hover:scale-105">
-                            <img src={profileImage} alt="Desiree" loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover rounded-full shadow-accent group-hover:shadow-accent-lg transition-all duration-500" />
                         </div>
                     </div>
                 </div>

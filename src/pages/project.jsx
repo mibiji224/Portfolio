@@ -370,13 +370,8 @@ const Projects = ({ projectsData }) => {
   return (
     <section ref={sectionRef} className="bg-background text-foreground pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-12 font-sans" id="projects">
 
-      {/* Styles for Animations & Scrollbars */}
+      {/* Styles for Animations */}
       <style>{`
-        .modern-scrollbar::-webkit-scrollbar { width: 6px; }
-        .modern-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
-        .modern-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--primary)); border-radius: 4px; }
-        .modern-scrollbar::-webkit-scrollbar-thumb:hover { background: #ff1f1f; }
-        
         .stagger-enter { animation-fill-mode: both; }
 
         /* Slide Animations */
@@ -429,7 +424,9 @@ const Projects = ({ projectsData }) => {
                     className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
                   <div className="h-36 overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent z-10 opacity-60 pointer-events-none"></div>
+                    {/* Sits over artwork, so it stays dark in both themes: fading to the
+                        light card washed the image out instead of seating it. */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/85 to-transparent z-10 opacity-60 pointer-events-none"></div>
 
                     <ImageWithLoader
                       src={project.image}

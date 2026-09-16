@@ -205,6 +205,20 @@ function AboutNarrative({ educationData = [] }) {
                     </p>
                 </Panel>
 
+                <Panel>
+                    <Label icon={<Coffee className="w-4 h-4" />}>Hobbies</Label>
+                    <div className="flex flex-wrap gap-2">
+                        {HOBBIES.map((hobby) => <Pill key={hobby}>{hobby}</Pill>)}
+                    </div>
+                </Panel>
+
+                <Panel>
+                    <Label icon={<Sparkles className="w-4 h-4" />}>Personality</Label>
+                    <div className="flex flex-wrap gap-2">
+                        {TRAITS.map((trait) => <Pill key={trait}>{trait}</Pill>)}
+                    </div>
+                </Panel>
+
             </div>
 
             {/* RIGHT COLUMN: PHILOSOPHY & CREDENTIALS */}
@@ -247,22 +261,6 @@ function AboutNarrative({ educationData = [] }) {
                     </div>
                 </Panel>
 
-            </div>
-
-            {/* FULL WIDTH: INTERESTS: pills need the room to sit on one line */}
-            <div className="lg:col-span-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Panel>
-                    <Label icon={<Coffee className="w-4 h-4" />}>Hobbies</Label>
-                    <div className="flex flex-wrap gap-2">
-                        {HOBBIES.map((hobby) => <Pill key={hobby}>{hobby}</Pill>)}
-                    </div>
-                </Panel>
-                <Panel>
-                    <Label icon={<Sparkles className="w-4 h-4" />}>Personality</Label>
-                    <div className="flex flex-wrap gap-2">
-                        {TRAITS.map((trait) => <Pill key={trait}>{trait}</Pill>)}
-                    </div>
-                </Panel>
             </div>
 
         </div>

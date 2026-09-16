@@ -174,13 +174,6 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
     return (
         <section className="bg-background text-foreground min-h-screen w-full flex flex-col pt-6 pb-16 lg:pt-10 lg:pb-24 px-4 sm:px-6 lg:px-12 font-sans relative" id="about">
 
-            <style>{`
-        .modern-scrollbar::-webkit-scrollbar { width: 4px; }
-        .modern-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
-        .modern-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--primary)); border-radius: 4px; }
-        .modern-scrollbar::-webkit-scrollbar-thumb:hover { background: #ff1f1f; }
-      `}</style>
-
             <div className="max-w-7xl mx-auto w-full flex flex-col">
 
                 {/* Section Title */}

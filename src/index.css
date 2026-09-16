@@ -108,6 +108,28 @@
   }
 }
 
+/* Scroll containers inside cards. Defined once here rather than in each
+   section's <style> block, and coloured off the tokens so the track is a
+   dark strip on the dark theme and a petal one on the light theme. */
+.modern-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary)) hsl(var(--secondary));
+}
+.modern-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.modern-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+  border-radius: 4px;
+}
+.modern-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 4px;
+}
+.modern-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary-strong));
+}
+
 /* Media never outgrows its column, whatever its intrinsic size */
 img,
 svg,
