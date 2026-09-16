@@ -11,8 +11,9 @@ const LiquidBackground = () => {
   const settings = {
     // Per-frame decay. The relationship to trail length isn't linear — the
     // wave also disperses spatially — so this was solved by simulation, not
-    // arithmetic: 0.96 ran ~84 frames (~1.4s), 0.88 runs ~43 (~0.7s).
-    damping: 0.88,
+    // arithmetic: 0.96 ran ~84 frames (~1.4s), 0.70 runs ~22 (~0.37s), and
+    // the ripple spreads ~24px rather than ~54px before it fades.
+    damping: 0.70,
     strength: 1000, // Impact strength
   };
 
