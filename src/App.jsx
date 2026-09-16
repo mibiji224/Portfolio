@@ -15,8 +15,8 @@ const Footer   = lazy(() => import('./components/Footer.jsx'))
 const Dashboard = lazy(() => import('./admin/Dashboard.jsx'))
 
 const SectionFallback = () => (
-  <div className="min-h-[50vh] flex items-center justify-center bg-[#080707]">
-    <div className="w-8 h-8 border-2 border-[#db0a0a] border-t-transparent rounded-full animate-spin" />
+  <div className="min-h-[50vh] flex items-center justify-center bg-background">
+    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
   </div>
 )
 

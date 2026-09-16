@@ -1,5 +1,8 @@
 import { Award, CheckCircle2, ChevronLeft, ChevronRight, Code, Coffee, ExternalLink, GraduationCap, Heart, Palette, Sparkles, User } from 'lucide-react';
 import { useState } from 'react';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 
 const HOBBIES = ['Digital Painting', 'Fitness', 'Reading', 'Cybersecurity'];
 const TRAITS = ['INTJ-T', 'Detail-Oriented', 'Creative Strategist', 'Resilient'];
@@ -61,34 +64,36 @@ const CERTIFICATIONS = [
 // tall the card is: change one and check the other still fits.
 const CERTS_PER_PAGE = 3;
 
-const Card = ({ className = '', children }) => (
-    <div className={`bg-[#0f0f0f]/50 border border-white/5 rounded-xl p-5 sm:p-6 ${className}`}>
-        {children}
-    </div>
+const Panel = ({ className = '', children }) => (
+    <Card className={`bg-card/60 p-5 sm:p-6 ${className}`}>{children}</Card>
 );
 
 const Label = ({ icon, children }) => (
-    <div className="flex items-center gap-3 text-[#db0a0a] font-bold text-sm tracking-wider uppercase mb-3">
+    <div className="flex items-center gap-3 text-primary font-bold text-sm tracking-wider uppercase mb-3">
         {icon} {children}
     </div>
 );
 
 const Pill = ({ children }) => (
-    <span className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-xs text-gray-400 hover:text-white hover:border-[#db0a0a]/50 transition-all cursor-default">
+    <Badge
+        variant="secondary"
+        className="px-3 py-1.5 text-xs hover:text-foreground hover:border-primary/50 transition-all cursor-default"
+    >
         {children}
-    </span>
+    </Badge>
 );
 
 const PagerButton = ({ onClick, disabled, label, children }) => (
-    <button
-        type="button"
+    <Button
+        variant="outline"
+        size="icon-sm"
         onClick={onClick}
         disabled={disabled}
         aria-label={label}
-        className="w-8 h-8 flex items-center justify-center rounded-full border border-white/10 text-gray-300 transition-all hover:border-[#db0a0a]/60 hover:text-[#db0a0a] hover:bg-[#db0a0a]/10 disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:border-white/10 disabled:hover:text-gray-300 disabled:hover:bg-transparent"
+        className="text-muted-foreground hover:text-primary-strong disabled:opacity-25"
     >
         {children}
-    </button>
+    </Button>
 );
 
 // One page of certifications at a time. The list keeps a fixed height so the
@@ -107,18 +112,18 @@ const CertificationList = () => {
         <>
             <div key={page} className="h-[13.75rem] flex flex-col gap-2 animate-certPage">
                 {visible.map((cert) => (
-                    <div key={cert.title} className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-[#0f0f0f] border border-white/5 rounded-lg hover:border-[#db0a0a]/50 transition-all hover:-translate-y-0.5 duration-300 group">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#db0a0a] mt-[3px] shrink-0" />
+                    <div key={cert.title} className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300 group">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
                         <div className="min-w-0 flex-1">
-                            <h4 className="text-white text-xs font-bold leading-tight line-clamp-2 group-hover:text-[#db0a0a] transition-colors">{cert.title}</h4>
+                            <h4 className="text-foreground text-xs font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cert.title}</h4>
                             {/* Issuer, date, credential ID and the verify link share one
                                 line: two lines per row is what keeps these as compact as
                                 the education entries below. */}
-                            <div className="flex items-baseline gap-1.5 mt-0.5 text-[10px] text-gray-400">
+                            <div className="flex items-baseline gap-1.5 mt-0.5 text-[10px] text-muted-foreground">
                                 <span className="truncate" title={cert.issuer}>{cert.issuer}</span>
-                                <span className="shrink-0 text-gray-500">• {cert.date}</span>
+                                <span className="shrink-0 text-muted-foreground/80">• {cert.date}</span>
                                 {cert.credentialId && (
-                                    <span className="font-mono text-[9px] text-gray-600 truncate" title={`Credential ID ${cert.credentialId}`}>
+                                    <span className="font-mono text-[9px] text-muted-foreground/70 truncate" title={`Credential ID ${cert.credentialId}`}>
                                         ID {cert.credentialId}
                                     </span>
                                 )}
@@ -127,7 +132,7 @@ const CertificationList = () => {
                                         href={cert.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1 font-semibold text-[#db0a0a] hover:text-white transition-colors shrink-0 ml-auto"
+                                        className="inline-flex items-center gap-1 font-semibold text-primary-strong hover:text-foreground transition-colors shrink-0 ml-auto"
                                     >
                                         Show credential <ExternalLink className="w-2.5 h-2.5" />
                                     </a>
@@ -142,8 +147,8 @@ const CertificationList = () => {
             </div>
 
             {pageCount > 1 && (
-                <div className="flex items-center justify-between gap-3 mt-3 pt-2.5 border-t border-white/5">
-                    <span className="text-[11px] text-gray-500 tabular-nums">
+                <div className="flex items-center justify-between gap-3 mt-3 pt-2.5 border-t border-border">
+                    <span className="text-[11px] text-muted-foreground/80 tabular-nums">
                         {start + 1}–{start + visible.length} of {CERTIFICATIONS.length}
                     </span>
                     <div className="flex items-center gap-2">
@@ -154,7 +159,7 @@ const CertificationList = () => {
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </PagerButton>
-                        <span className="text-[11px] text-gray-400 tabular-nums w-8 text-center">{page + 1}/{pageCount}</span>
+                        <span className="text-[11px] text-muted-foreground tabular-nums w-8 text-center">{page + 1}/{pageCount}</span>
                         <PagerButton
                             onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
                             disabled={page === pageCount - 1}
@@ -179,85 +184,85 @@ function AboutNarrative({ educationData = [] }) {
             {/* LEFT COLUMN: THE NARRATIVE */}
             <div className="lg:col-span-7 space-y-6">
 
-                <Card>
+                <Panel>
                     <Label icon={<User className="w-4 h-4" />}>Who I Am</Label>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed">
                         I am a Philippines-based creative and developer operating where logic meets imagination. My journey began with a paintbrush, envisioning a career in Fine Arts before discovering that code, like paint, is a powerful medium for creation. Transitioning from the freedom of art to the structure of Computer Science was a challenge that fueled my growth from an underdog to a leader.
                     </p>
-                </Card>
+                </Panel>
 
-                <Card>
+                <Panel>
                     <Label icon={<Code className="w-4 h-4" />}>The Developer Side</Label>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed">
                         I specialize in building responsive SPAs using <strong>React</strong>, <strong>SQL</strong>, and <strong>Tailwind CSS</strong>. I fell in love with code while trying to bring my designs to life, and I now believe that clean code is just as essential as clean design.
                     </p>
-                </Card>
+                </Panel>
 
-                <Card>
+                <Panel>
                     <Label icon={<Palette className="w-4 h-4" />}>The Artistic Side</Label>
-                    <p className="text-gray-400 leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed">
                         Digital art and UI design are my roots. Whether I'm branding an organization or sketching character concepts, I bring a designer's eye to every technical project. This duality allows me to effectively bridge the gap between design and engineering teams.
                     </p>
-                </Card>
+                </Panel>
 
             </div>
 
             {/* RIGHT COLUMN: PHILOSOPHY & CREDENTIALS */}
             <div className="lg:col-span-5 space-y-6">
 
-                <Card className="bg-white/5">
+                <Panel className="bg-accent/70">
                     <Label icon={<Heart className="w-4 h-4" />}>My Philosophy</Label>
-                    <p className="text-gray-300 italic font-serif text-base sm:text-lg">
+                    <p className="text-muted-foreground italic font-serif text-base sm:text-lg">
                         "Technology without design is functional but boring. Design without technology is beautiful but static. I strive to combine both."
                     </p>
-                </Card>
+                </Panel>
 
-                <Card>
+                <Panel>
                     <Label icon={<Award className="w-4 h-4" />}>Certifications & Awards</Label>
                     <CertificationList />
-                </Card>
+                </Panel>
 
-                <Card>
+                <Panel>
                     <Label icon={<GraduationCap className="w-4 h-4" />}>Education</Label>
                     <div className="space-y-2">
                         {educationData.map((edu, index) => (
-                            <div key={index} className="group bg-[#0f0f0f] p-2.5 rounded-lg border border-white/5 hover:border-[#db0a0a]/50 transition-all hover:-translate-y-0.5 duration-300">
+                            <div key={index} className="group bg-card p-2.5 rounded-lg border border-border hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300">
                                 <div className="flex justify-between items-center mb-1">
-                                    <h4 className="text-xs font-bold text-white group-hover:text-[#db0a0a] transition-colors truncate pr-2">
+                                    <h4 className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate pr-2">
                                         {edu.school}
                                     </h4>
-                                    <span className="text-[9px] font-mono text-[#db0a0a] bg-[#db0a0a]/10 px-1.5 py-0.5 rounded border border-[#db0a0a]/20 whitespace-nowrap">
+                                    <span className="text-[9px] font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20 whitespace-nowrap">
                                         {edu.year}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center gap-2">
-                                    <p className="text-gray-400 text-[10px] truncate min-w-0 flex-1">{edu.degree}</p>
+                                    <p className="text-muted-foreground text-[10px] truncate min-w-0 flex-1">{edu.degree}</p>
                                     <div className="flex items-center gap-1 shrink-0">
-                                        <Award className="w-3 h-3 text-[#db0a0a]" />
-                                        <span className="text-[9px] text-gray-300 font-medium">{edu.status}</span>
+                                        <Award className="w-3 h-3 text-primary" />
+                                        <span className="text-[9px] text-muted-foreground font-medium">{edu.status}</span>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div>
-                </Card>
+                </Panel>
 
             </div>
 
             {/* FULL WIDTH: INTERESTS: pills need the room to sit on one line */}
             <div className="lg:col-span-12 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <Card>
+                <Panel>
                     <Label icon={<Coffee className="w-4 h-4" />}>Hobbies</Label>
                     <div className="flex flex-wrap gap-2">
                         {HOBBIES.map((hobby) => <Pill key={hobby}>{hobby}</Pill>)}
                     </div>
-                </Card>
-                <Card>
+                </Panel>
+                <Panel>
                     <Label icon={<Sparkles className="w-4 h-4" />}>Personality</Label>
                     <div className="flex flex-wrap gap-2">
                         {TRAITS.map((trait) => <Pill key={trait}>{trait}</Pill>)}
                     </div>
-                </Card>
+                </Panel>
             </div>
 
         </div>

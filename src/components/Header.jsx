@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { scrollToSection } from '../lib/scroll';
+import ThemeToggle from './ThemeToggle';
 
 const navLinks = [
     { name: 'About', href: '#about' },
@@ -131,17 +132,16 @@ function Head({ onNavigate }) {
         else scrollToSection(href);
     };
 
-    // Clear-glass pill: mostly the page showing through. The white gradient is
-    // now a faint sheen rather than a pane, so the bar reads as transparent over
-    // the #080707 page; the thin smoked tint underneath is what keeps the links
-    // legible when bright artwork scrolls behind it. A deeper blur and the
-    // saturation carry the glass, with the hairline edge and top inset as the
-    // only hard highlights.
-    const surface = `bg-black/25
-        bg-[linear-gradient(100deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.08)_22%,rgba(255,255,255,0.09)_45%,rgba(255,255,255,0.06)_72%,rgba(255,255,255,0.04)_100%)]
+    // Clear-glass pill: mostly the page showing through. The tint and the sheen
+    // both come off `background`, so the bar smokes over the dark theme and
+    // milks over the light one without a second set of classes. A deeper blur
+    // and the saturation carry the glass; the hairline edge and the top inset
+    // are the only hard highlights.
+    const surface = `bg-background/40
+        bg-[linear-gradient(100deg,hsl(var(--foreground)/0.04)_0%,hsl(var(--foreground)/0.08)_22%,hsl(var(--primary)/0.06)_45%,hsl(var(--foreground)/0.06)_72%,hsl(var(--foreground)/0.04)_100%)]
         backdrop-blur-xl backdrop-saturate-150
-        border border-white/[0.08]
-        shadow-[0_18px_40px_-20px_rgba(0,0,0,0.85),inset_0_1px_0_0_rgba(255,255,255,0.08)]`;
+        border border-border
+        shadow-nav`;
 
     return (
         <header
@@ -163,11 +163,11 @@ function Head({ onNavigate }) {
                     <a
                         href="#home"
                         onClick={(e) => handleNavClick(e, '#home')}
-                        className="relative select-none text-xl sm:text-2xl font-black tracking-tight text-white
-                            rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                        className="relative select-none text-xl sm:text-2xl font-black tracking-tight text-foreground
+                            rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                         DR.
-                        <span className="text-[#db0a0a]">S</span>
+                        <span className="text-primary">S</span>
                     </a>
 
                     {/* --- DESKTOP LINKS --- */}
@@ -181,7 +181,7 @@ function Head({ onNavigate }) {
                                 top: `${indicator.top}px`,
                                 opacity: indicator.ready ? 1 : 0,
                             }}
-                            className="absolute left-0 h-[2px] rounded-full bg-white
+                            className="absolute left-0 h-[2px] rounded-full bg-primary
                                 transition-[transform,width,opacity,top] duration-500 ease-out"
                         />
 
@@ -193,10 +193,10 @@ function Head({ onNavigate }) {
                                 aria-current={active === link.href ? 'page' : undefined}
                                 className={`relative rounded-full px-4 py-1.5 text-[15px]
                                     transition-colors duration-300 focus-visible:outline-none
-                                    focus-visible:ring-2 focus-visible:ring-white/40 ${
+                                    focus-visible:ring-2 focus-visible:ring-ring ${
                                         active === link.href
-                                            ? 'font-semibold text-white'
-                                            : 'font-normal text-white/75 hover:text-white'
+                                            ? 'font-semibold text-foreground'
+                                            : 'font-normal text-muted-foreground hover:text-foreground'
                                     }`}
                             >
                                 <span ref={(el) => (labelRefs.current[link.href] = el)}>
@@ -206,17 +206,19 @@ function Head({ onNavigate }) {
                         ))}
                     </nav>
 
+                    <ThemeToggle className="ml-auto md:ml-2 mr-1 md:mr-0" />
+
                     {/* --- MOBILE TOGGLE --- */}
                     <button
                         onClick={toggleMenu}
                         aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
                         aria-expanded={isMenuOpen}
-                        className="relative rounded-full p-1.5 sm:p-2 text-white transition-transform duration-300
+                        className="relative rounded-full p-1.5 sm:p-2 text-foreground transition-transform duration-300
                             active:scale-90 focus-visible:outline-none focus-visible:ring-2
-                            focus-visible:ring-white/40 md:hidden"
+                            focus-visible:ring-ring md:hidden"
                     >
                         {isMenuOpen ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="#db0a0a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         ) : (
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
                         )}
@@ -241,10 +243,10 @@ function Head({ onNavigate }) {
                                 aria-current={active === link.href ? 'page' : undefined}
                                 className={`rounded-xl sm:rounded-2xl px-4 py-2.5 text-sm sm:text-base transition-colors
                                     duration-300 focus-visible:outline-none focus-visible:ring-2
-                                    focus-visible:ring-white/40 ${
+                                    focus-visible:ring-ring ${
                                         active === link.href
-                                            ? 'bg-white/[0.08] font-semibold text-white underline underline-offset-4'
-                                            : 'font-normal text-white/75 hover:bg-white/[0.05] hover:text-white'
+                                            ? 'bg-accent font-semibold text-foreground underline underline-offset-4'
+                                            : 'font-normal text-muted-foreground hover:bg-accent/70 hover:text-foreground'
                                     }`}
                             >
                                 {link.name}

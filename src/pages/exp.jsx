@@ -172,12 +172,12 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
     ];
 
     return (
-        <section className="bg-[#080707] text-white min-h-screen w-full flex flex-col pt-6 pb-16 lg:pt-10 lg:pb-24 px-4 sm:px-6 lg:px-12 font-sans relative" id="about">
+        <section className="bg-background text-foreground min-h-screen w-full flex flex-col pt-6 pb-16 lg:pt-10 lg:pb-24 px-4 sm:px-6 lg:px-12 font-sans relative" id="about">
 
             <style>{`
         .modern-scrollbar::-webkit-scrollbar { width: 4px; }
         .modern-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
-        .modern-scrollbar::-webkit-scrollbar-thumb { background: #db0a0a; border-radius: 4px; }
+        .modern-scrollbar::-webkit-scrollbar-thumb { background: hsl(var(--primary)); border-radius: 4px; }
         .modern-scrollbar::-webkit-scrollbar-thumb:hover { background: #ff1f1f; }
       `}</style>
 
@@ -185,8 +185,8 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
 
                 {/* Section Title */}
                 <div className="shrink-0 mb-6 lg:mb-8">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">About Me</h2>
-                    <div className="w-20 h-1 bg-[#db0a0a]"></div>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">About Me</h2>
+                    <div className="w-20 h-1 bg-primary"></div>
                 </div>
 
                 {/* The narrative leads the section, ahead of the timeline */}
@@ -199,41 +199,41 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                     {/* LEFT COLUMN: EXPERIENCE */}
                     <div className="lg:col-span-7 flex flex-col lg:h-[70vh] lg:min-h-[520px]">
                         <div className="flex items-center gap-3 mb-4 shrink-0">
-                            <div className="p-1.5 bg-[#db0a0a]/10 rounded-lg">
-                                <Briefcase className="w-5 h-5 text-[#db0a0a]" />
+                            <div className="p-1.5 bg-primary/10 rounded-lg">
+                                <Briefcase className="w-5 h-5 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-100">Experience</h3>
+                            <h3 className="text-xl font-bold text-foreground">Experience</h3>
                         </div>
 
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-[#0f0f0f]/50 rounded-xl p-3 sm:p-4 border border-white/5 pb-6" style={{ overscrollBehavior: 'contain' }}>
-                            <ol className="relative border-l border-neutral-800 ml-2 sm:ml-3 space-y-8">
+                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card/60 rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
+                            <ol className="relative border-l border-border ml-2 sm:ml-3 space-y-8">
                                 {experienceData.map((item, index) => (
                                     <li key={index} className="relative ml-6 sm:ml-8 group">
-                                        <span className="absolute -left-[31px] sm:-left-[43px] top-1 flex items-center justify-center w-6 h-6 bg-[#080707] rounded-full border border-neutral-700 group-hover:border-[#db0a0a] group-hover:shadow-[0_0_10px_#db0a0a] transition-all duration-300">
-                                            <div className="w-2 h-2 bg-neutral-600 rounded-full group-hover:bg-[#db0a0a] transition-colors"></div>
+                                        <span className="absolute -left-[31px] sm:-left-[43px] top-1 flex items-center justify-center w-6 h-6 bg-background rounded-full border border-border group-hover:border-primary group-hover:shadow-accent transition-all duration-300">
+                                            <div className="w-2 h-2 bg-muted-foreground rounded-full group-hover:bg-primary transition-colors"></div>
                                         </span>
 
                                         <div className="relative">
                                             <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                <span className="text-[10px] font-mono font-medium text-[#db0a0a] border border-[#db0a0a]/30 px-1.5 py-0.5 rounded bg-[#db0a0a]/5">
+                                                <span className="text-[10px] font-mono font-medium text-primary border border-primary/30 px-1.5 py-0.5 rounded bg-primary/5">
                                                     {item.date}
                                                 </span>
                                                 {item.type && (
-                                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${item.type === 'Present' ? 'bg-[#db0a0a] text-white' : 'bg-white text-black'}`}>
+                                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${item.type === 'Present' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground'}`}>
                                                         {item.type}
                                                     </span>
                                                 )}
                                             </div>
 
-                                            <h4 className="text-base font-bold text-white mb-0.5 group-hover:text-[#db0a0a] transition-colors">
+                                            <h4 className="text-base font-bold text-foreground mb-0.5 group-hover:text-primary transition-colors">
                                                 {item.title}
                                             </h4>
 
-                                            <h5 className="text-xs font-medium text-gray-300 mb-2">
+                                            <h5 className="text-xs font-medium text-muted-foreground mb-2">
                                                 {item.company}
                                             </h5>
 
-                                            <p className="text-xs text-gray-400 leading-relaxed max-w-lg">
+                                            <p className="text-xs text-muted-foreground leading-relaxed max-w-lg">
                                                 {item.description}
                                             </p>
                                         </div>
@@ -246,24 +246,24 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                     {/* RIGHT COLUMN: SKILLS */}
                     <div className="lg:col-span-5 flex flex-col lg:h-[70vh] lg:min-h-[520px]">
                         <div className="flex items-center gap-3 mb-4 shrink-0">
-                            <div className="p-1.5 bg-[#db0a0a]/10 rounded-lg">
-                                <Code className="w-5 h-5 text-[#db0a0a]" />
+                            <div className="p-1.5 bg-primary/10 rounded-lg">
+                                <Code className="w-5 h-5 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-100">Skills</h3>
+                            <h3 className="text-xl font-bold text-foreground">Skills</h3>
                         </div>
 
                         {/* Scrollable Content Area */}
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-[#0f0f0f]/50 rounded-xl p-3 sm:p-4 border border-white/5 pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card/60 rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
 
                             {/* Core Skills Group */}
                             <div className="mb-4">
-                                <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <div className="w-1 h-1 bg-[#db0a0a] rounded-full"></div>
+                                <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <div className="w-1 h-1 bg-primary rounded-full"></div>
                                     Core Competencies
                                 </h4>
                                 <div className="flex flex-wrap gap-1.5">
                                     {coreSkills.map((skill, index) => (
-                                        <span key={index} className="px-2 py-1 bg-[#1a1a1a] text-gray-400 text-[10px] font-medium rounded border border-white/5 hover:text-white hover:border-[#db0a0a]/50 transition-colors cursor-default">
+                                        <span key={index} className="px-2 py-1 bg-secondary text-muted-foreground text-[10px] font-medium rounded border border-border hover:text-foreground hover:border-primary/50 transition-colors cursor-default">
                                             {skill}
                                         </span>
                                     ))}
@@ -272,8 +272,8 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
 
                             {/* Technical Proficiency - IMPROVED LAYOUT */}
                             <div>
-                                <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <div className="w-1 h-1 bg-[#db0a0a] rounded-full"></div>
+                                <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <div className="w-1 h-1 bg-primary rounded-full"></div>
                                     Technical Proficiency
                                 </h4>
 
@@ -283,13 +283,13 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                         <div
                                             key={index}
                                             // If fullWidth is true (for Creative/Office), span 2 columns
-                                            className={`bg-[#0f0f0f] p-3 rounded-lg border border-white/5 hover:border-[#db0a0a]/30 transition-colors group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
+                                            className={`bg-card p-3 rounded-lg border border-border hover:border-primary/30 transition-colors group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
                                         >
                                             <div className="flex items-center gap-2 mb-2">
-                                                <span className="text-[#db0a0a] opacity-80 group-hover:opacity-100 transition-opacity">
+                                                <span className="text-primary opacity-80 group-hover:opacity-100 transition-opacity">
                                                     {group.icon}
                                                 </span>
-                                                <h5 className="text-white text-[11px] font-bold uppercase tracking-wider">
+                                                <h5 className="text-foreground text-[11px] font-bold uppercase tracking-wider">
                                                     {group.category}
                                                 </h5>
                                             </div>
@@ -298,7 +298,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                                 {group.items.map((skill, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="text-[10px] text-gray-400 bg-black/40 px-2 py-1 rounded border border-white/5 transition-all duration-200 group-hover:border-[#db0a0a]/20 group-hover:text-gray-200"
+                                                        className="text-[10px] text-muted-foreground bg-accent/70 px-2 py-1 rounded border border-border transition-all duration-200 group-hover:border-primary/20 group-hover:text-foreground"
                                                     >
                                                         {skill}
                                                     </span>

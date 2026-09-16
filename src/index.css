@@ -5,17 +5,107 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 3. Global Defaults (Optional but recommended) */
-/* This ensures the background is black even if a component doesn't load immediately */
-html {
-  /* Stop iOS from inflating type in landscape */
-  -webkit-text-size-adjust: 100%;
+/* 2. Theme tokens.
+   Both palettes live here as shadcn-shaped CSS variables, so every component
+   is written once against the semantic name and follows whichever theme is
+   on <html>. `:root` is the light pastel theme (shadcn's convention puts
+   light on the root); `.dark` is the original near-black one, and index.html
+   ships with class="dark" so the site still opens dark by default. */
+@layer base {
+  :root {
+    --background: 345 98% 98%;          /* blush  #FFF7F9 */
+    --foreground: 332 20% 17%;          /* ink    #33222A */
+
+    --card: 0 0% 100%;                  /* paper  #FFFFFF */
+    --card-foreground: 332 20% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 332 20% 17%;
+
+    --primary: 343 73% 66%;             /* blossom      #E8698C */
+    --primary-foreground: 0 0% 100%;
+    --primary-strong: 343 54% 53%;      /* blossom-deep #C8446A, text-safe */
+    --primary-soft: 342 81% 88%;        /* blossom-soft #F9C6D5 */
+
+    --secondary: 344 100% 96%;          /* petal  #FFE9EF */
+    --secondary-foreground: 332 20% 17%;
+    --muted: 344 100% 96%;
+    --muted-foreground: 330 9% 44%;     /* muted  #7A6670 */
+    --accent: 344 100% 96%;
+    --accent-foreground: 343 54% 53%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 341 56% 91%;              /* line   #F5DCE4 */
+    --input: 341 56% 91%;
+    --ring: 343 73% 66%;
+
+    --radius: 0.75rem;
+
+    /* On white, the accent casts a soft directional shadow. */
+    --shadow-accent: 0 8px 20px -12px hsl(343 54% 53% / 0.7);
+    --shadow-accent-lg: 0 16px 36px -12px hsl(343 54% 53% / 0.75);
+    --accent-ring: 0 0 0 5px hsl(342 81% 88% / 0.55);
+    /* Floating glass surfaces lift off the page rather than glowing. */
+    --shadow-nav: 0 18px 40px -22px hsl(343 54% 53% / 0.5), inset 0 1px 0 0 rgb(255 255 255 / 0.9);
+  }
+
+  .dark {
+    --background: 0 7% 3%;              /* #080707 */
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 6%;                    /* #0f0f0f */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 0 91% 45%;               /* #db0a0a */
+    --primary-foreground: 0 0% 0%;
+    --primary-strong: 0 91% 45%;
+    --primary-soft: 0 91% 38%;
+
+    --secondary: 0 0% 10%;              /* #1a1a1a */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 218 11% 65%;    /* gray-400 */
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 91% 45%;
+
+    --destructive: 0 91% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 18%;
+    --ring: 0 91% 45%;
+
+    /* On black the same accent reads as a halo instead. */
+    --shadow-accent: 0 0 20px hsl(0 91% 45% / 0.5);
+    --shadow-accent-lg: 0 0 40px hsl(0 91% 45% / 0.6);
+    --accent-ring: 0 0 42px 6px hsl(0 91% 45% / 0.7);
+    --shadow-nav: 0 18px 40px -20px rgb(0 0 0 / 0.85), inset 0 1px 0 0 rgb(255 255 255 / 0.08);
+  }
 }
 
-body {
-  background-color: #080707; 
-  color: white;
-  font-family: 'Poppins', sans-serif;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    /* Stop iOS from inflating type in landscape */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Poppins', sans-serif;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary-soft));
+    color: hsl(var(--foreground));
+  }
 }
 
 /* Media never outgrows its column, whatever its intrinsic size */

@@ -11,12 +11,40 @@ const LiquidBackground = () => {
   const settings = {
     damping: 0.96,
     strength: 1000, // Impact strength
-    background: [8, 7, 7],
+  };
+
+  // The canvas is transparent except where the wave is, so this is the colour
+  // of the ripple itself. Reading it off --primary keeps the effect on-theme
+  // without the component knowing which theme is on.
+  const readAccent = () => {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue('--primary')
+      .trim();
+    const [h, sPct, lPct] = raw.split(/\s+/).map((v) => parseFloat(v));
+    if ([h, sPct, lPct].some(Number.isNaN)) return [219, 10, 10];
+
+    const sat = sPct / 100;
+    const lum = lPct / 100;
+    const c = (1 - Math.abs(2 * lum - 1)) * sat;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = lum - c / 2;
+    const [r, g, b] =
+      h < 60 ? [c, x, 0] :
+      h < 120 ? [x, c, 0] :
+      h < 180 ? [0, c, x] :
+      h < 240 ? [0, x, c] :
+      h < 300 ? [x, 0, c] : [c, 0, x];
+    return [r, g, b].map((v) => Math.round((v + m) * 255));
   };
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    let accent = readAccent();
+    // Repaint in the new accent when the theme flips.
+    const themeObserver = new MutationObserver(() => { accent = readAccent(); });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     
     let width, height;
     let buffer1 = [];
@@ -129,20 +157,17 @@ const LiquidBackground = () => {
               const pixelIndex = i * 4;
               const waveHeight = buffer1[i]; // Use the fully updated buffer1
 
-              let r = settings.background[0];
-              const g = settings.background[1]; 
-              const b = settings.background[2]; 
+              const clamp = (v) => (v < 0 ? 0 : v > 255 ? 255 : v);
+              // Crests brighten toward the accent's own hue rather than
+              // blowing out to white.
+              const lift = waveHeight > 0 ? waveHeight * 1.5 : 0;
 
-              if (waveHeight > 0) {
-                  r += waveHeight * 2; 
-              }
-
-              data[pixelIndex] = r < 0 ? 0 : r > 255 ? 255 : r;
-              data[pixelIndex + 1] = g; 
-              data[pixelIndex + 2] = b; 
+              data[pixelIndex] = clamp(accent[0] + lift);
+              data[pixelIndex + 1] = clamp(accent[1] + lift * 0.3);
+              data[pixelIndex + 2] = clamp(accent[2] + lift * 0.3);
 
               // Alpha based on wave height
-              const alpha = Math.min(255, Math.max(0, waveHeight * 10));
+              const alpha = Math.min(210, Math.max(0, waveHeight * 9));
               data[pixelIndex + 3] = alpha; 
           }
       }
@@ -181,6 +206,7 @@ const LiquidBackground = () => {
       window.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
       visibilityObserver.disconnect();
+      themeObserver.disconnect();
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     };
