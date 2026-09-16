@@ -1,5 +1,5 @@
 -- ============================================================
--- SEED DATA — existing portfolio content
+-- SEED DATA: existing portfolio content
 -- Run in: Supabase Dashboard → SQL Editor → New query → Run
 -- ============================================================
 
@@ -166,7 +166,7 @@ insert into public.education (degree, institution, period, description, display_
 
 -- ============================================================
 -- PROJECTS (6 entries)
--- Images kept as local /public paths — they still work from the public folder.
+-- Images kept as local /public paths; they still work from the public folder.
 -- You can replace src values with Supabase Storage CDN URLs later via the CMS.
 -- ============================================================
 

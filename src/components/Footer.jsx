@@ -3,7 +3,7 @@ import { Heart } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#050505] border-t border-white/10 text-white py-8 px-1 font-sans relative z-10">
+    <footer className="bg-[#050505] border-t border-white/10 text-white py-8 px-4 sm:px-6 lg:px-12 font-sans relative z-10">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         
         {/* LEFT: Copyright & Branding */}

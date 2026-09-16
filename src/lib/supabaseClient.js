@@ -4,7 +4,7 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase env vars not set — CMS and dynamic data will be unavailable.')
+  console.warn('Supabase env vars not set. CMS and dynamic data will be unavailable.')
 }
 
 export const supabase = createClient(

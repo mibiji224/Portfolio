@@ -1,0 +1,35 @@
+/* Font is loaded via <link> in index.html for faster non-blocking load */
+
+/* 1. Initialize Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Global Defaults (Optional but recommended) */
+/* This ensures the background is black even if a component doesn't load immediately */
+html {
+  /* Stop iOS from inflating type in landscape */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: #080707; 
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Media never outgrows its column, whatever its intrinsic size */
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+/* Floating nav: honor reduced-motion without touching the hero's keyframes */
+@media (prefers-reduced-motion: reduce) {
+  [data-floating-nav],
+  [data-floating-nav] * {
+    transition-duration: 0.01ms !important;
+  }
+}

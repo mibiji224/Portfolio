@@ -37,11 +37,11 @@ export default function SchemaMarkup({ projects = [], experience = [] }) {
       {
         '@context': 'https://schema.org',
         '@type': 'ProfilePage',
-        name: 'Desiree Soronio — Portfolio',
+        name: 'Desiree Soronio Portfolio',
         url: 'https://desireesoronio.vercel.app',
         mainEntity: { '@type': 'Person', name: 'Desiree R. Soronio' },
         description:
-          'Portfolio of Desiree R. Soronio — Front End Developer and Creative UI/UX Designer.',
+          'Portfolio of Desiree R. Soronio, Front End Developer and Creative UI/UX Designer.',
       },
 
       // ── CreativeWork for each dev project ───────────────────────────────────

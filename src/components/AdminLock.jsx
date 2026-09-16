@@ -14,7 +14,7 @@ export default function AdminLock() {
   const { session, signIn } = useAuth()
   const navigate = useNavigate()
 
-  // Already logged in — lock navigates directly to /admin
+  // Already logged in, so the lock navigates directly to /admin
   const handleLockClick = () => {
     if (session) {
       navigate('/admin')
@@ -48,7 +48,7 @@ export default function AdminLock() {
 
   return (
     <>
-      {/* Ghost lock — invisible until hovered */}
+      {/* Ghost lock: invisible until hovered */}
       <button
         onClick={handleLockClick}
         className="fixed bottom-6 right-6 z-50 p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500 text-gray-700 hover:text-[#db0a0a] focus:outline-none cursor-pointer"

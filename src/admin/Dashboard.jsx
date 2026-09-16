@@ -260,7 +260,7 @@ function ProjectsTab({ toast }) {
             )}
           </Field>
 
-          <div className="md:col-span-2 flex items-center gap-3">
+          <div className="md:col-span-2 flex flex-wrap items-center gap-3">
             <label className="flex items-center gap-2 text-gray-400 text-sm cursor-pointer select-none">
               <input
                 type="checkbox"
@@ -303,9 +303,9 @@ function ProjectsTab({ toast }) {
             {projects.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between gap-4 bg-[#111] border border-white/5 rounded-xl px-4 py-3 hover:border-white/10 transition-colors"
+                className="flex flex-wrap items-center justify-between gap-3 bg-[#111] border border-white/5 rounded-xl px-3 sm:px-4 py-3 hover:border-white/10 transition-colors"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   {p.images?.[0]?.src && (
                     <img
                       src={p.images[0].src}
@@ -396,7 +396,7 @@ function ExperienceTab({ toast }) {
         </h2>
         <div className="space-y-2">
           {list.map((item) => (
-            <div key={item.id} className="flex items-center justify-between gap-4 bg-[#111] border border-white/5 rounded-xl px-4 py-3">
+            <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 bg-[#111] border border-white/5 rounded-xl px-3 sm:px-4 py-3">
               <div>
                 <p className="text-white text-sm">{item.title} <span className="text-gray-500">@ {item.company}</span></p>
                 <p className="text-gray-600 text-xs mt-0.5">{item.date} {item.type && `· ${item.type}`}</p>
@@ -456,7 +456,7 @@ export default function Dashboard() {
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-[#080707]/90 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <div>
             <p className="text-xs text-gray-600 uppercase tracking-widest mb-0.5">CMS</p>
             <h1 className="text-white font-semibold tracking-tight">Portfolio Dashboard</h1>
@@ -473,20 +473,20 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Tabs */}
-        <div className="flex gap-1 mb-8 bg-[#0f0f0f] rounded-xl p-1 w-fit border border-white/5">
+        <div className="flex gap-1 mb-8 bg-[#0f0f0f] rounded-xl p-1 w-full sm:w-fit overflow-x-auto border border-white/5">
           {TABS.map(({ id, label, Icon }) => (
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+              className={`flex flex-1 sm:flex-none items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors
                 ${tab === id
                   ? 'bg-[#db0a0a] text-white'
                   : 'text-gray-500 hover:text-white'
                 }`}
             >
-              <Icon size={14} /> {label}
+              <Icon size={14} className="shrink-0" /> {label}
             </button>
           ))}
         </div>

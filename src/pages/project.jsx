@@ -146,8 +146,35 @@ const LazyMasonryItem = ({ item, activeTab, onClick }) => {
 // ==========================================
 // 2. MAIN COMPONENT
 // ==========================================
+const TAB_ICON = "w-4 h-4 shrink-0";
+
+const PROJECT_TABS = [
+  { id: 'dev', label: 'Development', icon: <Code className={TAB_ICON} /> },
+  { id: 'art', label: 'Creative Arts', icon: <Palette className={TAB_ICON} /> },
+  { id: 'graphics', label: 'Graphics', icon: <PenTool className={TAB_ICON} /> },
+];
+
+const TabButtons = ({ activeTab, onSelect, shape }) =>
+  PROJECT_TABS.map(({ id, label, icon }) => (
+    <button
+      key={id}
+      onClick={() => onSelect(id)}
+      aria-pressed={activeTab === id}
+      className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 ${shape}
+        text-[11px] sm:text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeTab === id
+          ? 'bg-[#db0a0a] text-white shadow-[0_0_15px_rgba(219,10,10,0.4)]'
+          : 'text-gray-400 hover:text-white hover:bg-white/5'
+        }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  ));
+
 const Projects = ({ projectsData }) => {
   const [activeTab, setActiveTab] = useState('dev');
+  const sectionRef = useRef(null);
+  const [isSectionInView, setIsSectionInView] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFullView, setIsFullView] = useState(false);
   
@@ -169,6 +196,20 @@ const Projects = ({ projectsData }) => {
     handleResize(); 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // The mobile tab bar floats over the viewport, so it should only be present
+  // while the projects section is the thing being read.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => setIsSectionInView(entry.isIntersecting),
+      { rootMargin: '-8% 0px -8% 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   const getDistributedColumns = (items) => {
@@ -319,7 +360,7 @@ const Projects = ({ projectsData }) => {
   };
 
   return (
-    <section className="bg-[#080707] text-white pt-10 pb-16 px-2 lg:px-12 font-sans" id="projects">
+    <section ref={sectionRef} className="bg-[#080707] text-white pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-12 font-sans" id="projects">
 
       {/* Styles for Animations & Scrollbars */}
       <style>{`
@@ -356,26 +397,12 @@ const Projects = ({ projectsData }) => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
           <div>
-            <h3 className="text-4xl lg:text-4xl font-bold text-white mb-4">Projects</h3>
+            <h3 className="text-3xl sm:text-4xl font-bold text-white mb-4">Projects</h3>
             <div className="w-20 h-1 bg-[#db0a0a]"></div>
           </div>
 
-          <div className="bg-[#1a1a1a] p-1.5 rounded-xl w-full md:w-auto grid grid-cols-3 md:flex gap-1 border border-white/5">
-            {['dev', 'art', 'graphics'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${activeTab === tab
-                    ? 'bg-[#db0a0a] text-white shadow-[0_0_15px_rgba(219,10,10,0.4)]'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-              >
-                {tab === 'dev' && <Code className="w-4 h-4" />}
-                {tab === 'art' && <Palette className="w-4 h-4" />}
-                {tab === 'graphics' && <PenTool className="w-4 h-4" />}
-                <span className="capitalize">{tab === 'dev' ? 'Development' : tab === 'art' ? 'Creative Arts' : 'Graphics'}</span>
-              </button>
-            ))}
+          <div className="hidden md:flex bg-[#1a1a1a] p-1.5 rounded-xl w-auto gap-1 border border-white/5">
+            <TabButtons activeTab={activeTab} onSelect={setActiveTab} shape="rounded-lg" />
           </div>
         </div>
 
@@ -427,10 +454,10 @@ const Projects = ({ projectsData }) => {
 
         {/* --- ARTS & GRAPHICS TABS (Masonry) --- */}
         {(activeTab === 'art' || activeTab === 'graphics') && (
-          <div className="h-[800px] overflow-y-auto modern-scrollbar pr-2" style={{ overscrollBehavior: 'contain' }}>
-            <div className="flex gap-4 items-start animate-in fade-in slide-in-from-bottom-4 duration-500 pb-8">
+          <div className="h-[70vh] lg:h-[800px] overflow-y-auto modern-scrollbar pr-1 sm:pr-2" style={{ overscrollBehavior: 'contain' }}>
+            <div className="flex gap-3 sm:gap-4 items-start animate-in fade-in slide-in-from-bottom-4 duration-500 pb-8">
               {getDistributedColumns(activeTab === 'art' ? artProjects : graphicProjects).map((columnItems, colIndex) => (
-                <div key={colIndex} className="flex-1 flex flex-col gap-4">
+                <div key={colIndex} className="flex-1 min-w-0 flex flex-col gap-3 sm:gap-4">
                   {columnItems.map((item, index) => (
                     <LazyMasonryItem key={index} item={item} activeTab={activeTab} onClick={() => setSelectedImage(item)} />
                   ))}
@@ -442,6 +469,27 @@ const Projects = ({ projectsData }) => {
 
       </div>
 
+      {/* --- MOBILE FLOATING TAB BAR --- */}
+      {/* Docked to the bottom so it never fights the floating nav pill up top.
+          Hidden behind the lightbox, which owns the screen while it is open. */}
+      <div
+        className={`md:hidden fixed inset-x-0 bottom-0 z-40 flex justify-center px-4
+          pb-[max(1rem,env(safe-area-inset-bottom))] pointer-events-none
+          transition-[transform,opacity] duration-300 ease-out ${
+            isSectionInView && !selectedImage
+              ? 'translate-y-0 opacity-100'
+              : 'translate-y-[140%] opacity-0'
+          }`}
+      >
+        <div
+          className="pointer-events-auto grid grid-cols-3 gap-1 w-full max-w-sm p-1.5 rounded-full
+            border border-white/10 bg-[#111]/90 backdrop-blur-md backdrop-saturate-150
+            shadow-[0_18px_40px_-16px_rgba(0,0,0,0.9),inset_0_1px_0_0_rgba(255,255,255,0.08)]"
+        >
+          <TabButtons activeTab={activeTab} onSelect={setActiveTab} shape="rounded-full" />
+        </div>
+      </div>
+
       {/* LIGHTBOX MODAL */}
       {selectedImage && (
         <div
@@ -451,7 +499,7 @@ const Projects = ({ projectsData }) => {
           <div
             className={`
               bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden relative transition-all duration-500 ease-in-out
-              ${isFullView ? 'w-full max-w-5xl h-[90vh] flex flex-col' : 'w-full max-w-md block'}
+              ${isFullView ? 'w-full max-w-5xl h-[90vh] flex flex-col' : 'w-full max-w-md max-h-[90vh] overflow-y-auto modern-scrollbar block'}
             `}
             onClick={(e) => e.stopPropagation()}
           >
@@ -472,19 +520,19 @@ const Projects = ({ projectsData }) => {
                     className="max-w-full max-h-full object-contain"
                   />
                 </div>
-                <div className="p-4 bg-[#1a1a1a] border-t border-white/10 flex justify-between items-center">
-                  <h3 className="text-white font-bold text-lg truncate mr-4">{selectedImage.title}</h3>
+                <div className="p-3 sm:p-4 bg-[#1a1a1a] border-t border-white/10 flex justify-between items-center gap-3">
+                  <h3 className="text-white font-bold text-base sm:text-lg truncate min-w-0">{selectedImage.title}</h3>
                   <button
                     onClick={() => setIsFullView(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                    className="flex shrink-0 items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                   >
-                    <ArrowLeft className="w-4 h-4" /> Back to Details
+                    <ArrowLeft className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Back to Details</span><span className="sm:hidden">Back</span>
                   </button>
                 </div>
               </div>
             ) : (
               <>
-                <div className="relative h-64 w-full overflow-hidden bg-black group">
+                <div className="relative h-48 sm:h-64 w-full shrink-0 overflow-hidden bg-black group">
                   <ImageWithLoader
                     src={selectedImage.image}
                     alt={selectedImage.title}
@@ -493,12 +541,12 @@ const Projects = ({ projectsData }) => {
                   />
                 </div>
 
-                <div className="p-6">
+                <div className="p-5 sm:p-6">
                   <span className="text-[#db0a0a] text-xs font-bold uppercase tracking-wider mb-2 block">
                     {selectedImage.category ? selectedImage.category : "Development"}
                   </span>
                   
-                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-white leading-tight">
+                  <h5 className="mb-2 text-xl sm:text-2xl font-bold tracking-tight text-white leading-tight">
                     {selectedImage.title}
                   </h5>
                   

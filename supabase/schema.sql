@@ -139,7 +139,7 @@ create policy "admin_write_skills"
 --   2. Click "New bucket"
 --   3. Name: portfolio-assets
 --   4. Toggle "Public bucket" ON
---   5. Click Save — then run the policies below
+--   5. Click Save, then run the policies below
 
 create policy "public_read_storage"
   on storage.objects for select

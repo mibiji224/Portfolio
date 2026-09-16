@@ -84,25 +84,25 @@ const App = () => {
     return (
         // Added min-h-screen and bg-neutral-950 for the preview to look correct
         <div className="min-h-screen bg-transparent flex items-center justify-center">
-            <section className="w-full text-white py-20 px-6 lg:px-12 font-sans relative overflow-hidden" id="connect">
+            <section className="w-full text-white py-16 sm:py-20 px-4 sm:px-6 lg:px-12 font-sans relative overflow-hidden" id="connect">
 
                 <div className="max-w-[1400px] mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
 
                         {/* --- LEFT COLUMN: Engaging Text & Contact Info --- */}
-                        <div className="lg:col-span-7 space-y-10">
+                        <div className="lg:col-span-7 space-y-8 sm:space-y-10">
                             <div>
                                 <span className="flex items-center gap-3 text-[#db0a0a] font-mono text-sm tracking-widest uppercase mb-6">
                                     <span className="w-8 h-[1px] bg-[#db0a0a]"></span>
                                     Get in Touch
                                 </span>
 
-                                <h2 className="text-4xl lg:text-6xl font-bold text-white leading-[1.1] mb-6">
+                                <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white leading-[1.1] mb-6">
                                     Let’s build something <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">extraordinary together.</span>
                                 </h2>
 
-                                <p className="text-gray-400 text-lg leading-relaxed max-w-xl font-light">
+                                <p className="text-gray-400 text-base sm:text-lg leading-relaxed max-w-xl font-light">
                                     I'm currently available for freelance work and open to new opportunities.
                                     If you have a project that needs a creative touch, or just want to discuss
                                     the latest tech, I'm all ears.
@@ -110,15 +110,15 @@ const App = () => {
                             </div>
 
                             {/* Contact Info Row */}
-                            <div className="flex flex-col sm:flex-row gap-8 py-6 border-t border-white/5 border-b">
+                            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 py-6 border-t border-white/5 border-b">
                                 {/* Email */}
-                                <div className="flex items-start gap-4">
-                                    <div className="p-3 rounded-full bg-transparent text-[#db0a0a] border border-white/10">
+                                <div className="flex items-start gap-4 min-w-0">
+                                    <div className="p-3 shrink-0 rounded-full bg-transparent text-[#db0a0a] border border-white/10">
                                         <Mail className="w-5 h-5" />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Me</p>
-                                        <a href="mailto:desireesoronio@gmail.com" className="text-lg font-medium text-white hover:text-[#db0a0a] transition-colors">
+                                        <a href="mailto:desireesoronio@gmail.com" className="block break-all text-base sm:text-lg font-medium text-white hover:text-[#db0a0a] transition-colors">
                                             desireesoronio@gmail.com
                                         </a>
                                     </div>
@@ -126,7 +126,7 @@ const App = () => {
 
                                 {/* Location */}
                                 <div className="flex items-start gap-4">
-                                    <div className="p-3 rounded-full bg-transparent text-[#db0a0a] border border-white/10">
+                                    <div className="p-3 shrink-0 rounded-full bg-transparent text-[#db0a0a] border border-white/10">
                                         <MapPin className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -158,7 +158,7 @@ const App = () => {
 
                         {/* --- RIGHT COLUMN: Compact Form --- */}
                         <div className="lg:col-span-5">
-                            <div className="bg-transparent border border-white/10 p-8 rounded-3xl relative shadow-none backdrop-blur-sm">
+                            <div className="bg-transparent border border-white/10 p-5 sm:p-8 rounded-2xl sm:rounded-3xl relative shadow-none backdrop-blur-sm">
                                 <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                                     <h3 className="text-xl font-bold text-white mb-2">Send a Message</h3>
 
