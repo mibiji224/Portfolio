@@ -96,54 +96,80 @@ const PagerButton = ({ onClick, disabled, label, children }) => (
     </Button>
 );
 
-// One page of certifications at a time. The list keeps a fixed height so the
-// card stays aligned with the developer/artistic cards opposite it no matter
-// how many entries the list grows to.
+const CertRow = ({ cert }) => (
+    <div className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300 group">
+        <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
+        <div className="min-w-0 flex-1">
+            <h4 className="text-foreground text-xs font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cert.title}</h4>
+            {/* Issuer, date, credential ID and the verify link share one
+                line: two lines per row is what keeps these as compact as
+                the education entries below. */}
+            <div className="flex items-baseline gap-1.5 mt-0.5 text-[10px] text-muted-foreground">
+                <span className="truncate" title={cert.issuer}>{cert.issuer}</span>
+                <span className="shrink-0 text-muted-foreground/80">• {cert.date}</span>
+                {cert.credentialId && (
+                    <span className="font-mono text-[9px] text-muted-foreground/70 truncate" title={`Credential ID ${cert.credentialId}`}>
+                        ID {cert.credentialId}
+                    </span>
+                )}
+                {cert.url && (
+                    <a
+                        href={cert.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-semibold text-primary-strong hover:text-foreground transition-colors shrink-0 ml-auto"
+                    >
+                        Show credential <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                )}
+            </div>
+        </div>
+    </div>
+);
+
+// One page of certifications at a time, on a track that slides sideways: every
+// page is laid out in a row and the track shifts by one page width, so the
+// outgoing page leaves in the direction the pager was pressed. The list keeps a
+// fixed height so the card stays aligned with the developer/artistic cards
+// opposite it no matter how many entries the list grows to.
 const CertificationList = () => {
     const [page, setPage] = useState(0);
 
     const pageCount = Math.ceil(CERTIFICATIONS.length / CERTS_PER_PAGE);
+    const pages = Array.from({ length: pageCount }, (_, i) =>
+        CERTIFICATIONS.slice(i * CERTS_PER_PAGE, (i + 1) * CERTS_PER_PAGE)
+    );
     const start = page * CERTS_PER_PAGE;
-    const visible = CERTIFICATIONS.slice(start, start + CERTS_PER_PAGE);
-    // A short last page still has to fill the same height as a full one.
-    const fillers = CERTS_PER_PAGE - visible.length;
+    const visible = pages[page];
 
     return (
         <>
-            <div key={page} className="h-[13.75rem] flex flex-col gap-2 animate-certPage">
-                {visible.map((cert) => (
-                    <div key={cert.title} className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300 group">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
-                        <div className="min-w-0 flex-1">
-                            <h4 className="text-foreground text-xs font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cert.title}</h4>
-                            {/* Issuer, date, credential ID and the verify link share one
-                                line: two lines per row is what keeps these as compact as
-                                the education entries below. */}
-                            <div className="flex items-baseline gap-1.5 mt-0.5 text-[10px] text-muted-foreground">
-                                <span className="truncate" title={cert.issuer}>{cert.issuer}</span>
-                                <span className="shrink-0 text-muted-foreground/80">• {cert.date}</span>
-                                {cert.credentialId && (
-                                    <span className="font-mono text-[9px] text-muted-foreground/70 truncate" title={`Credential ID ${cert.credentialId}`}>
-                                        ID {cert.credentialId}
-                                    </span>
-                                )}
-                                {cert.url && (
-                                    <a
-                                        href={cert.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1 font-semibold text-primary-strong hover:text-foreground transition-colors shrink-0 ml-auto"
-                                    >
-                                        Show credential <ExternalLink className="w-2.5 h-2.5" />
-                                    </a>
-                                )}
-                            </div>
+            {/* Clipped on the x axis only — `overflow-hidden` would also crop the
+                small lift each row makes on hover. */}
+            <div className="h-[13.75rem] overflow-x-clip">
+                <div
+                    className="flex h-full transition-transform duration-300 ease-out motion-reduce:transition-none"
+                    style={{ transform: `translateX(-${page * 100}%)` }}
+                >
+                    {pages.map((certs, i) => (
+                        <div
+                            key={i}
+                            className="w-full shrink-0 h-full flex flex-col gap-2"
+                            // Off-screen pages stay in the DOM to slide, so keep them
+                            // out of the tab order and away from screen readers.
+                            aria-hidden={i !== page}
+                            inert={i !== page}
+                        >
+                            {certs.map((cert) => (
+                                <CertRow key={cert.title} cert={cert} />
+                            ))}
+                            {/* A short last page still has to fill the same height as a full one. */}
+                            {Array.from({ length: CERTS_PER_PAGE - certs.length }).map((_, f) => (
+                                <div key={`filler-${f}`} className="flex-1" aria-hidden="true" />
+                            ))}
                         </div>
-                    </div>
-                ))}
-                {Array.from({ length: fillers }).map((_, i) => (
-                    <div key={`filler-${i}`} className="flex-1" aria-hidden="true" />
-                ))}
+                    ))}
+                </div>
             </div>
 
             {pageCount > 1 && (

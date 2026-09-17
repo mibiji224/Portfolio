@@ -129,23 +129,20 @@ function Home({ onReadMore, isExpanded = false }) {
                     </h1>
                     <div className="gsap-reveal flex flex-row items-baseline justify-center lg:justify-start gap-1.5 mt-2 sm:mt-4 text-lg sm:text-3xl lg:text-4xl font-semibold w-full">
                         <span className="text-muted-foreground whitespace-nowrap">I am</span>
-                        <div className="relative flex justify-start">
-                            {/* This invisible span acts as a placeholder for the layout */}
-                            <span className="invisible opacity-0 whitespace-nowrap" aria-hidden="true">a Web Developer</span>
 
-                            {/* Overlays the placeholder so the row keeps a stable
-                                width as the typed role changes length. */}
+                        {/* The role sits in normal flow rather than in a slot sized to the
+                            longest role: a fixed slot is what the row centres on, which
+                            leaves shorter roles parked left of centre on mobile. */}
+                        <span
+                            className="text-primary-strong drop-shadow-[0_1px_6px_hsl(var(--primary)/0.45)] whitespace-nowrap"
+                            aria-label={ROLES[roleIndex]}
+                        >
+                            {typedRole}
                             <span
-                                className="absolute inset-x-0 top-0 text-left text-primary-strong drop-shadow-[0_1px_6px_hsl(var(--primary)/0.45)] whitespace-nowrap"
-                                aria-label={ROLES[roleIndex]}
-                            >
-                                {typedRole}
-                                <span
-                                    aria-hidden="true"
-                                    className="inline-block w-[2px] sm:w-[3px] h-[0.85em] translate-y-[0.08em] ml-0.5 sm:ml-1 bg-primary animate-[caretBlink_1s_step-end_infinite]"
-                                ></span>
-                            </span>
-                        </div>
+                                aria-hidden="true"
+                                className="inline-block w-[2px] sm:w-[3px] h-[0.85em] translate-y-[0.08em] ml-0.5 sm:ml-1 bg-primary animate-[caretBlink_1s_step-end_infinite]"
+                            ></span>
+                        </span>
                     </div>
                     <p className="gsap-reveal text-muted-foreground text-xs sm:text-base lg:text-lg leading-relaxed max-w-xs sm:max-w-lg lg:max-w-2xl mt-3 mb-6 sm:mt-6 sm:mb-8 lg:mt-8 lg:mb-10 px-2 lg:px-0">
                         A driven leader with a curious mind for the ever-evolving world of technology and innovation. I blend logical problem-solving with creative expression.
