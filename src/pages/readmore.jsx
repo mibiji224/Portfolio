@@ -65,7 +65,7 @@ const CERTIFICATIONS = [
 const CERTS_PER_PAGE = 3;
 
 const Panel = ({ className = '', children }) => (
-    <Card className={`bg-card/60 p-5 sm:p-6 ${className}`}>{children}</Card>
+    <Card className={`bg-card p-5 sm:p-6 ${className}`}>{children}</Card>
 );
 
 const Label = ({ icon, children }) => (
@@ -97,7 +97,7 @@ const PagerButton = ({ onClick, disabled, label, children }) => (
 );
 
 const CertRow = ({ cert }) => (
-    <div className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300 group">
+    <div className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-secondary border border-border rounded-lg hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300 group">
         <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
         <div className="min-w-0 flex-1">
             <h4 className="text-foreground text-xs font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cert.title}</h4>
@@ -250,7 +250,7 @@ function AboutNarrative({ educationData = [] }) {
             {/* RIGHT COLUMN: PHILOSOPHY & CREDENTIALS */}
             <div className="lg:col-span-5 space-y-6">
 
-                <Panel className="bg-accent/70">
+                <Panel className="bg-accent">
                     <Label icon={<Heart className="w-4 h-4" />}>My Philosophy</Label>
                     <p className="text-muted-foreground italic font-serif text-base sm:text-lg">
                         "Technology without design is functional but boring. Design without technology is beautiful but static. I strive to combine both."
@@ -266,7 +266,7 @@ function AboutNarrative({ educationData = [] }) {
                     <Label icon={<GraduationCap className="w-4 h-4" />}>Education</Label>
                     <div className="space-y-2">
                         {educationData.map((edu, index) => (
-                            <div key={index} className="group bg-card p-2.5 rounded-lg border border-border hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300">
+                            <div key={index} className="group bg-secondary p-2.5 rounded-lg border border-border hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300">
                                 <div className="flex justify-between items-center mb-1">
                                     <h4 className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate pr-2">
                                         {edu.school}

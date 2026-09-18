@@ -161,7 +161,7 @@ const App = () => {
 
                         {/* --- RIGHT COLUMN: Compact Form --- */}
                         <div className="lg:col-span-5">
-                            <Card className="bg-card/60 p-5 sm:p-8 rounded-2xl sm:rounded-3xl relative backdrop-blur-sm">
+                            <Card className="bg-card p-5 sm:p-8 rounded-2xl sm:rounded-3xl relative">
                                 <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                                     <h3 className="text-xl font-bold text-foreground mb-2">Send a Message</h3>
 
@@ -221,7 +221,7 @@ const App = () => {
                                     <Button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full bg-gradient-to-r from-primary to-primary-strong text-primary-foreground text-sm font-bold py-4 h-auto rounded-xl hover:scale-[1.02] mt-2"
+                                        className="w-full bg-gradient-to-r from-primary to-primary-deep text-primary-foreground text-sm font-bold py-4 h-auto rounded-xl hover:scale-[1.02] mt-2"
                                     >
                                         {isSubmitting ? (
                                             <>

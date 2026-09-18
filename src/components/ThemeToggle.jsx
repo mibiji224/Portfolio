@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button'
 
 const STORAGE_KEY = 'theme'
 
-/** The theme that should be on <html> right now. Dark is the default, so the
- *  portfolio opens the way it always has unless someone has chosen otherwise. */
+/** The theme that should be on <html> right now. Light is the default and the
+ *  site's main look; dark is there for whoever prefers it. A saved choice wins,
+ *  so someone who has toggled once keeps the theme they picked. */
 export function resolveTheme() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -14,7 +15,7 @@ export function resolveTheme() {
   } catch {
     // private mode, blocked site data: fall through to the default
   }
-  return 'dark'
+  return 'light'
 }
 
 export function applyTheme(theme) {

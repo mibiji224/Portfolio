@@ -198,7 +198,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                             <h3 className="text-xl font-bold text-foreground">Experience</h3>
                         </div>
 
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card/60 rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
                             <ol className="relative border-l border-border ml-2 sm:ml-3 space-y-8">
                                 {experienceData.map((item, index) => (
                                     <li key={index} className="relative ml-6 sm:ml-8 group">
@@ -246,7 +246,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                         </div>
 
                         {/* Scrollable Content Area */}
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card/60 rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
 
                             {/* Core Skills Group */}
                             <div className="mb-4">
@@ -276,7 +276,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                         <div
                                             key={index}
                                             // If fullWidth is true (for Creative/Office), span 2 columns
-                                            className={`bg-card p-3 rounded-lg border border-border hover:border-primary/30 transition-colors group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
+                                            className={`bg-secondary p-3 rounded-lg border border-border hover:border-primary/30 transition-colors group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
                                         >
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="text-primary opacity-80 group-hover:opacity-100 transition-opacity">
@@ -291,7 +291,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                                 {group.items.map((skill, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="text-[10px] text-muted-foreground bg-accent/70 px-2 py-1 rounded border border-border transition-all duration-200 group-hover:border-primary/20 group-hover:text-foreground"
+                                                        className="text-[10px] text-muted-foreground bg-accent px-2 py-1 rounded border border-border transition-all duration-200 group-hover:border-primary/20 group-hover:text-foreground"
                                                     >
                                                         {skill}
                                                     </span>

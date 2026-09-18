@@ -115,9 +115,7 @@ function Home({ onReadMore, isExpanded = false }) {
                 @media (prefers-reduced-motion: reduce) {
                     .read-more-hint { animation: none; box-shadow: var(--shadow-accent-lg), var(--accent-ring); }
                 }
-                .bg-grid { background-size: 40px 40px; background-image: linear-gradient(to right, hsl(var(--foreground) / 0.05) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--foreground) / 0.05) 1px, transparent 1px); }
             `}</style>
-            <div className="absolute inset-0 bg-grid z-0 pointer-events-none"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 lg:w-96 lg:h-96 bg-primary opacity-30 blur-[100px] lg:blur-[150px] rounded-full z-0"></div>
 
             <section className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-4 sm:px-8 lg:px-20 py-12 lg:py-0" id="home">
