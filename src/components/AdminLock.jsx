@@ -61,7 +61,7 @@ export default function AdminLock() {
       {/* Ghost lock: invisible until hovered */}
       <button
         onClick={handleLockClick}
-        className="fixed bottom-6 right-6 z-50 p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500 text-muted-foreground/60 hover:text-primary focus:outline-none cursor-pointer"
+        className="fixed bottom-6 right-6 z-50 p-2 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-500 text-muted-foreground/60 hover:text-primary-strong focus:outline-none cursor-pointer"
         aria-label="Admin login"
       >
         <Lock size={14} />
@@ -74,7 +74,7 @@ export default function AdminLock() {
           <DialogHeader>
             <div className="flex items-center gap-3 mb-7">
               <div className="p-2 bg-primary/10 rounded-lg">
-                <Lock size={16} className="text-primary" />
+                <Lock size={16} className="text-primary-strong" />
               </div>
               <div>
                 <DialogTitle>Admin Access</DialogTitle>
@@ -126,7 +126,7 @@ export default function AdminLock() {
             </div>
 
             {error && (
-              <p className="text-primary text-xs bg-primary/10 border border-primary/20 rounded-lg px-3 py-2">
+              <p className="text-primary-strong text-xs bg-primary/10 border border-primary/20 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}

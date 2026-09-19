@@ -95,7 +95,7 @@ const App = () => {
                         {/* --- LEFT COLUMN: Engaging Text & Contact Info --- */}
                         <div className="lg:col-span-7 space-y-8 sm:space-y-10">
                             <div>
-                                <span className="flex items-center gap-3 text-primary font-mono text-sm tracking-widest uppercase mb-6">
+                                <span className="flex items-center gap-3 text-primary-strong font-mono text-sm tracking-widest uppercase mb-6">
                                     <span className="w-8 h-[1px] bg-primary"></span>
                                     Get in Touch
                                 </span>
@@ -116,12 +116,12 @@ const App = () => {
                             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 py-6 border-t border-border border-b">
                                 {/* Email */}
                                 <div className="flex items-start gap-4 min-w-0">
-                                    <div className="p-3 shrink-0 rounded-full bg-transparent text-primary border border-border">
+                                    <div className="p-3 shrink-0 rounded-full bg-transparent text-primary-strong border border-border">
                                         <Mail className="w-5 h-5" />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider mb-1">Email Me</p>
-                                        <a href="mailto:desireesoronio@gmail.com" className="block break-all text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors">
+                                        <a href="mailto:desireesoronio@gmail.com" className="block break-all text-base sm:text-lg font-medium text-foreground hover:text-primary-strong transition-colors">
                                             desireesoronio@gmail.com
                                         </a>
                                     </div>
@@ -129,7 +129,7 @@ const App = () => {
 
                                 {/* Location */}
                                 <div className="flex items-start gap-4">
-                                    <div className="p-3 shrink-0 rounded-full bg-transparent text-primary border border-border">
+                                    <div className="p-3 shrink-0 rounded-full bg-transparent text-primary-strong border border-border">
                                         <MapPin className="w-5 h-5" />
                                     </div>
                                     <div>
@@ -167,14 +167,14 @@ const App = () => {
 
                                     {/* Status Message Display */}
                                     {statusMessage && (
-                                        <div className={`p-4 rounded-xl text-sm ${statusMessage.startsWith('✅') ? 'bg-green-900/50 border border-green-700 text-green-300' : 'bg-destructive/15 border border-destructive/40 text-primary'}`}>
+                                        <div className={`p-4 rounded-xl text-sm ${statusMessage.startsWith('✅') ? 'bg-green-900/50 border border-green-700 text-green-300' : 'bg-destructive/15 border border-destructive/40 text-primary-strong'}`}>
                                             {statusMessage}
                                         </div>
                                     )}
 
                                     {/* Name Field */}
                                     <div className="space-y-1">
-                                        <Label htmlFor="contact-name" className={focusedField === 'name' ? 'text-primary' : undefined}>Name</Label>
+                                        <Label htmlFor="contact-name" className={focusedField === 'name' ? 'text-primary-strong' : undefined}>Name</Label>
                                         <Input
                                             id="contact-name"
                                             type="text" name="name" value={formData.name} onChange={handleChange}
@@ -185,7 +185,7 @@ const App = () => {
 
                                     {/* Email Field */}
                                     <div className="space-y-1">
-                                        <Label htmlFor="contact-email" className={focusedField === 'email' ? 'text-primary' : undefined}>Email</Label>
+                                        <Label htmlFor="contact-email" className={focusedField === 'email' ? 'text-primary-strong' : undefined}>Email</Label>
                                         <Input
                                             id="contact-email"
                                             type="email" name="email" value={formData.email} onChange={handleChange}
@@ -196,7 +196,7 @@ const App = () => {
 
                                     {/* Subject Field */}
                                     <div className="space-y-1">
-                                        <Label htmlFor="contact-subject" className={focusedField === 'subject' ? 'text-primary' : undefined}>Subject</Label>
+                                        <Label htmlFor="contact-subject" className={focusedField === 'subject' ? 'text-primary-strong' : undefined}>Subject</Label>
                                         <Input
                                             id="contact-subject"
                                             type="text" name="subject" value={formData.subject} onChange={handleChange}
@@ -207,7 +207,7 @@ const App = () => {
 
                                     {/* Message Field */}
                                     <div className="space-y-1">
-                                        <Label htmlFor="contact-message" className={focusedField === 'message' ? 'text-primary' : undefined}>Message</Label>
+                                        <Label htmlFor="contact-message" className={focusedField === 'message' ? 'text-primary-strong' : undefined}>Message</Label>
                                         <Textarea
                                             id="contact-message"
                                             name="message" value={formData.message} onChange={handleChange}

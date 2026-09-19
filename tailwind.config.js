@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class'],
   content: [
     "./index.html",             // ✅ Added: Scans the root HTML file (common in Vite)
     "./public/index.html",      // ✅ Added: Scans the public folder (common in CRA)
@@ -22,6 +21,13 @@ module.exports = {
           strong: "hsl(var(--primary-strong))",
           soft: "hsl(var(--primary-soft))",
           deep: "hsl(var(--primary-deep))",
+        },
+        matcha: {
+          DEFAULT: "hsl(var(--matcha))",
+          foreground: "hsl(var(--matcha-foreground))",
+          strong: "hsl(var(--matcha-strong))",
+          ink: "hsl(var(--matcha-ink))",
+          soft: "hsl(var(--matcha-soft))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -54,6 +60,9 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
+        /* Not "card": `card` is also a colour name, so `shadow-card` would
+           compile as a shadow-COLOUR utility and silently win. */
+        lift: "var(--shadow-lift)",
         accent: "var(--shadow-accent)",
         "accent-lg": "var(--shadow-accent-lg)",
         "accent-ring": "var(--accent-ring)",

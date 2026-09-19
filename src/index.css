@@ -6,107 +6,78 @@
 @tailwind utilities;
 
 /* 2. Theme tokens.
-   The whole site is coloured from one five-step rose palette:
+   Built on four given pastels, pink and matcha in equal measure:
 
-     Rose Ink     #3A071F   hsl(332 78% 13%)
-     Blush Wine   #6F1F3B   hsl(339 56% 28%)
-     Petal Dust   #B65A7C   hsl(338 39% 53%)
-     Powder Rose  #E2A6BA   hsl(340 51% 77%)
-     Ivory Bloom  #FFF0F5   hsl(340 100% 97%)
+     #FEC3CA  hsl(353 97% 88%)   pink
+     #FFDBE0  hsl(352 100% 93%)  pale pink
+     #C6D998  hsl(78 46% 72%)    matcha
+     #D6E8B5  hsl(81 53% 81%)    pale matcha
 
-   Both palettes live here as shadcn-shaped CSS variables, so every component
-   is written once against the semantic name and follows whichever theme is
-   on <html>. `:root` is the light theme and the site's default: index.html
-   ships with no class, so the portfolio opens light unless someone toggles.
-   `.dark` is the same five colours restacked for a dark ground.
+   All four are pastels, so they are the fills: surfaces, chips, buttons.
+   None can carry text on white (the strongest is 1.5:1), so every text tone
+   is the SAME hue darkened until it clears contrast -- h=352 down the pink
+   ramp, h=78 down the matcha one. That is why the text greens and pinks
+   belong to the palette even though they are not in the swatch.
 
-   Roles that need a step between two palette entries (surface tints, muted
-   text, borders) are blends of them, so every value stays on the same hue
-   family. --primary is the fill accent and --primary-strong the text-safe
-   one: Petal Dust reads 4.0:1 on Ivory Bloom, fine for fills, icons and
-   large type, so anything small and load-bearing uses --primary-strong
-   (Blush Wine, 9.8:1). */
+   The palette lives here as shadcn-shaped CSS variables, so every component
+   is written once against the semantic name. The site is light only.
+
+   Cards are separated by shadow rather than a border, which is why
+   --shadow-lift exists and why the page and the card are both white. */
 @layer base {
   :root {
     --background: 0 0% 100%;            /* pure white */
-    --foreground: 332 78% 13%;          /* Rose Ink    #3A071F */
+    --foreground: 348 22% 20%;          /* #3E282C, the pastels' hue at ink depth */
 
-    /* The page is pure white, so cards take Ivory Bloom to stay readable as
-       surfaces. Reversed from the usual white-card-on-tinted-page order. */
-    --card: 340 100% 97%;               /* Ivory Bloom #FFF0F5 */
-    --card-foreground: 332 78% 13%;
-    --popover: 340 100% 97%;
-    --popover-foreground: 332 78% 13%;
+    --card: 0 0% 100%;                  /* white, lifted by --shadow-lift */
+    --card-foreground: 348 22% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 348 22% 20%;
 
-    --primary: 338 39% 53%;             /* Petal Dust  #B65A7C */
-    --primary-foreground: 340 100% 97%; /* Ivory Bloom on the fill */
-    --primary-strong: 339 56% 28%;      /* Blush Wine  #6F1F3B, text-safe */
-    --primary-soft: 340 51% 77%;        /* Powder Rose #E2A6BA */
-    /* Far end of accent gradients. Deliberately a deeper rose rather than
-       Blush Wine: a gradient that lands on the wine reads as a dark button
-       instead of a pink one. Same value in both themes so the fill stays
-       pink and keeps the Ivory Bloom label at 5.2:1 either way. */
-    --primary-deep: 339 43% 46%;        /* #A84366 */
+    --primary: 353 97% 88%;             /* #FEC3CA — the pink, as given */
+    --primary-foreground: 348 22% 20%;  /* ink on the pastel fill, 9.0:1 */
+    --primary-strong: 352 60% 52%;      /* #CE3D51, pink ramp, text-safe */
+    --primary-soft: 352 100% 93%;       /* #FFDBE0 — pale pink, as given */
+    --primary-deep: 352 70% 66%;        /* #E56C7C, the soft display pink */
 
-    --secondary: 341 64% 91%;           /* Powder Rose over Ivory Bloom #F7DBE4 */
-    --secondary-foreground: 332 78% 13%;
-    --muted: 341 64% 91%;
-    --muted-foreground: 337 39% 39%;    /* Rose Ink toward Petal Dust #8B3D5B */
-    --accent: 341 64% 91%;
-    --accent-foreground: 339 56% 28%;
+    /* Matcha is the equal partner, not a garnish. */
+    --matcha: 78 46% 72%;               /* #C6D998 — the green, as given */
+    --matcha-foreground: 348 22% 20%;   /* ink on the pastel fill, 8.9:1 */
+    /* Small green text. Deeper than it looks like it needs to be: it sits
+       on the pale-green chips, so the two are the same hue and only
+       lightness separates them. 6.3:1 there, 8.2:1 on white. */
+    --matcha-strong: 78 38% 24%;        /* #475426 */
+    --matcha-soft: 81 53% 81%;          /* #D6E8B5 — pale matcha, as given */
+    /* Display-only green. Big type needs 3:1, not the 4.5:1 body text needs,
+       so this sits as light as that bar allows. Small green text keeps
+       --matcha-strong, which also has to clear the pale-green chips. */
+    --matcha-ink: 79 40% 42%;           /* #7B9640, 3.3:1 */
+
+    --secondary: 352 100% 93%;          /* pale pink, the nested-tile fill */
+    --secondary-foreground: 348 22% 20%;
+    --muted: 352 100% 93%;
+    --muted-foreground: 350 14% 40%;    /* #74585C, the ink hue softened */
+    --accent: 352 100% 93%;
+    --accent-foreground: 352 60% 46%;
 
     /* Danger stays a true red: it has to read as a warning, not as brand. */
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 341 59% 89%;              /* #F3D1DC */
-    --input: 341 59% 89%;
-    --ring: 338 39% 53%;
+    --border: 352 60% 90%;              /* #F5D6DA, hairlines and dividers */
+    --input: 352 60% 90%;
+    --ring: 353 97% 88%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* On ivory, the accent casts a soft directional shadow. */
-    --shadow-accent: 0 8px 20px -12px hsl(339 56% 28% / 0.7);
-    --shadow-accent-lg: 0 16px 36px -12px hsl(339 56% 28% / 0.75);
-    --accent-ring: 0 0 0 5px hsl(340 51% 77% / 0.55);
-    /* Floating glass surfaces lift off the page rather than glowing. */
-    --shadow-nav: 0 18px 40px -22px hsl(339 56% 28% / 0.5), inset 0 1px 0 0 rgb(255 255 255 / 0.9);
-  }
+    /* Cards float on a white page, so the shadow is the only thing giving
+       them an edge: a tight contact shadow plus a wide soft one. */
+    --shadow-lift: 0 1px 2px 0 hsl(352 40% 55% / 0.07), 0 8px 24px -8px hsl(352 45% 50% / 0.18);
 
-  .dark {
-    --background: 0 0% 0%;              /* pure black */
-    --foreground: 340 100% 97%;         /* Ivory Bloom #FFF0F5 */
-
-    --card: 332 78% 13%;                /* Rose Ink #3A071F, lifts off the black */
-    --card-foreground: 340 100% 97%;
-    --popover: 334 69% 17%;             /* #470D26 */
-    --popover-foreground: 340 100% 97%;
-
-    --primary: 338 39% 53%;             /* Petal Dust  #B65A7C */
-    --primary-foreground: 340 100% 97%;
-    --primary-strong: 340 51% 77%;      /* Powder Rose carries accent text here */
-    --primary-soft: 339 56% 28%;        /* Blush Wine  #6F1F3B */
-    --primary-deep: 339 43% 46%;        /* #A84366, see :root */
-
-    --secondary: 337 60% 23%;           /* Rose Ink toward Blush Wine #5F1833 */
-    --secondary-foreground: 340 100% 97%;
-    --muted: 337 60% 23%;
-    --muted-foreground: 340 46% 69%;    /* Powder Rose, a shade down #D38BA4 */
-    --accent: 335 67% 18%;
-    --accent-foreground: 340 51% 77%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 339 57% 27%;              /* #6A1D38 */
-    --input: 339 57% 30%;
-    --ring: 338 39% 53%;
-
-    /* On the dark ground the same accent reads as a halo instead. */
-    --shadow-accent: 0 0 20px hsl(338 39% 53% / 0.5);
-    --shadow-accent-lg: 0 0 40px hsl(338 39% 53% / 0.6);
-    --accent-ring: 0 0 42px 6px hsl(338 39% 53% / 0.7);
-    --shadow-nav: 0 18px 40px -20px rgb(0 0 0 / 0.85), inset 0 1px 0 0 rgb(255 255 255 / 0.08);
+    --shadow-accent: 0 8px 20px -12px hsl(352 60% 46% / 0.7);
+    --shadow-accent-lg: 0 16px 36px -12px hsl(352 60% 46% / 0.75);
+    --accent-ring: 0 0 0 5px hsl(352 100% 93% / 0.9);
+    --shadow-nav: 0 18px 40px -22px hsl(352 60% 46% / 0.5), inset 0 1px 0 0 rgb(255 255 255 / 0.9);
   }
 }
 
@@ -133,8 +104,8 @@
 }
 
 /* Scroll containers inside cards. Defined once here rather than in each
-   section's <style> block, and coloured off the tokens so the track is a
-   dark strip on the dark theme and a petal one on the light theme. */
+   section's <style> block, and coloured off the tokens so the track picks
+   up the palette instead of the browser default. */
 .modern-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--primary)) hsl(var(--secondary));

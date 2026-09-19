@@ -69,15 +69,15 @@ const Panel = ({ className = '', children }) => (
 );
 
 const Label = ({ icon, children }) => (
-    <div className="flex items-center gap-3 text-primary font-bold text-sm tracking-wider uppercase mb-3">
+    <div className="flex items-center gap-3 text-primary-strong font-bold text-sm tracking-wider uppercase mb-3">
         {icon} {children}
     </div>
 );
 
 const Pill = ({ children }) => (
     <Badge
-        variant="secondary"
-        className="px-3 py-1.5 text-xs hover:text-foreground hover:border-primary/50 transition-all cursor-default"
+        variant="matcha"
+        className="px-3 py-1.5 text-xs transition-all cursor-default"
     >
         {children}
     </Badge>
@@ -97,10 +97,10 @@ const PagerButton = ({ onClick, disabled, label, children }) => (
 );
 
 const CertRow = ({ cert }) => (
-    <div className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-secondary border border-border rounded-lg hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300 group">
-        <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-[3px] shrink-0" />
+    <div className="flex-1 min-h-0 overflow-hidden flex items-start gap-2.5 p-2.5 bg-secondary rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lift duration-300 group">
+        <CheckCircle2 className="w-3.5 h-3.5 text-primary-strong mt-[3px] shrink-0" />
         <div className="min-w-0 flex-1">
-            <h4 className="text-foreground text-xs font-bold leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cert.title}</h4>
+            <h4 className="text-foreground text-xs font-bold leading-tight line-clamp-2 group-hover:text-primary-strong transition-colors">{cert.title}</h4>
             {/* Issuer, date, credential ID and the verify link share one
                 line: two lines per row is what keeps these as compact as
                 the education entries below. */}
@@ -266,19 +266,19 @@ function AboutNarrative({ educationData = [] }) {
                     <Label icon={<GraduationCap className="w-4 h-4" />}>Education</Label>
                     <div className="space-y-2">
                         {educationData.map((edu, index) => (
-                            <div key={index} className="group bg-secondary p-2.5 rounded-lg border border-border hover:border-primary/50 transition-all hover:-translate-y-0.5 duration-300">
+                            <div key={index} className="group bg-secondary p-2.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lift duration-300">
                                 <div className="flex justify-between items-center mb-1">
-                                    <h4 className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate pr-2">
+                                    <h4 className="text-xs font-bold text-foreground group-hover:text-primary-strong transition-colors truncate pr-2">
                                         {edu.school}
                                     </h4>
-                                    <span className="text-[9px] font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20 whitespace-nowrap">
+                                    <span className="text-[9px] font-mono text-primary-strong bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20 whitespace-nowrap">
                                         {edu.year}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center gap-2">
                                     <p className="text-muted-foreground text-[10px] truncate min-w-0 flex-1">{edu.degree}</p>
                                     <div className="flex items-center gap-1 shrink-0">
-                                        <Award className="w-3 h-3 text-primary" />
+                                        <Award className="w-3 h-3 text-primary-strong" />
                                         <span className="text-[9px] text-muted-foreground font-medium">{edu.status}</span>
                                     </div>
                                 </div>

@@ -5,6 +5,8 @@ import Home from './pages/home.jsx'
 import AdminLock from './components/AdminLock.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import SchemaMarkup from './components/SchemaMarkup.jsx'
+// TEMPORARY: remove with the component once the design is final.
+import UnderConstructionNotice from './components/UnderConstructionNotice.jsx'
 import { usePortfolioData } from './hooks/usePortfolioData'
 import { scrollToSection } from './lib/scroll'
 
@@ -78,6 +80,9 @@ function Portfolio() {
 
   return (
     <>
+      {/* TEMPORARY: work-in-progress notice, shown on every visit. */}
+      <UnderConstructionNotice />
+
       {/* Inject JSON-LD once data is ready */}
       {!loading && <SchemaMarkup projects={projects} experience={experience} />}
 

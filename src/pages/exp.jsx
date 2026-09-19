@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
     Briefcase,
     Code,
@@ -10,6 +10,104 @@ import {
     FileText
 } from 'lucide-react';
 import AboutNarrative from './readmore.jsx';
+
+const SKILL_PILL = 'px-2 py-1 bg-matcha text-matcha-strong text-[11px] font-medium rounded-lg hover:bg-matcha/70 transition-colors cursor-default';
+const TOGGLE_PILL = 'px-2 py-1 bg-primary text-primary-foreground text-[11px] font-semibold rounded-lg hover:bg-primary-deep transition-colors';
+// gap-1.5
+const PILL_GAP = 6;
+
+/** A wrapped pill row capped at `rows` lines, with the overflow behind a pill.
+ *
+ *  How many pills fit per line depends on the container width and on each
+ *  label, so it has to be measured. The measuring is done on a hidden twin
+ *  holding every pill: laying the real row out short would tell us nothing
+ *  about where the cut belongs. One measurement is enough because dropping
+ *  trailing items from a wrapped row never moves the ones before them, so
+ *  the geometry we read stays true for the clamped row. */
+const ClampedPills = ({ items, rows = 2 }) => {
+    const [expanded, setExpanded] = useState(false);
+    const [limit, setLimit] = useState(items.length);
+    const twinRef = useRef(null);
+
+    const measure = useCallback(() => {
+        const el = twinRef.current;
+        if (!el) return;
+        const nodes = Array.from(el.children);
+        const toggle = nodes[nodes.length - 1];
+        const pills = nodes.slice(0, -1);
+        if (!pills.length || !toggle) return;
+
+        const tops = [...new Set(pills.map((p) => p.offsetTop))].sort((a, b) => a - b);
+        if (tops.length <= rows) {
+            setLimit(items.length);
+            return;
+        }
+
+        const lastRowTop = tops[rows - 1];
+        let count = pills.filter((p) => p.offsetTop <= lastRowTop).length;
+        const width = el.clientWidth;
+        const toggleWidth = toggle.offsetWidth;
+
+        // Give back trailing pills until the toggle fits on the last kept row.
+        while (count > 1) {
+            const last = pills[count - 1];
+            if (last.offsetTop < lastRowTop) break;
+            if (last.offsetLeft + last.offsetWidth + PILL_GAP + toggleWidth <= width) break;
+            count -= 1;
+        }
+        setLimit(count);
+    }, [items.length, rows]);
+
+    useLayoutEffect(() => {
+        measure();
+        const el = twinRef.current;
+        const observer = new ResizeObserver(measure);
+        if (el) observer.observe(el);
+        // Pill widths shift once the webfont swaps in, so measure again after.
+        let cancelled = false;
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(() => { if (!cancelled) measure(); });
+        }
+        return () => {
+            cancelled = true;
+            observer.disconnect();
+        };
+    }, [measure]);
+
+    const clamped = limit < items.length;
+    const shown = expanded || !clamped ? items : items.slice(0, limit);
+
+    return (
+        <div className="relative">
+            <div
+                ref={twinRef}
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 invisible pointer-events-none flex flex-wrap gap-1.5"
+            >
+                {items.map((skill, index) => (
+                    <span key={index} className={SKILL_PILL}>{skill}</span>
+                ))}
+                <span className={TOGGLE_PILL}>+{items.length} more</span>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+                {shown.map((skill, index) => (
+                    <span key={index} className={SKILL_PILL}>{skill}</span>
+                ))}
+                {clamped && (
+                    <button
+                        type="button"
+                        onClick={() => setExpanded((open) => !open)}
+                        aria-expanded={expanded}
+                        className={TOGGLE_PILL}
+                    >
+                        {expanded ? 'Show less' : `+${items.length - limit} more`}
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+};
 
 const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) => {
     // DATA: Falls back to hardcoded values when Supabase has no data yet.
@@ -193,12 +291,12 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                     <div className="lg:col-span-7 flex flex-col lg:h-[70vh] lg:min-h-[520px]">
                         <div className="flex items-center gap-3 mb-4 shrink-0">
                             <div className="p-1.5 bg-primary/10 rounded-lg">
-                                <Briefcase className="w-5 h-5 text-primary" />
+                                <Briefcase className="w-5 h-5 text-primary-strong" />
                             </div>
                             <h3 className="text-xl font-bold text-foreground">Experience</h3>
                         </div>
 
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-2xl p-3 sm:p-4 shadow-lift pb-6" style={{ overscrollBehavior: 'contain' }}>
                             <ol className="relative border-l border-border ml-2 sm:ml-3 space-y-8">
                                 {experienceData.map((item, index) => (
                                     <li key={index} className="relative ml-6 sm:ml-8 group">
@@ -208,7 +306,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
 
                                         <div className="relative">
                                             <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                <span className="text-[10px] font-mono font-medium text-primary border border-primary/30 px-1.5 py-0.5 rounded bg-primary/5">
+                                                <span className="text-[10px] font-mono font-medium text-primary-strong border border-primary/30 px-1.5 py-0.5 rounded bg-primary/5">
                                                     {item.date}
                                                 </span>
                                                 {item.type && (
@@ -218,7 +316,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                                 )}
                                             </div>
 
-                                            <h4 className="text-base font-bold text-foreground mb-0.5 group-hover:text-primary transition-colors">
+                                            <h4 className="text-base font-bold text-foreground mb-0.5 group-hover:text-primary-strong transition-colors">
                                                 {item.title}
                                             </h4>
 
@@ -240,33 +338,27 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                     <div className="lg:col-span-5 flex flex-col lg:h-[70vh] lg:min-h-[520px]">
                         <div className="flex items-center gap-3 mb-4 shrink-0">
                             <div className="p-1.5 bg-primary/10 rounded-lg">
-                                <Code className="w-5 h-5 text-primary" />
+                                <Code className="w-5 h-5 text-primary-strong" />
                             </div>
                             <h3 className="text-xl font-bold text-foreground">Skills</h3>
                         </div>
 
                         {/* Scrollable Content Area */}
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-xl p-3 sm:p-4 border border-border pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-2xl p-3 sm:p-4 shadow-lift pb-6" style={{ overscrollBehavior: 'contain' }}>
 
                             {/* Core Skills Group */}
                             <div className="mb-4">
                                 <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <div className="w-1 h-1 bg-primary rounded-full"></div>
+                                    <div className="w-1 h-1 bg-primary-strong rounded-full"></div>
                                     Core Competencies
                                 </h4>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {coreSkills.map((skill, index) => (
-                                        <span key={index} className="px-2 py-1 bg-secondary text-muted-foreground text-[10px] font-medium rounded border border-border hover:text-foreground hover:border-primary/50 transition-colors cursor-default">
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
+                                <ClampedPills items={coreSkills} rows={2} />
                             </div>
 
                             {/* Technical Proficiency - IMPROVED LAYOUT */}
                             <div>
                                 <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <div className="w-1 h-1 bg-primary rounded-full"></div>
+                                    <div className="w-1 h-1 bg-primary-strong rounded-full"></div>
                                     Technical Proficiency
                                 </h4>
 
@@ -276,10 +368,10 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                         <div
                                             key={index}
                                             // If fullWidth is true (for Creative/Office), span 2 columns
-                                            className={`bg-secondary p-3 rounded-lg border border-border hover:border-primary/30 transition-colors group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
+                                            className={`bg-card p-3 rounded-xl shadow-lift transition-all hover:-translate-y-0.5 group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
                                         >
                                             <div className="flex items-center gap-2 mb-2">
-                                                <span className="text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+                                                <span className="text-primary-strong opacity-80 group-hover:opacity-100 transition-opacity">
                                                     {group.icon}
                                                 </span>
                                                 <h5 className="text-foreground text-[11px] font-bold uppercase tracking-wider">
@@ -291,7 +383,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                                 {group.items.map((skill, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="text-[10px] text-muted-foreground bg-accent px-2 py-1 rounded border border-border transition-all duration-200 group-hover:border-primary/20 group-hover:text-foreground"
+                                                        className="text-[11px] font-medium text-matcha-strong bg-matcha px-2 py-1 rounded-lg transition-all duration-200 group-hover:bg-matcha/70"
                                                     >
                                                         {skill}
                                                     </span>

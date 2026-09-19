@@ -4,11 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import { applyTheme, resolveTheme } from './components/ThemeToggle.jsx'
 
-// Settle the theme before the first paint. index.html ships no theme class, so
-// this only does work when someone has chosen dark.
-applyTheme(resolveTheme())
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

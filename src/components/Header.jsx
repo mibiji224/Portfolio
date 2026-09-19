@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { scrollToSection } from '../lib/scroll';
-import ThemeToggle from './ThemeToggle';
 
 const navLinks = [
     { name: 'About', href: '#about' },
@@ -133,10 +132,9 @@ function Head({ onNavigate }) {
     };
 
     // Clear-glass pill: mostly the page showing through. The tint and the sheen
-    // both come off `background`, so the bar smokes over the dark theme and
-    // milks over the light one without a second set of classes. A deeper blur
-    // and the saturation carry the glass; the hairline edge and the top inset
-    // are the only hard highlights.
+    // both come off `background`, so the bar milks over the page rather than
+    // carrying its own colour. A deeper blur and the saturation carry the
+    // glass; the hairline edge and the top inset are the only hard highlights.
     const surface = `bg-background/40
         bg-[linear-gradient(100deg,hsl(var(--foreground)/0.04)_0%,hsl(var(--foreground)/0.08)_22%,hsl(var(--primary)/0.06)_45%,hsl(var(--foreground)/0.06)_72%,hsl(var(--foreground)/0.04)_100%)]
         backdrop-blur-xl backdrop-saturate-150
@@ -159,19 +157,8 @@ function Head({ onNavigate }) {
                     className={`relative flex items-center justify-between gap-3 sm:gap-4 rounded-full
                         py-2 pl-4 pr-2 sm:py-3 sm:pl-8 sm:pr-4 md:pr-8 ${surface}`}
                 >
-                    {/* --- LOGO --- */}
-                    <a
-                        href="#home"
-                        onClick={(e) => handleNavClick(e, '#home')}
-                        className="relative select-none text-xl sm:text-2xl font-black tracking-tight text-foreground
-                            rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                        DR.
-                        <span className="text-primary">S</span>
-                    </a>
-
                     {/* --- DESKTOP LINKS --- */}
-                    <nav ref={navRef} className="relative hidden items-center md:flex">
+                    <nav ref={navRef} className="relative hidden items-center md:flex md:mx-auto">
                         {/* Sliding underline */}
                         <span
                             aria-hidden="true"
@@ -181,7 +168,7 @@ function Head({ onNavigate }) {
                                 top: `${indicator.top}px`,
                                 opacity: indicator.ready ? 1 : 0,
                             }}
-                            className="absolute left-0 h-[2px] rounded-full bg-primary
+                            className="absolute left-0 h-[2px] rounded-full bg-primary-strong
                                 transition-[transform,width,opacity,top] duration-500 ease-out"
                         />
 
@@ -205,8 +192,6 @@ function Head({ onNavigate }) {
                             </a>
                         ))}
                     </nav>
-
-                    <ThemeToggle className="ml-auto md:ml-2 mr-1 md:mr-0" />
 
                     {/* --- MOBILE TOGGLE --- */}
                     <button

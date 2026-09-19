@@ -19,7 +19,7 @@ function Toast({ message, type }) {
   return (
     <div className={`fixed top-6 right-6 z-[9999] flex items-center gap-2.5 px-4 py-3 rounded-xl border text-sm shadow-2xl
       ${isError
-        ? 'bg-[#1a0a0a] border-primary/30 text-primary'
+        ? 'bg-[#1a0a0a] border-primary/30 text-primary-strong'
         : 'bg-[#0a1a0a] border-green-500/30 text-green-400'
       }`}
     >
@@ -141,7 +141,7 @@ function ProjectsTab({ toast }) {
       {/* ── Add Project Form ── */}
       <section>
         <h2 className="text-foreground font-semibold mb-5 flex items-center gap-2">
-          <Plus size={16} className="text-primary" /> Add Project
+          <Plus size={16} className="text-primary-strong" /> Add Project
         </h2>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -232,7 +232,7 @@ function ProjectsTab({ toast }) {
               onClick={() => fileRef.current?.click()}
               className="border-2 border-dashed border-border hover:border-primary/40 rounded-xl p-6 text-center cursor-pointer transition-colors group"
             >
-              <Upload size={20} className="mx-auto mb-2 text-muted-foreground/70 group-hover:text-primary transition-colors" />
+              <Upload size={20} className="mx-auto mb-2 text-muted-foreground/70 group-hover:text-primary-strong transition-colors" />
               <p className="text-muted-foreground/80 text-sm">Click to upload images (JPG, PNG, WebP)</p>
               <p className="text-muted-foreground/60 text-xs mt-1">Files are uploaded to Supabase Storage CDN</p>
               <Input
@@ -253,7 +253,7 @@ function ProjectsTab({ toast }) {
                     <button
                       type="button"
                       onClick={() => removePreview(i)}
-                      className="absolute top-1 right-1 bg-neutral-900/70 rounded-full p-0.5 text-white hover:text-primary"
+                      className="absolute top-1 right-1 bg-neutral-900/70 rounded-full p-0.5 text-white hover:text-primary-strong"
                     >
                       <X size={10} />
                     </button>
@@ -286,7 +286,7 @@ function ProjectsTab({ toast }) {
       {/* ── Project List ── */}
       <section>
         <h2 className="text-foreground font-semibold mb-5 flex items-center gap-2">
-          <ImageIcon size={16} className="text-primary" />
+          <ImageIcon size={16} className="text-primary-strong" />
           Existing Projects
           <span className="text-muted-foreground/70 font-normal text-sm">({projects.length})</span>
         </h2>
@@ -322,7 +322,7 @@ function ProjectsTab({ toast }) {
                 <button
                   onClick={() => handleDelete(p.id)}
                   disabled={deletingId === p.id}
-                  className="text-muted-foreground/70 hover:text-primary disabled:opacity-40 transition-colors flex-shrink-0"
+                  className="text-muted-foreground/70 hover:text-primary-strong disabled:opacity-40 transition-colors flex-shrink-0"
                 >
                   {deletingId === p.id ? <Spinner /> : <Trash2 size={15} />}
                 </button>
@@ -373,7 +373,7 @@ function ExperienceTab({ toast }) {
     <div className="space-y-10">
       <section>
         <h2 className="text-foreground font-semibold mb-5 flex items-center gap-2">
-          <Plus size={16} className="text-primary" /> Add Experience
+          <Plus size={16} className="text-primary-strong" /> Add Experience
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Role *"><Input required type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Front End Developer" className={inputCls} /></Field>
@@ -391,7 +391,7 @@ function ExperienceTab({ toast }) {
 
       <section>
         <h2 className="text-foreground font-semibold mb-4 flex items-center gap-2">
-          <Briefcase size={16} className="text-primary" /> Existing ({list.length})
+          <Briefcase size={16} className="text-primary-strong" /> Existing ({list.length})
         </h2>
         <div className="space-y-2">
           {list.map((item) => (
@@ -400,7 +400,7 @@ function ExperienceTab({ toast }) {
                 <p className="text-foreground text-sm">{item.title} <span className="text-muted-foreground/80">@ {item.company}</span></p>
                 <p className="text-muted-foreground/70 text-xs mt-0.5">{item.date} {item.type && `· ${item.type}`}</p>
               </div>
-              <button onClick={() => handleDelete(item.id)} disabled={deletingId === item.id} className="text-muted-foreground/70 hover:text-primary disabled:opacity-40 transition-colors">
+              <button onClick={() => handleDelete(item.id)} disabled={deletingId === item.id} className="text-muted-foreground/70 hover:text-primary-strong disabled:opacity-40 transition-colors">
                 {deletingId === item.id ? <Spinner /> : <Trash2 size={15} />}
               </button>
             </div>
@@ -464,7 +464,7 @@ export default function Dashboard() {
             <span className="text-muted-foreground/70 text-xs hidden sm:block">{session?.user?.email}</span>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 text-muted-foreground/80 hover:text-primary transition-colors text-sm"
+              className="flex items-center gap-1.5 text-muted-foreground/80 hover:text-primary-strong transition-colors text-sm"
             >
               <LogOut size={14} /> Sign out
             </button>

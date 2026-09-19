@@ -18,8 +18,8 @@ const LiquidBackground = () => {
   };
 
   // The canvas is transparent except where the wave is, so this is the colour
-  // of the ripple itself. Reading it off --primary keeps the effect on-theme
-  // without the component knowing which theme is on.
+  // of the ripple itself. Reading it off --primary keeps the effect on-palette
+  // without hardcoding the accent here.
   const readAccent = () => {
     const raw = getComputedStyle(document.documentElement)
       .getPropertyValue('--primary')
@@ -45,10 +45,7 @@ const LiquidBackground = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-    let accent = readAccent();
-    // Repaint in the new accent when the theme flips.
-    const themeObserver = new MutationObserver(() => { accent = readAccent(); });
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    const accent = readAccent();
     
     let width, height;
     let buffer1 = [];
@@ -210,7 +207,6 @@ const LiquidBackground = () => {
       window.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
       visibilityObserver.disconnect();
-      themeObserver.disconnect();
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     };

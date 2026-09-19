@@ -65,7 +65,7 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center z-20 bg-secondary">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <Loader2 className="w-8 h-8 text-primary-strong animate-spin" />
         </div>
       )}
 
@@ -424,8 +424,8 @@ const Projects = ({ projectsData }) => {
                     className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
                   <div className="h-36 overflow-hidden relative">
-                    {/* Sits over artwork, so it stays dark in both themes: fading to the
-                        light card washed the image out instead of seating it. */}
+                    {/* Sits over artwork, so it stays dark rather than fading to the
+                        card colour, which washed the image out instead of seating it. */}
                     <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/85 to-transparent z-10 opacity-60 pointer-events-none"></div>
 
                     <ImageWithLoader
@@ -441,7 +441,7 @@ const Projects = ({ projectsData }) => {
                   </div>
 
                   <div className="p-4">
-                    <h3 className="text-base font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{project.title}</h3>
+                    <h3 className="text-base font-bold text-foreground mb-1 group-hover:text-primary-strong transition-colors">{project.title}</h3>
                     <p className="text-muted-foreground text-xs mb-3 line-clamp-2">{project.description}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {project.tags.slice(0, 4).map((tag, idx) => (
@@ -552,7 +552,7 @@ const Projects = ({ projectsData }) => {
                 </div>
 
                 <div className="p-5 sm:p-6">
-                  <span className="text-primary text-xs font-bold uppercase tracking-wider mb-2 block">
+                  <span className="text-primary-strong text-xs font-bold uppercase tracking-wider mb-2 block">
                     {selectedImage.category ? selectedImage.category : "Development"}
                   </span>
                   
