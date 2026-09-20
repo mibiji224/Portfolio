@@ -11,7 +11,7 @@ const badgeVariants = cva(
         default: 'border-transparent bg-primary text-primary-foreground',
         secondary: 'border-border bg-secondary text-muted-foreground',
         outline: 'border-primary/20 bg-primary/10 text-primary-strong',
-        matcha: 'border-transparent bg-matcha text-matcha-strong hover:bg-matcha/70',
+        matcha: 'border-matcha-strong/25 bg-matcha text-matcha-strong hover:bg-matcha/70',
         ghost: 'border-transparent bg-transparent text-muted-foreground',
       },
       size: {

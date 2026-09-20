@@ -1,4 +1,4 @@
-import { Award, CheckCircle2, ChevronLeft, ChevronRight, Code, Coffee, ExternalLink, GraduationCap, Heart, Palette, Sparkles, User } from 'lucide-react';
+import { Award, CheckCircle2, ChevronLeft, ChevronRight, Coffee, ExternalLink, GraduationCap, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -207,29 +207,8 @@ function AboutNarrative({ educationData = [] }) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            {/* LEFT COLUMN: THE NARRATIVE */}
-            <div className="lg:col-span-7 space-y-6">
-
-                <Panel>
-                    <Label icon={<User className="w-4 h-4" />}>Who I Am</Label>
-                    <p className="text-muted-foreground leading-relaxed">
-                        I am a Philippines-based creative and developer operating where logic meets imagination. My journey began with a paintbrush, envisioning a career in Fine Arts before discovering that code, like paint, is a powerful medium for creation. Transitioning from the freedom of art to the structure of Computer Science was a challenge that fueled my growth from an underdog to a leader.
-                    </p>
-                </Panel>
-
-                <Panel>
-                    <Label icon={<Code className="w-4 h-4" />}>The Developer Side</Label>
-                    <p className="text-muted-foreground leading-relaxed">
-                        I specialize in building responsive SPAs using <strong>React</strong>, <strong>SQL</strong>, and <strong>Tailwind CSS</strong>. I fell in love with code while trying to bring my designs to life, and I now believe that clean code is just as essential as clean design.
-                    </p>
-                </Panel>
-
-                <Panel>
-                    <Label icon={<Palette className="w-4 h-4" />}>The Artistic Side</Label>
-                    <p className="text-muted-foreground leading-relaxed">
-                        Digital art and UI design are my roots. Whether I'm branding an organization or sketching character concepts, I bring a designer's eye to every technical project. This duality allows me to effectively bridge the gap between design and engineering teams.
-                    </p>
-                </Panel>
+            {/* Hobbies and personality: light panels, so the narrow column. */}
+            <div className="lg:col-span-5 space-y-6 lg:order-2">
 
                 <Panel>
                     <Label icon={<Coffee className="w-4 h-4" />}>Hobbies</Label>
@@ -247,15 +226,8 @@ function AboutNarrative({ educationData = [] }) {
 
             </div>
 
-            {/* RIGHT COLUMN: PHILOSOPHY & CREDENTIALS */}
-            <div className="lg:col-span-5 space-y-6">
-
-                <Panel className="bg-accent">
-                    <Label icon={<Heart className="w-4 h-4" />}>My Philosophy</Label>
-                    <p className="text-muted-foreground italic font-serif text-base sm:text-lg">
-                        "Technology without design is functional but boring. Design without technology is beautiful but static. I strive to combine both."
-                    </p>
-                </Panel>
+            {/* Credentials carry the weight here, so they lead and take the wide column. */}
+            <div className="lg:col-span-7 space-y-6 lg:order-1">
 
                 <Panel>
                     <Label icon={<Award className="w-4 h-4" />}>Certifications & Awards</Label>

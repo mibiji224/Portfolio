@@ -7,12 +7,15 @@ import {
     Server,
     Wrench,
     Palette,
-    FileText
+    FileText,
+    ChevronDown
 } from 'lucide-react';
 import AboutNarrative from './readmore.jsx';
 
-const SKILL_PILL = 'px-2 py-1 bg-matcha text-matcha-strong text-[11px] font-medium rounded-lg hover:bg-matcha/70 transition-colors cursor-default';
-const TOGGLE_PILL = 'px-2 py-1 bg-primary text-primary-foreground text-[11px] font-semibold rounded-lg hover:bg-primary-deep transition-colors';
+const SKILL_PILL = 'px-2 py-1 bg-matcha text-matcha-strong border border-matcha-strong/25 text-[11px] font-medium rounded-lg hover:bg-matcha/70 transition-colors cursor-default';
+// Outlined, not filled: a solid pill sitting among solid pills reads as one
+// more skill rather than as the control that reveals the rest.
+const TOGGLE_PILL = 'inline-flex items-center gap-1 px-2 py-1 border border-primary-strong/40 text-primary-strong text-[11px] font-semibold rounded-lg hover:bg-primary-soft transition-colors';
 // gap-1.5
 const PILL_GAP = 6;
 
@@ -24,7 +27,7 @@ const PILL_GAP = 6;
  *  about where the cut belongs. One measurement is enough because dropping
  *  trailing items from a wrapped row never moves the ones before them, so
  *  the geometry we read stays true for the clamped row. */
-const ClampedPills = ({ items, rows = 2 }) => {
+const ClampedPills = ({ items, rows = 2, pillClassName = SKILL_PILL }) => {
     const [expanded, setExpanded] = useState(false);
     const [limit, setLimit] = useState(items.length);
     const twinRef = useRef(null);
@@ -85,14 +88,16 @@ const ClampedPills = ({ items, rows = 2 }) => {
                 className="absolute inset-x-0 top-0 invisible pointer-events-none flex flex-wrap gap-1.5"
             >
                 {items.map((skill, index) => (
-                    <span key={index} className={SKILL_PILL}>{skill}</span>
+                    <span key={index} className={pillClassName}>{skill}</span>
                 ))}
-                <span className={TOGGLE_PILL}>+{items.length} more</span>
+                <span className={TOGGLE_PILL}>
+                    +{items.length} more <ChevronDown className="h-3 w-3" />
+                </span>
             </div>
 
             <div className="flex flex-wrap gap-1.5">
                 {shown.map((skill, index) => (
-                    <span key={index} className={SKILL_PILL}>{skill}</span>
+                    <span key={index} className={pillClassName}>{skill}</span>
                 ))}
                 {clamped && (
                     <button
@@ -102,6 +107,10 @@ const ClampedPills = ({ items, rows = 2 }) => {
                         className={TOGGLE_PILL}
                     >
                         {expanded ? 'Show less' : `+${items.length - limit} more`}
+                        <ChevronDown
+                            className={`h-3 w-3 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                            aria-hidden="true"
+                        />
                     </button>
                 )}
             </div>
@@ -114,32 +123,11 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
     // Once you populate the DB, pass props from App.jsx and these inline arrays can be removed.
     const experienceData = expProp?.length ? expProp : [
         {
-            title: "Operations Manager",
+            title: "Executive Assistant & Operations Manager",
             company: "Inventiv Softwares",
-            date: "September 2025",
-            type: "Present",
+            date: "December 2025 - Present",
+            type: null,
             description: "Driving operational efficiency by managing executive software development project workflows, talent acquisition, business and activity proposals, and social media strategy for a growing software firm."
-        },
-        {
-            title: "Front End Developer / UI UX Designer",
-            company: "Inventiv Softwares",
-            date: "June 2025 - September 2025",
-            type: "Part Time",
-            description: "Building responsive and visually engaging user interfaces using React and modern design tools. Collaborating with cross-functional teams to translate design concepts into functional web applications while ensuring optimal user experience and performance."
-        },
-        {
-            title: "Account Manager",
-            company: "ELM Marketing Agency",
-            date: "Present",
-            type: "Part Time",
-            description: "Managing client accounts and campaign delivery, acting as the bridge between clients and the creative team to keep marketing work on brief and on schedule."
-        },
-        {
-            title: "Web Developer",
-            company: "Acme Construction",
-            date: "October 2024 - January 2026",
-            type: "Contract",
-            description: "Designing and deploying custom web applications with focus on performance and scalability. Managing hosting infrastructure and implementing best practices for site optimization."
         },
         {
             title: "Administrative Secretary - Office of the Regional Director",
@@ -170,25 +158,11 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
             description: "Managed external relations and student advocacy initiatives, building partnerships to enhance institutional engagement and student welfare programs."
         },
         {
-            title: "Marketing and Multimedia Unit Supervisor",
-            company: "College of Computing Education Student Government - University of Mindanao",
-            date: "July 2024 - July 2025",
-            type: "LEADERSHIP",
-            description: "Oversaw creative content strategy and multimedia production to amplify student engagement and event reach across digital platforms."
-        },
-        {
             title: "Assistant Recreational Head",
             company: "Philippine Society of Information Technology Students Region XI",
             date: "August 2024 - May 2025",
             type: null,
             description: "Coordinated regional recreational events and activities for IT students, managing logistics and participant engagement."
-        },
-        {
-            title: "Documentation Photographer",
-            company: "Blockchain Campus Conference",
-            date: "October 2024",
-            type: "EVENT VOLUNTEER",
-            description: "Captured conference highlights through professional photography, documenting key moments and attendee experiences."
         },
         {
             title: "Secretary",
@@ -258,15 +232,13 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
     ];
 
     const technicalSkills = [
-        // Standard width cards (Span 1)
         { category: "Frontend", icon: <Layout size={14} />, items: ["HTML", "CSS", "Tailwind CSS", "Bootstrap", "React"] },
         { category: "Backend", icon: <Server size={14} />, items: ["JavaScript", "Python", "PHP", "Java", "Node.js", "REST API"] },
         { category: "Database", icon: <Database size={14} />, items: ["MySQL", "MongoDB", "Firebase", "PostgreSQL"] },
         { category: "Tech Tools", icon: <Wrench size={14} />, items: ["Git", "GitHub", "VSCode", "Eclipse", "NetBeans", "Xampp"] },
 
-        // Full width cards (Span 2) - Moved here for visual balance
-        { category: "Creative Tools", icon: <Palette size={14} />, items: ["Figma", "Adobe Photoshop", "Canva", "Blender", "Procreate", "IbisPaint", "CapCut", "Photopea"], fullWidth: true },
-        { category: "Office Tools", icon: <FileText size={14} />, items: ["Google Suite", "Excel", "Word", "Google Sheets", "Google Docs", "Notion", "Slack", "Trello", "Zoom", "GMeet", "Outlook", "Loom"], fullWidth: true }
+        { category: "Creative Tools", icon: <Palette size={14} />, items: ["Figma", "Adobe Photoshop", "Canva", "Blender", "Procreate", "IbisPaint", "CapCut", "Photopea"] },
+        { category: "Office Tools", icon: <FileText size={14} />, items: ["Google Suite", "Excel", "Word", "Google Sheets", "Google Docs", "Notion", "Slack", "Trello", "Zoom", "GMeet", "Outlook", "Loom"] }
     ];
 
     return (
@@ -280,12 +252,9 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                     <div className="w-20 h-1 bg-primary"></div>
                 </div>
 
-                {/* The narrative leads the section, ahead of the timeline */}
-                <AboutNarrative educationData={educationData} />
-
-                {/* Experience / Skills: both columns share one height on desktop so the
-                    two panels start and end on the same line */}
-                <div className="mt-12 lg:mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+                {/* Experience / Skills lead the section. Both columns share one height
+                    on desktop so the two panels start and end on the same line */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
                     {/* LEFT COLUMN: EXPERIENCE */}
                     <div className="lg:col-span-7 flex flex-col lg:h-[70vh] lg:min-h-[520px]">
@@ -296,7 +265,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                             <h3 className="text-xl font-bold text-foreground">Experience</h3>
                         </div>
 
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-2xl p-3 sm:p-4 shadow-lift pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain pr-2 sm:pr-4 modern-scrollbar bg-card rounded-2xl p-3 sm:p-4 shadow-lift pb-6">
                             <ol className="relative border-l border-border ml-2 sm:ml-3 space-y-8">
                                 {experienceData.map((item, index) => (
                                     <li key={index} className="relative ml-6 sm:ml-8 group">
@@ -344,31 +313,35 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                         </div>
 
                         {/* Scrollable Content Area */}
-                        <div className="max-h-[65vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 sm:pr-4 modern-scrollbar bg-card rounded-2xl p-3 sm:p-4 shadow-lift pb-6" style={{ overscrollBehavior: 'contain' }}>
+                        <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain pr-2 sm:pr-4 modern-scrollbar bg-card rounded-2xl p-3 sm:p-4 shadow-lift pb-6">
 
                             {/* Core Skills Group */}
-                            <div className="mb-4">
-                                <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <div className="w-1 h-1 bg-primary-strong rounded-full"></div>
+                            <div className="mb-7">
+                                <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-foreground">
+                                    <span className="h-4 w-1 rounded-full bg-primary-strong" aria-hidden="true"></span>
                                     Core Competencies
                                 </h4>
-                                <ClampedPills items={coreSkills} rows={2} />
+                                {/* Pink here, matcha below: the two groups are different kinds of
+                                    thing, and colour says so faster than a heading alone. */}
+                                <ClampedPills
+                                    items={coreSkills}
+                                    rows={2}
+                                    pillClassName="px-2 py-1 bg-primary text-foreground border border-primary-strong/25 text-[11px] font-medium rounded-lg hover:bg-primary-deep/60 transition-colors cursor-default"
+                                />
                             </div>
 
                             {/* Technical Proficiency - IMPROVED LAYOUT */}
                             <div>
-                                <h4 className="text-[10px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                    <div className="w-1 h-1 bg-primary-strong rounded-full"></div>
+                                <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-foreground">
+                                    <span className="h-4 w-1 rounded-full bg-matcha-strong" aria-hidden="true"></span>
                                     Technical Proficiency
                                 </h4>
 
-                                {/* Bento Grid Layout */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {technicalSkills.map((group, index) => (
                                         <div
                                             key={index}
-                                            // If fullWidth is true (for Creative/Office), span 2 columns
-                                            className={`bg-card p-3 rounded-xl shadow-lift transition-all hover:-translate-y-0.5 group ${group.fullWidth ? 'sm:col-span-2' : 'col-span-1'}`}
+                                            className="bg-card p-3.5 rounded-xl shadow-lift transition-transform hover:-translate-y-0.5 group"
                                         >
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className="text-primary-strong opacity-80 group-hover:opacity-100 transition-opacity">
@@ -383,7 +356,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                                 {group.items.map((skill, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="text-[11px] font-medium text-matcha-strong bg-matcha px-2 py-1 rounded-lg transition-all duration-200 group-hover:bg-matcha/70"
+                                                        className="text-[11px] font-medium text-matcha-strong bg-matcha border border-matcha-strong/25 px-2 py-1 rounded-lg transition-all duration-200 group-hover:bg-matcha/70"
                                                     >
                                                         {skill}
                                                     </span>
@@ -396,6 +369,11 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                         </div>
                     </div>
 
+                </div>
+
+                {/* Credentials and the personal panels close the section */}
+                <div className="mt-12 lg:mt-16">
+                    <AboutNarrative educationData={educationData} />
                 </div>
             </div>
         </section>

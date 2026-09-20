@@ -1,7 +1,6 @@
 import gsap from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 // Ensure these paths match your project structure
-import RippleBackground from './RippleBackground';
 import { Button } from '@/components/ui/button'
 
 // --- MAIN HOME COMPONENT ---
@@ -102,7 +101,6 @@ function Home({ onReadMore, isExpanded = false }) {
 
     return (
         <div ref={comp} className="relative min-h-[100dvh] w-full bg-transparent text-foreground font-['Poppins'] overflow-hidden">
-            <RippleBackground />
             <style>{`
                 @keyframes caretBlink { 0%, 49% { opacity:1; } 50%, 100% { opacity:0; } }
                 @keyframes readMorePulse {
@@ -116,7 +114,6 @@ function Home({ onReadMore, isExpanded = false }) {
                     .read-more-hint { animation: none; box-shadow: var(--shadow-accent-lg), var(--accent-ring); }
                 }
             `}</style>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 lg:w-96 lg:h-96 bg-primary opacity-30 blur-[100px] lg:blur-[150px] rounded-full z-0"></div>
 
             <section className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-4 sm:px-8 lg:px-20 py-12 lg:py-0" id="home">
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-4xl">
