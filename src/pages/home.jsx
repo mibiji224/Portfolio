@@ -5,7 +5,7 @@ import RippleBackground from './RippleBackground';
 import { Button } from '@/components/ui/button'
 
 // --- MAIN HOME COMPONENT ---
-const ROLES = ["a Software Developer", "a Leader", "a Project Manager", "a Designer", "an Innovator", "a Creative Thinker"];
+const ROLES = ["a Software Developer", "a Leader", "a Project Manager", "a Graphic Designer", "an Innovator", "an Engineer", "a Creative Thinker"];
 const TYPING_SPEED = 80;
 const DELETING_SPEED = 45;
 const HOLD_AFTER_TYPED = 1800;
