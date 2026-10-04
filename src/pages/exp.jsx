@@ -11,8 +11,8 @@ import {
     ChevronDown
 } from 'lucide-react';
 import AboutNarrative from './readmore.jsx';
+import { pinkPill, matchaPill } from '@/lib/pillTints';
 
-const SKILL_PILL = 'px-2 py-1 bg-matcha text-matcha-strong border border-matcha-strong/25 text-[11px] font-medium rounded-lg hover:bg-matcha/70 transition-colors cursor-default';
 // Outlined, not filled: a solid pill sitting among solid pills reads as one
 // more skill rather than as the control that reveals the rest.
 const TOGGLE_PILL = 'inline-flex items-center gap-1 px-2 py-1 border border-primary-strong/40 text-primary-strong text-[11px] font-semibold rounded-lg hover:bg-primary-soft transition-colors';
@@ -27,7 +27,7 @@ const PILL_GAP = 6;
  *  about where the cut belongs. One measurement is enough because dropping
  *  trailing items from a wrapped row never moves the ones before them, so
  *  the geometry we read stays true for the clamped row. */
-const ClampedPills = ({ items, rows = 2, pillClassName = SKILL_PILL }) => {
+const ClampedPills = ({ items, rows = 2, pillClassName = matchaPill }) => {
     const [expanded, setExpanded] = useState(false);
     const [limit, setLimit] = useState(items.length);
     const twinRef = useRef(null);
@@ -77,6 +77,7 @@ const ClampedPills = ({ items, rows = 2, pillClassName = SKILL_PILL }) => {
         };
     }, [measure]);
 
+    const pillClass = (index) => (typeof pillClassName === 'function' ? pillClassName(index) : pillClassName);
     const clamped = limit < items.length;
     const shown = expanded || !clamped ? items : items.slice(0, limit);
 
@@ -88,7 +89,7 @@ const ClampedPills = ({ items, rows = 2, pillClassName = SKILL_PILL }) => {
                 className="absolute inset-x-0 top-0 invisible pointer-events-none flex flex-wrap gap-1.5"
             >
                 {items.map((skill, index) => (
-                    <span key={index} className={pillClassName}>{skill}</span>
+                    <span key={index} className={pillClass(index)}>{skill}</span>
                 ))}
                 <span className={TOGGLE_PILL}>
                     +{items.length} more <ChevronDown className="h-3 w-3" />
@@ -97,7 +98,7 @@ const ClampedPills = ({ items, rows = 2, pillClassName = SKILL_PILL }) => {
 
             <div className="flex flex-wrap gap-1.5">
                 {shown.map((skill, index) => (
-                    <span key={index} className={pillClassName}>{skill}</span>
+                    <span key={index} className={pillClass(index)}>{skill}</span>
                 ))}
                 {clamped && (
                     <button
@@ -326,7 +327,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                 <ClampedPills
                                     items={coreSkills}
                                     rows={2}
-                                    pillClassName="px-2 py-1 bg-primary text-foreground border border-primary-strong/25 text-[11px] font-medium rounded-lg hover:bg-primary-deep/60 transition-colors cursor-default"
+                                    pillClassName={pinkPill}
                                 />
                             </div>
 
@@ -356,7 +357,7 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
                                                 {group.items.map((skill, idx) => (
                                                     <span
                                                         key={idx}
-                                                        className="text-[11px] font-medium text-matcha-strong bg-matcha border border-matcha-strong/25 px-2 py-1 rounded-lg transition-all duration-200 group-hover:bg-matcha/70"
+                                                        className={matchaPill(idx + index)}
                                                     >
                                                         {skill}
                                                     </span>

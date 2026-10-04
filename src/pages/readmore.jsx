@@ -1,8 +1,9 @@
 import { Award, CheckCircle2, ChevronLeft, ChevronRight, Coffee, ExternalLink, GraduationCap, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { matchaPill } from '@/lib/pillTints'
 
 const HOBBIES = ['Digital Painting', 'Fitness', 'Reading', 'Cybersecurity'];
 const TRAITS = ['INTJ-T', 'Detail-Oriented', 'Creative Strategist', 'Resilient'];
@@ -74,13 +75,10 @@ const Label = ({ icon, children }) => (
     </div>
 );
 
-const Pill = ({ children }) => (
-    <Badge
-        variant="matcha"
-        className="px-3 py-1.5 text-xs transition-all cursor-default"
-    >
+const Pill = ({ index, children }) => (
+    <span className={cn(matchaPill(index), 'px-3 py-1.5 rounded-full text-xs')}>
         {children}
-    </Badge>
+    </span>
 );
 
 const PagerButton = ({ onClick, disabled, label, children }) => (
@@ -213,14 +211,14 @@ function AboutNarrative({ educationData = [] }) {
                 <Panel>
                     <Label icon={<Coffee className="w-4 h-4" />}>Hobbies</Label>
                     <div className="flex flex-wrap gap-2">
-                        {HOBBIES.map((hobby) => <Pill key={hobby}>{hobby}</Pill>)}
+                        {HOBBIES.map((hobby, i) => <Pill key={hobby} index={i}>{hobby}</Pill>)}
                     </div>
                 </Panel>
 
                 <Panel>
                     <Label icon={<Sparkles className="w-4 h-4" />}>Personality</Label>
                     <div className="flex flex-wrap gap-2">
-                        {TRAITS.map((trait) => <Pill key={trait}>{trait}</Pill>)}
+                        {TRAITS.map((trait, i) => <Pill key={trait} index={i + 2}>{trait}</Pill>)}
                     </div>
                 </Panel>
 

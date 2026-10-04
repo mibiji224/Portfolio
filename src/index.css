@@ -132,11 +132,3 @@ video,
 canvas {
   max-width: 100%;
 }
-
-/* Floating nav: honor reduced-motion without touching the hero's keyframes */
-@media (prefers-reduced-motion: reduce) {
-  [data-floating-nav],
-  [data-floating-nav] * {
-    transition-duration: 0.01ms !important;
-  }
-}
