@@ -3,9 +3,12 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
 gsap.registerPlugin(ScrollToPlugin)
 
-// The nav is plain text at the top of the hero and scrolls away with it, so
-// a section only needs a little breathing room above its heading.
+// Breathing room above a section's heading. Below `lg` the dashboard's sticky
+// top bar covers the first 56px of the viewport, so clear that as well.
 export const SCROLL_OFFSET = 12
+const MOBILE_BAR_HEIGHT = 56
+const mobileBarOffset = () =>
+  typeof window !== 'undefined' && window.innerWidth < 1024 ? MOBILE_BAR_HEIGHT : 0
 
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
@@ -18,7 +21,7 @@ export function scrollToSection(target, offsetY) {
   const el = typeof target === 'string' ? document.querySelector(target) : target
   if (!el) return
 
-  if (offsetY == null) offsetY = SCROLL_OFFSET
+  if (offsetY == null) offsetY = SCROLL_OFFSET + mobileBarOffset()
 
   try {
     gsap.to(window, {

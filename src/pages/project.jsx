@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useLazyLoad } from '../hooks/useLazyLoad';
+import SectionLabel from '@/components/SectionLabel'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -179,8 +180,11 @@ const TabTriggers = ({ shape }) =>
     </TabsTrigger>
   ));
 
-const Projects = ({ projectsData }) => {
-  const [activeTab, setActiveTab] = useState('dev');
+const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
+  // The dashboard sidebar owns the tab on desktop; standalone use still works.
+  const [localTab, setLocalTab] = useState('dev');
+  const activeTab = controlledTab ?? localTab;
+  const setActiveTab = onTabChange ?? setLocalTab;
   const sectionRef = useRef(null);
   const [isSectionInView, setIsSectionInView] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -368,7 +372,7 @@ const Projects = ({ projectsData }) => {
   };
 
   return (
-    <section ref={sectionRef} className="bg-background text-foreground pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-12 font-sans" id="projects">
+    <section ref={sectionRef} className="bg-background text-foreground pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-10 border-t border-border font-sans" id="projects">
 
       {/* Styles for Animations */}
       <style>{`
@@ -400,12 +404,12 @@ const Projects = ({ projectsData }) => {
 
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
-          <div>
-            <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Projects</h3>
-            <div className="w-20 h-1 bg-primary"></div>
+          <div className="flex-1">
+            <SectionLabel index="02" className="mb-6">projects</SectionLabel>
+            <h3 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Projects</h3>
           </div>
 
-          <TabsList className="hidden md:flex rounded-xl w-auto">
+          <TabsList className="hidden md:flex lg:hidden rounded-xl w-auto">
             <TabTriggers shape="rounded-lg" />
           </TabsList>
         </div>

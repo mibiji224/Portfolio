@@ -1,10 +1,11 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Head from './components/Header.jsx'
 import Home from './pages/home.jsx'
 import AdminLock from './components/AdminLock.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import SchemaMarkup from './components/SchemaMarkup.jsx'
+import DashboardShell from './components/DashboardShell.jsx'
 // TEMPORARY: remove with the component once the design is final.
 import UnderConstructionNotice from './components/UnderConstructionNotice.jsx'
 import { usePortfolioData } from './hooks/usePortfolioData'
@@ -15,6 +16,10 @@ const Project  = lazy(() => import('./pages/project.jsx'))
 const Contact  = lazy(() => import('./pages/connect.jsx'))
 const Footer   = lazy(() => import('./components/Footer.jsx'))
 const Dashboard = lazy(() => import('./admin/Dashboard.jsx'))
+const ReadMoreLoader = lazy(() => import('./components/ReadMoreLoader.jsx'))
+
+// How long the loader holds before the portfolio opens (one loop at 2x speed).
+const READ_MORE_DELAY = 1200
 
 const SectionFallback = () => (
   <div className="min-h-[50vh] flex items-center justify-center bg-background">
@@ -31,6 +36,11 @@ function Portfolio() {
   // until "Read More" opens the portfolio.
   const [isExpanded, setIsExpanded] = useState(false)
   const [pendingScroll, setPendingScroll] = useState(null)
+  const [isOpening, setIsOpening] = useState(false)
+  const [projectTab, setProjectTab] = useState('dev')
+  const openTimer = useRef(null)
+
+  useEffect(() => () => clearTimeout(openTimer.current), [])
 
   // Sections un-hide in the same commit as isExpanded, so the scroll has to wait
   // for that render; a display:none target has no position to scroll to. On a
@@ -67,6 +77,19 @@ function Portfolio() {
     setPendingScroll(href)
   }
 
+  const openWithLoader = () => {
+    if (isOpening) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      expandTo('#about')
+      return
+    }
+    setIsOpening(true)
+    openTimer.current = setTimeout(() => {
+      expandTo('#about')
+      setIsOpening(false)
+    }, READ_MORE_DELAY)
+  }
+
   const collapse = () => {
     setIsExpanded(false)
     window.scrollTo({ top: 0 })
@@ -88,13 +111,24 @@ function Portfolio() {
 
       <Head onNavigate={handleNavigate} />
       <Home
-        onReadMore={() => (isExpanded ? collapse() : expandTo('#about'))}
+        onReadMore={() => (isExpanded ? collapse() : openWithLoader())}
         isExpanded={isExpanded}
       />
 
       {/* Kept mounted so the markup stays crawlable and the nav's scroll-spy can
-          find its targets; `hidden` is what keeps it out of view until asked for. */}
-      <div id="portfolio-sections" hidden={!isExpanded}>
+          find its targets; the shell hides it until Read More asks for it. */}
+      <DashboardShell
+        hidden={!isExpanded}
+        projectTab={projectTab}
+        onSection={handleNavigate}
+        onProjectTab={(id) => {
+          setProjectTab(id)
+          // Let the new tab's content mount first: gsap clamps its target to the
+          // page height at the moment it starts, and a shorter tab ends too early.
+          setTimeout(() => scrollToSection('#projects'), 60)
+        }}
+        onHome={collapse}
+      >
         <Suspense fallback={<SectionFallback />}>
           <Exp
             experienceData={experience}
@@ -103,7 +137,11 @@ function Portfolio() {
           />
         </Suspense>
         <Suspense fallback={<SectionFallback />}>
-          <Project projectsData={projects} />
+          <Project
+            projectsData={projects}
+            activeTab={projectTab}
+            onTabChange={setProjectTab}
+          />
         </Suspense>
         <Suspense fallback={<SectionFallback />}>
           <Contact />
@@ -111,7 +149,13 @@ function Portfolio() {
         <Suspense fallback={<SectionFallback />}>
           <Footer />
         </Suspense>
-      </div>
+      </DashboardShell>
+
+      {isOpening && (
+        <Suspense fallback={null}>
+          <ReadMoreLoader />
+        </Suspense>
+      )}
 
       {/* Ghost admin lock: bottom-right, invisible until hovered */}
       <AdminLock />

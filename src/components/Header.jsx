@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 
 const navLinks = [
     { name: 'About', href: '#about' },
@@ -9,46 +9,7 @@ const navLinks = [
 // Plain text links, centred at the top of the hero. It sits in normal flow of
 // the page (absolute, not fixed), so it scrolls away with the hero.
 function Head({ onNavigate }) {
-    const [active, setActive] = useState('#home');
-
-    // Track which section is in view. Sections mount lazily via Suspense, so
-    // keep scanning until every target exists.
-    useEffect(() => {
-        const observed = new Set();
-        const targets = ['#home', ...navLinks.map((l) => l.href)];
-
-        const io = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) setActive(`#${entry.target.id}`);
-                });
-            },
-            { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
-        );
-
-        const scan = () => {
-            targets.forEach((href) => {
-                const el = document.querySelector(href);
-                if (el && !observed.has(el)) {
-                    observed.add(el);
-                    io.observe(el);
-                }
-            });
-            return observed.size === targets.length;
-        };
-
-        if (scan()) return () => io.disconnect();
-
-        const mo = new MutationObserver(() => {
-            if (scan()) mo.disconnect();
-        });
-        mo.observe(document.body, { childList: true, subtree: true });
-
-        return () => {
-            mo.disconnect();
-            io.disconnect();
-        };
-    }, []);
+    const [active, setActive] = useScrollSpy(['#home', ...navLinks.map((l) => l.href)], '#home');
 
     const handleNavClick = (e, href) => {
         // Let middle-click / cmd-click open a new tab

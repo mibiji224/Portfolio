@@ -1,11 +1,11 @@
 import gsap from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 // Ensure these paths match your project structure
-import RippleBackground from './RippleBackground';
+import FluidBackground from '../components/FluidBackground';
 import { Button } from '@/components/ui/button'
 
 // --- MAIN HOME COMPONENT ---
-const ROLES = ["a Software Developer", "a Leader", "a Project Manager", "a Graphic Designer", "an Innovator", "an Engineer", "a Creative Thinker"];
+const ROLES = ["a Software Developer", "a Leader", "a Project Manager", "a Designer", "an Innovator", "an Engineer", "a Creative Thinker", "a Project Manager"];
 const TYPING_SPEED = 80;
 const DELETING_SPEED = 45;
 const HOLD_AFTER_TYPED = 1800;
@@ -102,7 +102,7 @@ function Home({ onReadMore, isExpanded = false }) {
 
     return (
         <div ref={comp} className="relative min-h-[100dvh] w-full bg-transparent text-foreground font-['Poppins'] overflow-hidden">
-            <RippleBackground />
+            <FluidBackground />
             <style>{`
                 @keyframes caretBlink { 0%, 49% { opacity:1; } 50%, 100% { opacity:0; } }
                 @keyframes readMorePulse {

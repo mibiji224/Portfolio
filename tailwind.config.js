@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+      },
       // Every colour resolves through a CSS variable, so a component written
       // once follows whichever theme is on <html>. See src/index.css.
       colors: {

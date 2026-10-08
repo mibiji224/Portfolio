@@ -11,6 +11,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import AboutNarrative from './readmore.jsx';
+import SectionLabel from '@/components/SectionLabel';
 import { pinkPill, matchaPill } from '@/lib/pillTints';
 
 // Outlined, not filled: a solid pill sitting among solid pills reads as one
@@ -243,14 +244,14 @@ const About = ({ experienceData: expProp, educationData: eduProp, skillsData }) 
     ];
 
     return (
-        <section className="bg-background text-foreground min-h-screen w-full flex flex-col pt-6 pb-16 lg:pt-10 lg:pb-24 px-4 sm:px-6 lg:px-12 font-sans relative" id="about">
+        <section className="bg-background text-foreground min-h-screen w-full flex flex-col pt-6 pb-16 lg:pt-10 lg:pb-24 px-4 sm:px-6 lg:px-10 font-sans relative" id="about">
 
             <div className="max-w-7xl mx-auto w-full flex flex-col">
 
                 {/* Section Title */}
                 <div className="shrink-0 mb-6 lg:mb-8">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">About Me</h2>
-                    <div className="w-20 h-1 bg-primary"></div>
+                    <SectionLabel index="01" className="mb-6">about</SectionLabel>
+                    <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">About Me</h2>
                 </div>
 
                 {/* Experience / Skills lead the section. Both columns share one height

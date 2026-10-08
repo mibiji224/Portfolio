@@ -22,8 +22,9 @@
    The palette lives here as shadcn-shaped CSS variables, so every component
    is written once against the semantic name. The site is light only.
 
-   Cards are separated by shadow rather than a border, which is why
-   --shadow-lift exists and why the page and the card are both white. */
+   Cards are separated by a hairline ring (--shadow-lift) rather than a
+   border, which keeps the dashboard flat: the page and the card are both
+   white and only the line tells them apart. */
 @layer base {
   :root {
     --background: 0 0% 100%;            /* pure white */
@@ -68,11 +69,11 @@
     --input: 352 60% 90%;
     --ring: 353 97% 88%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
     /* Cards float on a white page, so the shadow is the only thing giving
        them an edge: a tight contact shadow plus a wide soft one. */
-    --shadow-lift: 0 1px 2px 0 hsl(352 40% 55% / 0.07), 0 8px 24px -8px hsl(352 45% 50% / 0.18);
+    --shadow-lift: 0 0 0 1px hsl(352 60% 90%), 0 1px 2px 0 hsl(352 40% 55% / 0.04);
 
     --shadow-accent: 0 8px 20px -12px hsl(352 60% 46% / 0.7);
     --shadow-accent-lg: 0 16px 36px -12px hsl(352 60% 46% / 0.75);
