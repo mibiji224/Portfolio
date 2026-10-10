@@ -372,7 +372,7 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
   };
 
   return (
-    <section ref={sectionRef} className="bg-background text-foreground pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-10 border-t border-border font-sans" id="projects">
+    <section ref={sectionRef} className="bg-background text-foreground pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-10 font-sans" id="projects">
 
       {/* Styles for Animations */}
       <style>{`
@@ -405,8 +405,8 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
           <div className="flex-1">
-            <SectionLabel index="02" className="mb-6">projects</SectionLabel>
-            <h3 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Projects</h3>
+            <SectionLabel index="06" className="mb-6">projects</SectionLabel>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Projects</h1>
           </div>
 
           <TabsList className="hidden md:flex lg:hidden rounded-xl w-auto">

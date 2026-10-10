@@ -3,33 +3,25 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
 gsap.registerPlugin(ScrollToPlugin)
 
-// Breathing room above a section's heading. Below `lg` the dashboard's sticky
-// top bar covers the first 56px of the viewport, so clear that as well.
-export const SCROLL_OFFSET = 12
-const MOBILE_BAR_HEIGHT = 56
-const mobileBarOffset = () =>
-  typeof window !== 'undefined' && window.innerWidth < 1024 ? MOBILE_BAR_HEIGHT : 0
-
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-// Smooth-scrolls a section to the top of the viewport. Accepts a selector or an
-// element; a target that isn't in the document is a no-op rather than a throw.
-// Pass offsetY to override the default clearance.
-export function scrollToSection(target, offsetY) {
+// Smooth-scrolls to an element, a selector, or a y offset (0 = top of page).
+// A target that isn't in the document is a no-op rather than a throw.
+export function scrollToTarget(target, { duration = 1.2, offsetY = 0 } = {}) {
   const el = typeof target === 'string' ? document.querySelector(target) : target
-  if (!el) return
-
-  if (offsetY == null) offsetY = SCROLL_OFFSET + mobileBarOffset()
+  if (el == null) return
 
   try {
     gsap.to(window, {
-      duration: prefersReducedMotion() ? 0 : 0.8,
-      ease: 'power2.out',
-      scrollTo: { y: el, offsetY, autoKill: false },
+      duration: prefersReducedMotion() ? 0 : duration,
+      ease: 'power3.inOut',
+      scrollTo: { y: el, offsetY, autoKill: true },
+      overwrite: true,
     })
   } catch {
-    el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
+    if (typeof el === 'number') window.scrollTo({ top: el })
+    else el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
   }
 }

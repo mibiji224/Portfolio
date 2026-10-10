@@ -741,13 +741,18 @@ const FluidBackground = () => {
       rafId = requestAnimationFrame(update);
     };
 
-    const handleVisibility = () => {
-      if (document.hidden) {
+    // The canvas is fixed, so "off screen" means the hero has scrolled away:
+    // stop simulating while the dashboard covers it, resume on the way back.
+    const shouldRun = () => !document.hidden && window.scrollY < window.innerHeight
+    const syncRunning = () => {
+      if (shouldRun()) {
+        if (rafId == null) {
+          lastTime = performance.now();
+          rafId = requestAnimationFrame(update);
+        }
+      } else if (rafId != null) {
         cancelAnimationFrame(rafId);
         rafId = null;
-      } else if (rafId == null) {
-        lastTime = performance.now();
-        rafId = requestAnimationFrame(update);
       }
     };
 
@@ -759,9 +764,10 @@ const FluidBackground = () => {
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('touchend', handleLeave);
     document.addEventListener('mouseleave', handleLeave);
-    document.addEventListener('visibilitychange', handleVisibility);
+    document.addEventListener('visibilitychange', syncRunning);
+    window.addEventListener('scroll', syncRunning, { passive: true });
 
-    rafId = requestAnimationFrame(update);
+    syncRunning();
 
     return () => {
       cancelAnimationFrame(rafId);
@@ -770,7 +776,8 @@ const FluidBackground = () => {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleLeave);
       document.removeEventListener('mouseleave', handleLeave);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      document.removeEventListener('visibilitychange', syncRunning);
+      window.removeEventListener('scroll', syncRunning);
     };
   }, []);
 

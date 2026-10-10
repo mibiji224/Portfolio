@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Head from './components/Header.jsx'
+import { Navigate, Outlet, Route, Routes, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Home from './pages/home.jsx'
 import AdminLock from './components/AdminLock.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -9,17 +8,26 @@ import DashboardShell from './components/DashboardShell.jsx'
 // TEMPORARY: remove with the component once the design is final.
 import UnderConstructionNotice from './components/UnderConstructionNotice.jsx'
 import { usePortfolioData } from './hooks/usePortfolioData'
-import { scrollToSection } from './lib/scroll'
+import { scrollToTarget } from './lib/scroll'
 
-const Exp      = lazy(() => import('./pages/exp.jsx'))
-const Project  = lazy(() => import('./pages/project.jsx'))
-const Contact  = lazy(() => import('./pages/connect.jsx'))
-const Footer   = lazy(() => import('./components/Footer.jsx'))
-const Dashboard = lazy(() => import('./admin/Dashboard.jsx'))
+const Experience     = lazy(() => import('./pages/experience.jsx'))
+const Skills         = lazy(() => import('./pages/skills.jsx'))
+const Certifications = lazy(() => import('./pages/certifications.jsx'))
+const Education      = lazy(() => import('./pages/education.jsx'))
+const Personal       = lazy(() => import('./pages/personal.jsx'))
+const Project        = lazy(() => import('./pages/project.jsx'))
+const Contact        = lazy(() => import('./pages/connect.jsx'))
+const Dashboard      = lazy(() => import('./admin/Dashboard.jsx'))
 const ReadMoreLoader = lazy(() => import('./components/ReadMoreLoader.jsx'))
 
-// How long the loader holds before the portfolio opens (one loop at 2x speed).
-const READ_MORE_DELAY = 1200
+const PROJECT_TABS = ['dev', 'art', 'graphics']
+
+// Links from before the pages were split (…/#projects) still land somewhere sensible.
+const LEGACY_HASHES = {
+  '#about': '/experience',
+  '#projects': '/projects/dev',
+  '#connect': '/contact',
+}
 
 const SectionFallback = () => (
   <div className="min-h-[50vh] flex items-center justify-center bg-background">
@@ -27,79 +35,11 @@ const SectionFallback = () => (
   </div>
 )
 
-// The public portfolio. Fetches dynamic data here so SchemaMarkup
-// and child sections can both consume it.
-function Portfolio() {
-  const { projects, experience, education, skills, loading } = usePortfolioData()
-
-  // The landing view is the hero alone: every section below it stays hidden
-  // until "Read More" opens the portfolio.
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [pendingScroll, setPendingScroll] = useState(null)
-  const [isOpening, setIsOpening] = useState(false)
-  const [projectTab, setProjectTab] = useState('dev')
-  const openTimer = useRef(null)
-
-  useEffect(() => () => clearTimeout(openTimer.current), [])
-
-  // Sections un-hide in the same commit as isExpanded, so the scroll has to wait
-  // for that render; a display:none target has no position to scroll to. On a
-  // deep link the target also mounts lazily, so give it a moment to appear.
-  useEffect(() => {
-    if (!pendingScroll) return
-
-    let timer
-    let attempts = 0
-    const attempt = () => {
-      if (document.querySelector(pendingScroll) || attempts++ > 40) {
-        scrollToSection(pendingScroll)
-        setPendingScroll(null)
-        return
-      }
-      timer = setTimeout(attempt, 50)
-    }
-    attempt()
-
-    return () => clearTimeout(timer)
-  }, [pendingScroll])
-
-  // A deep link (…/#projects) should open the portfolio at that section instead
-  // of landing on a collapsed hero.
-  useEffect(() => {
-    const { hash } = window.location
-    if (!hash || hash === '#home') return
-    setIsExpanded(true)
-    setPendingScroll(hash)
-  }, [])
-
-  const expandTo = (href) => {
-    setIsExpanded(true)
-    setPendingScroll(href)
-  }
-
-  const openWithLoader = () => {
-    if (isOpening) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      expandTo('#about')
-      return
-    }
-    setIsOpening(true)
-    openTimer.current = setTimeout(() => {
-      expandTo('#about')
-      setIsOpening(false)
-    }, READ_MORE_DELAY)
-  }
-
-  const collapse = () => {
-    setIsExpanded(false)
-    window.scrollTo({ top: 0 })
-  }
-
-  // The hero is always mounted, so navigating home never needs to expand.
-  const handleNavigate = (href) => {
-    if (href === '#home') scrollToSection(href)
-    else expandTo(href)
-  }
+// Everything the public site shares: the notice, the JSON-LD, the admin lock,
+// and the loader. Portfolio data is fetched once here, so it is usually in
+// hand by the time someone presses Read More.
+function PublicLayout({ data }) {
+  const { projects, experience, loading } = data
 
   return (
     <>
@@ -109,53 +49,7 @@ function Portfolio() {
       {/* Inject JSON-LD once data is ready */}
       {!loading && <SchemaMarkup projects={projects} experience={experience} />}
 
-      <Head onNavigate={handleNavigate} />
-      <Home
-        onReadMore={() => (isExpanded ? collapse() : openWithLoader())}
-        isExpanded={isExpanded}
-      />
-
-      {/* Kept mounted so the markup stays crawlable and the nav's scroll-spy can
-          find its targets; the shell hides it until Read More asks for it. */}
-      <DashboardShell
-        hidden={!isExpanded}
-        projectTab={projectTab}
-        onSection={handleNavigate}
-        onProjectTab={(id) => {
-          setProjectTab(id)
-          // Let the new tab's content mount first: gsap clamps its target to the
-          // page height at the moment it starts, and a shorter tab ends too early.
-          setTimeout(() => scrollToSection('#projects'), 60)
-        }}
-        onHome={collapse}
-      >
-        <Suspense fallback={<SectionFallback />}>
-          <Exp
-            experienceData={experience}
-            educationData={education}
-            skillsData={skills}
-          />
-        </Suspense>
-        <Suspense fallback={<SectionFallback />}>
-          <Project
-            projectsData={projects}
-            activeTab={projectTab}
-            onTabChange={setProjectTab}
-          />
-        </Suspense>
-        <Suspense fallback={<SectionFallback />}>
-          <Contact />
-        </Suspense>
-        <Suspense fallback={<SectionFallback />}>
-          <Footer />
-        </Suspense>
-      </DashboardShell>
-
-      {isOpening && (
-        <Suspense fallback={null}>
-          <ReadMoreLoader />
-        </Suspense>
-      )}
+      <Outlet context={data} />
 
       {/* Ghost admin lock: bottom-right, invisible until hovered */}
       <AdminLock />
@@ -163,10 +57,97 @@ function Portfolio() {
   )
 }
 
+// The hero with the dashboard beneath it. Read More scrolls down to the
+// dashboard; a link straight to a page opens already scrolled to it.
+function DashboardLayout() {
+  const data = useOutletContext()
+  const { pathname, hash } = useLocation()
+  const dashboardRef = useRef(null)
+  const prevPath = useRef(null)
+  // The loader belongs to the dashboard, so it waits until the visitor is there.
+  const [entered, setEntered] = useState(pathname !== '/')
+
+  const dashboardTop = () =>
+    dashboardRef.current ? dashboardRef.current.getBoundingClientRect().top + window.scrollY : 0
+
+  // A new page starts at the top of the dashboard rather than inheriting the
+  // previous page's scroll position, and a link straight to a page opens there.
+  // Keyed on the path itself (not a first-render flag) so a repeat run of the
+  // same path, such as StrictMode's, does nothing.
+  useEffect(() => {
+    if (prevPath.current === pathname) return
+    const initial = prevPath.current === null
+    prevPath.current = pathname
+
+    if (initial && pathname === '/') return
+    window.scrollTo(0, dashboardTop())
+  }, [pathname])
+
+  const legacy = LEGACY_HASHES[hash]
+  if (pathname === '/' && legacy) return <Navigate to={legacy} replace />
+
+  const enter = () => {
+    setEntered(true)
+    scrollToTarget(dashboardRef.current)
+  }
+
+  return (
+    <>
+      <Home onReadMore={enter} />
+
+      <div ref={dashboardRef}>
+        <DashboardShell onHome={() => scrollToTarget(0)}>
+          <Suspense fallback={<SectionFallback />}>
+            <Outlet context={data} />
+          </Suspense>
+        </DashboardShell>
+      </div>
+
+      {/* Only while the portfolio data is actually being fetched. */}
+      {entered && data.loading && (
+        <Suspense fallback={null}>
+          <ReadMoreLoader />
+        </Suspense>
+      )}
+    </>
+  )
+}
+
+function ProjectsPage() {
+  const { projects } = useOutletContext()
+  const { tab } = useParams()
+  const navigate = useNavigate()
+
+  if (!PROJECT_TABS.includes(tab)) return <Navigate to="/projects/dev" replace />
+
+  return (
+    <Project
+      projectsData={projects}
+      activeTab={tab}
+      onTabChange={(id) => navigate(`/projects/${id}`)}
+    />
+  )
+}
+
 function App() {
+  const data = usePortfolioData()
+
   return (
     <Routes>
-      <Route path="/" element={<Portfolio />} />
+      <Route element={<PublicLayout data={data} />}>
+        <Route element={<DashboardLayout />}>
+          <Route index element={<Experience />} />
+          <Route path="/experience" element={<Experience />} />
+          <Route path="/skills" element={<Skills />} />
+          <Route path="/certifications" element={<Certifications />} />
+          <Route path="/education" element={<Education />} />
+          <Route path="/personal" element={<Personal />} />
+          <Route path="/projects" element={<Navigate to="/projects/dev" replace />} />
+          <Route path="/projects/:tab" element={<ProjectsPage />} />
+          <Route path="/contact" element={<Contact />} />
+        </Route>
+      </Route>
+
       <Route
         path="/admin"
         element={

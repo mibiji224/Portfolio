@@ -88,7 +88,7 @@ const App = () => {
     return (
         // Added min-h-screen and bg-background for the preview to look correct
         <div className="min-h-screen bg-transparent flex items-center justify-center">
-            <section className="w-full text-foreground py-16 sm:py-20 px-4 sm:px-6 lg:px-10 border-t border-border font-sans relative overflow-hidden" id="connect">
+            <section className="w-full text-foreground py-16 sm:py-20 px-4 sm:px-6 lg:px-10 font-sans relative overflow-hidden" id="connect">
 
                 <div className="max-w-[1400px] mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
@@ -96,12 +96,12 @@ const App = () => {
                         {/* --- LEFT COLUMN: Engaging Text & Contact Info --- */}
                         <div className="lg:col-span-7 space-y-8 sm:space-y-10">
                             <div>
-                                <SectionLabel index="03" className="mb-8">contact</SectionLabel>
+                                <SectionLabel index="07" className="mb-8">contact</SectionLabel>
 
-                                <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground leading-[1.1] mb-6">
+                                <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground leading-[1.1] mb-6">
                                     Let’s build something <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-primary-strong">extraordinary together.</span>
-                                </h2>
+                                </h1>
 
                                 <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-xl font-light">
                                     I'm currently available for freelance work and open to new opportunities.

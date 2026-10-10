@@ -1,94 +1,93 @@
 import { useEffect, useState } from 'react'
-import { ArrowUpLeft, Code, FolderGit2, Mail, Menu, Palette, PenTool, User, X } from 'lucide-react'
-import { useScrollSpy } from '@/hooks/useScrollSpy'
+import { NavLink, useLocation } from 'react-router-dom'
+import {
+  ArrowUpLeft, Award, Briefcase, Code, FolderGit2, GraduationCap, Mail, Menu, Palette, PenTool,
+  Sparkles, Wrench, X,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const ICON = 'w-4 h-4 shrink-0'
 
-const SECTION_LINKS = [
-  { name: 'About', href: '#about', icon: <User className={ICON} /> },
-  { name: 'Projects', href: '#projects', icon: <FolderGit2 className={ICON} /> },
-  { name: 'Contact', href: '#connect', icon: <Mail className={ICON} /> },
+const ABOUT_LINKS = [
+  { name: 'Experience', to: '/experience', icon: <Briefcase className={ICON} /> },
+  { name: 'Skills', to: '/skills', icon: <Wrench className={ICON} /> },
+  { name: 'Certifications', to: '/certifications', icon: <Award className={ICON} /> },
+  { name: 'Education', to: '/education', icon: <GraduationCap className={ICON} /> },
+  { name: 'Hobbies & Personality', to: '/personal', icon: <Sparkles className={ICON} /> },
 ]
 
-const PROJECT_TABS = [
-  { id: 'dev', label: 'Development', icon: <Code className={ICON} /> },
-  { id: 'art', label: 'Creative Arts', icon: <Palette className={ICON} /> },
-  { id: 'graphics', label: 'Graphics', icon: <PenTool className={ICON} /> },
+const PROJECT_LINKS = [
+  { name: 'Development', to: '/projects/dev', icon: <Code className={ICON} /> },
+  { name: 'Creative Arts', to: '/projects/art', icon: <Palette className={ICON} /> },
+  { name: 'Graphics', to: '/projects/graphics', icon: <PenTool className={ICON} /> },
 ]
 
-const SECTION_HREFS = SECTION_LINKS.map((l) => l.href)
+const CONTACT_LINK = { name: 'Contact', to: '/contact', icon: <Mail className={ICON} /> }
 
-const itemClass = (active) =>
+const itemClass = (isActive) =>
   cn(
     'group relative flex w-full items-center gap-3 rounded-md px-3 py-2 text-left font-mono text-[13px]',
     'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-    active
+    isActive
       ? 'bg-secondary text-foreground'
       : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
   )
 
-// Active marker: a short bar on the item's left edge, in the brand pink.
 const Marker = () => (
   <span className="absolute -left-px top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-primary-strong" aria-hidden="true" />
 )
 
+const Item = ({ link }) => {
+  // The dashboard's index route shows Experience, so it counts as that page.
+  const { pathname } = useLocation()
+  const atIndex = link.to === '/experience' && pathname === '/'
+
+  return (
+    <NavLink to={link.to} className={({ isActive }) => itemClass(isActive || atIndex)}>
+      {({ isActive }) => (
+        <>
+          {(isActive || atIndex) && <Marker />}
+          {link.icon}
+          {link.name}
+        </>
+      )}
+    </NavLink>
+  )
+}
+
+const GroupLabel = ({ children }) => (
+  <p className="px-3 pb-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/80">{children}</p>
+)
+
 const Divider = () => <hr className="my-4 border-t border-border" />
 
-const SidebarContent = ({ activeSection, projectTab, onSection, onProjectTab, onHome }) => (
+const SidebarContent = ({ onHome }) => (
   <div className="flex h-full flex-col px-5 py-6">
     <button
       type="button"
       onClick={onHome}
-      className="text-left text-lg font-medium tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+      className="rounded text-left text-lg font-medium tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       Desiree Soronio
     </button>
     <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Portfolio</p>
 
-    <nav aria-label="Sections" className="mt-8 flex flex-col gap-0.5">
-      {SECTION_LINKS.map(({ name, href, icon }) => {
-        const active = activeSection === href
-        return (
-          <a
-            key={href}
-            href={href}
-            onClick={(e) => {
-              if (e.metaKey || e.ctrlKey) return
-              e.preventDefault()
-              onSection(href)
-            }}
-            aria-current={active ? 'page' : undefined}
-            className={itemClass(active)}
-          >
-            {active && <Marker />}
-            {icon}
-            {name}
-          </a>
-        )
-      })}
+    <nav aria-label="About" className="mt-8 flex flex-col gap-0.5">
+      <GroupLabel>About</GroupLabel>
+      {ABOUT_LINKS.map((link) => <Item key={link.to} link={link} />)}
     </nav>
 
     <Divider />
 
-    <p className="px-3 pb-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/80">Projects</p>
-    <nav aria-label="Project categories" className="flex flex-col gap-0.5">
-      {PROJECT_TABS.map(({ id, label, icon }) => {
-        const active = activeSection === '#projects' && projectTab === id
-        return (
-          <button
-            key={id}
-            type="button"
-            onClick={() => onProjectTab(id)}
-            aria-pressed={active}
-            className={itemClass(active)}
-          >
-            {active && <Marker />}
-            {icon}
-            {label}
-          </button>
-        )
-      })}
+    <nav aria-label="Projects" className="flex flex-col gap-0.5">
+      <GroupLabel>Projects</GroupLabel>
+      {PROJECT_LINKS.map((link) => <Item key={link.to} link={link} />)}
+    </nav>
+
+    <Divider />
+
+    <nav aria-label="Contact" className="flex flex-col gap-0.5">
+      <Item link={CONTACT_LINK} />
     </nav>
 
     <div className="mt-auto pt-6">
@@ -102,10 +101,20 @@ const SidebarContent = ({ activeSection, projectTab, onSection, onProjectTab, on
 )
 
 // Sticky left sidebar on desktop; a sticky top bar plus drawer below `lg`.
-// It sits in normal flow after the hero, so it appears as the hero scrolls off.
-const DashboardShell = ({ hidden, projectTab, onSection, onProjectTab, onHome, children }) => {
-  const [activeSection, setActiveSection] = useScrollSpy(SECTION_HREFS, SECTION_HREFS[0])
+// `onHome` scrolls back up to the hero; it is a scroll, not a navigation.
+const DashboardShell = ({ onHome, children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const { pathname } = useLocation()
+
+  // Any navigation closes the drawer.
+  useEffect(() => {
+    setDrawerOpen(false)
+  }, [pathname])
+
+  const goHome = () => {
+    setDrawerOpen(false)
+    onHome?.()
+  }
 
   useEffect(() => {
     if (!drawerOpen) return
@@ -114,29 +123,10 @@ const DashboardShell = ({ hidden, projectTab, onSection, onProjectTab, onHome, c
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen])
 
-  const handlers = {
-    activeSection,
-    projectTab,
-    onSection: (href) => {
-      setActiveSection(href)
-      setDrawerOpen(false)
-      onSection(href)
-    },
-    onProjectTab: (id) => {
-      setActiveSection('#projects')
-      setDrawerOpen(false)
-      onProjectTab(id)
-    },
-    onHome: () => {
-      setDrawerOpen(false)
-      onHome()
-    },
-  }
-
   return (
-    <div id="portfolio-sections" className={cn('bg-background', hidden ? 'hidden' : 'lg:flex')}>
+    <div className="bg-background min-h-screen lg:flex">
       <aside className="hidden lg:block sticky top-0 h-screen w-64 shrink-0 self-start border-r border-border bg-background overflow-y-auto">
-        <SidebarContent {...handlers} />
+        <SidebarContent onHome={goHome} />
       </aside>
 
       <div className="min-w-0 flex-1">
@@ -172,7 +162,7 @@ const DashboardShell = ({ hidden, projectTab, onSection, onProjectTab, onHome, c
             >
               <X className="h-4 w-4" />
             </button>
-            <SidebarContent {...handlers} />
+            <SidebarContent onHome={goHome} />
           </div>
         </div>
       )}
