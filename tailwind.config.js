@@ -8,7 +8,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        // One typeface everywhere: `font-mono` keeps its spaced, uppercase
+        // label styling but is set in Poppins too.
+        sans: ['Poppins', 'sans-serif'],
+        mono: ['Poppins', 'sans-serif'],
       },
       // Every colour resolves through a CSS variable, so a component written
       // once follows whichever theme is on <html>. See src/index.css.

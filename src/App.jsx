@@ -117,9 +117,19 @@ function DashboardLayout() {
   // A link straight to a page opens already scrolled to its section.
   useEffect(() => {
     if (pathname === '/') return
-    const el = getEl(idForPath(pathname))
-    if (!el) return
-    window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - topOffset())
+    // The pages are lazy chunks, so wait for the target to mount.
+    let frame = 0
+    let tries = 0
+    const go = () => {
+      const el = getEl(idForPath(pathname))
+      if (el) {
+        window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - topOffset())
+      } else if (tries++ < 300) {
+        frame = requestAnimationFrame(go)
+      }
+    }
+    go()
+    return () => cancelAnimationFrame(frame)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

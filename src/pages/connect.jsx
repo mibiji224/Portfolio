@@ -26,7 +26,7 @@ const TikTokIcon = (props) => (
 const socialLinks = [
     { name: 'Github', Icon: Github, href: 'https://github.com/mibiji224' },
     { name: 'LinkedIn', Icon: Linkedin, href: 'https://www.linkedin.com/in/desireesoronio/' },
-    { name: 'Instagram', Icon: Instagram, href: 'https://instagram.com/mibiji224' },
+    { name: 'Instagram', Icon: Instagram, href: 'https://www.instagram.com/mizukiraki/' },
     { name: 'Tiktok', Icon: TikTokIcon, href: 'https://tiktok.com/hexagrine' },
 ];
 
