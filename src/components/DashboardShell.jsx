@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
 import {
   ArrowUpLeft, Award, Briefcase, Code, FolderGit2, GraduationCap, Mail, Menu, Palette, PenTool,
   Sparkles, Wrench, X,
@@ -13,7 +12,7 @@ const ABOUT_LINKS = [
   { name: 'Skills', to: '/skills', icon: <Wrench className={ICON} /> },
   { name: 'Certifications', to: '/certifications', icon: <Award className={ICON} /> },
   { name: 'Education', to: '/education', icon: <GraduationCap className={ICON} /> },
-  { name: 'Hobbies & Personality', to: '/personal', icon: <Sparkles className={ICON} /> },
+  { name: 'More About Me', to: '/personal', icon: <Sparkles className={ICON} /> },
 ]
 
 const PROJECT_LINKS = [
@@ -37,23 +36,23 @@ const Marker = () => (
   <span className="absolute -left-px top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-primary-strong" aria-hidden="true" />
 )
 
-const Item = ({ link }) => {
-  // The dashboard's index route shows Experience, so it counts as that page.
-  const { pathname } = useLocation()
-  const atIndex = link.to === '/experience' && pathname === '/'
-
-  return (
-    <NavLink to={link.to} className={({ isActive }) => itemClass(isActive || atIndex)}>
-      {({ isActive }) => (
-        <>
-          {(isActive || atIndex) && <Marker />}
-          {link.icon}
-          {link.name}
-        </>
-      )}
-    </NavLink>
-  )
-}
+// `active` is decided by the page (scroll position), not the URL, because
+// every page now lives in one continuous scroll.
+const Item = ({ link, active, onSelect }) => (
+  <a
+    href={link.to}
+    onClick={(e) => {
+      e.preventDefault()
+      onSelect(link.to)
+    }}
+    aria-current={active ? 'location' : undefined}
+    className={itemClass(active)}
+  >
+    {active && <Marker />}
+    {link.icon}
+    {link.name}
+  </a>
+)
 
 const GroupLabel = ({ children }) => (
   <p className="px-3 pb-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/80">{children}</p>
@@ -61,7 +60,7 @@ const GroupLabel = ({ children }) => (
 
 const Divider = () => <hr className="my-4 border-t border-border" />
 
-const SidebarContent = ({ onHome }) => (
+const SidebarContent = ({ onHome, isActive, onSelect }) => (
   <div className="flex h-full flex-col px-5 py-6">
     <button
       type="button"
@@ -74,20 +73,20 @@ const SidebarContent = ({ onHome }) => (
 
     <nav aria-label="About" className="mt-8 flex flex-col gap-0.5">
       <GroupLabel>About</GroupLabel>
-      {ABOUT_LINKS.map((link) => <Item key={link.to} link={link} />)}
+      {ABOUT_LINKS.map((link) => <Item key={link.to} link={link} active={isActive(link.to)} onSelect={onSelect} />)}
     </nav>
 
     <Divider />
 
     <nav aria-label="Projects" className="flex flex-col gap-0.5">
       <GroupLabel>Projects</GroupLabel>
-      {PROJECT_LINKS.map((link) => <Item key={link.to} link={link} />)}
+      {PROJECT_LINKS.map((link) => <Item key={link.to} link={link} active={isActive(link.to)} onSelect={onSelect} />)}
     </nav>
 
     <Divider />
 
     <nav aria-label="Contact" className="flex flex-col gap-0.5">
-      <Item link={CONTACT_LINK} />
+      <Item link={CONTACT_LINK} active={isActive(CONTACT_LINK.to)} onSelect={onSelect} />
     </nav>
 
     <div className="mt-auto pt-6">
@@ -102,14 +101,13 @@ const SidebarContent = ({ onHome }) => (
 
 // Sticky left sidebar on desktop; a sticky top bar plus drawer below `lg`.
 // `onHome` scrolls back up to the hero; it is a scroll, not a navigation.
-const DashboardShell = ({ onHome, children }) => {
+const DashboardShell = ({ onHome, isActive, onSelect, children }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const { pathname } = useLocation()
 
-  // Any navigation closes the drawer.
-  useEffect(() => {
+  const select = (to) => {
     setDrawerOpen(false)
-  }, [pathname])
+    onSelect(to)
+  }
 
   const goHome = () => {
     setDrawerOpen(false)
@@ -124,9 +122,9 @@ const DashboardShell = ({ onHome, children }) => {
   }, [drawerOpen])
 
   return (
-    <div className="bg-background min-h-screen lg:flex">
-      <aside className="hidden lg:block sticky top-0 h-screen w-64 shrink-0 self-start border-r border-border bg-background overflow-y-auto">
-        <SidebarContent onHome={goHome} />
+    <div className="min-h-screen lg:flex">
+      <aside className="hidden lg:block sticky top-0 h-screen w-64 shrink-0 self-start border-r border-border overflow-y-auto">
+        <SidebarContent onHome={goHome} isActive={isActive} onSelect={select} />
       </aside>
 
       <div className="min-w-0 flex-1">
@@ -162,7 +160,7 @@ const DashboardShell = ({ onHome, children }) => {
             >
               <X className="h-4 w-4" />
             </button>
-            <SidebarContent onHome={goHome} />
+            <SidebarContent onHome={goHome} isActive={isActive} onSelect={select} />
           </div>
         </div>
       )}

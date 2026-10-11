@@ -1,11 +1,12 @@
 import { ArrowRight, Github, Instagram, Linkedin, Mail, MapPin } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SectionLabel from '@/components/SectionLabel'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useMagnetic } from '@/hooks/useMagnetic'
 
 // Custom TikTok icon since Lucide doesn't include it by default.
 const TikTokIcon = (props) => (
@@ -17,7 +18,7 @@ const TikTokIcon = (props) => (
         stroke="none"
         className={props.className || 'w-4 h-4'}
     >
-        <path d="M12.553 2.45c-.247-.07-.478.113-.424.36l.28 1.28c.045.205-.098.397-.306.452l-2.073.552a.49.49 0 0 1-.58-.58L9.93 2.155c.05-.23-.11-.46-.353-.518l-1.63-.44c-.24-.06-.49.12-.44.364l.28 1.28c.05.23-.11.46-.35.52l-2.07.55c-.24.06-.49-.12-.44-.36l.28-1.28c.05-.23-.11-.46-.35-.52l-1.63-.44c-.24-.06-.49.12-.44.36L4.23 6.94c0 3.86 3.14 7 7 7h.03c1.78 0 3.32-.7 4.54-1.85 1.22-1.15 1.93-2.65 1.93-4.32V6.26c0-.24-.19-.44-.43-.44h-2.12c-.24 0-.44.19-.44.43v5.1c0 1.54-1.25 2.79-2.79 2.79H12c-1.54 0-2.79-1.25-2.79-2.79V5.04c0-.24.19-.44.43-.44h2.12c.24 0 .44.19.44.43v2.82c0 .24.19.44.43.44h2.12c.24 0 .43-.19.43-.43V4.92c0-1.54-1.25-2.79-2.79-2.79z" />
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
     </svg>
 );
 
@@ -30,6 +31,9 @@ const socialLinks = [
 ];
 
 const App = () => {
+    const submitRef = useRef(null);
+    useMagnetic(submitRef);
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -217,10 +221,12 @@ const App = () => {
 
                                     {/* Submit Button */}
                                     <Button
+                                        ref={submitRef}
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full bg-gradient-to-r from-primary to-primary-deep text-primary-foreground text-sm font-bold py-4 h-auto rounded-xl hover:scale-[1.02] mt-2"
+                                        className="w-full bg-gradient-to-r from-primary to-primary-deep text-primary-foreground text-sm font-bold py-4 h-auto rounded-xl mt-2"
                                     >
+                                        <span className="inline-flex items-center justify-center gap-2">
                                         {isSubmitting ? (
                                             <>
                                                 <svg className="animate-spin h-5 w-5 text-primary-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -235,6 +241,7 @@ const App = () => {
                                                 <ArrowRight className="w-4 h-4" />
                                             </>
                                         )}
+                                        </span>
                                     </Button>
                                 </form>
                             </Card>

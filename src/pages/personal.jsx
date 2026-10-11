@@ -20,7 +20,7 @@ const Panel = ({ icon, title, items, offset = 0 }) => (
 )
 
 const Personal = () => (
-    <PageShell index="05" label="hobbies & personality" title="Hobbies & Personality">
+    <PageShell index="05" label="more about me" title="More About Me">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Panel icon={<Coffee className="w-4 h-4" />} title="Hobbies" items={HOBBIES} />
             <Panel icon={<Sparkles className="w-4 h-4" />} title="Personality" items={TRAITS} offset={2} />

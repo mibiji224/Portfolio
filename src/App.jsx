@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Navigate, Outlet, Route, Routes, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useLocation, useOutletContext } from 'react-router-dom'
 import Home from './pages/home.jsx'
 import AdminLock from './components/AdminLock.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -57,31 +57,105 @@ function PublicLayout({ data }) {
   )
 }
 
+// Every page, in sidebar order, as one continuous scroll. `render` entries
+// are the blocks on the page; `NAV` entries are what the sidebar points at
+// (Projects is one block holding three subsections, each with its own id).
+const SECTIONS = [
+  { id: 'experience', Component: Experience },
+  { id: 'skills', Component: Skills },
+  { id: 'certifications', Component: Certifications },
+  { id: 'education', Component: Education },
+  { id: 'personal', Component: Personal },
+  { id: 'projects', Component: null },
+  { id: 'contact', Component: Contact },
+]
+
+const NAV = [
+  { id: 'experience', path: '/experience' },
+  { id: 'skills', path: '/skills' },
+  { id: 'certifications', path: '/certifications' },
+  { id: 'education', path: '/education' },
+  { id: 'personal', path: '/personal' },
+  { id: 'projects-dev', path: '/projects/dev' },
+  { id: 'projects-art', path: '/projects/art' },
+  { id: 'projects-graphics', path: '/projects/graphics' },
+  { id: 'contact', path: '/contact' },
+]
+
+const idForPath = (pathname) => {
+  if (pathname.startsWith('/projects')) {
+    const tab = pathname.split('/')[2]
+    return PROJECT_TABS.includes(tab) ? `projects-${tab}` : 'projects-dev'
+  }
+  return NAV.find((n) => n.path === pathname)?.id ?? 'experience'
+}
+
+const getEl = (id) => document.getElementById(id)
+
+// Clear of the sticky top bar that replaces the sidebar below `lg`.
+const topOffset = () => (window.innerWidth < 1024 ? 56 : 0)
+
 // The hero with the dashboard beneath it. Read More scrolls down to the
 // dashboard; a link straight to a page opens already scrolled to it.
 function DashboardLayout() {
   const data = useOutletContext()
   const { pathname, hash } = useLocation()
   const dashboardRef = useRef(null)
-  const prevPath = useRef(null)
   // The loader belongs to the dashboard, so it waits until the visitor is there.
   const [entered, setEntered] = useState(pathname !== '/')
+  const [activeId, setActiveId] = useState(idForPath(pathname))
 
   const dashboardTop = () =>
     dashboardRef.current ? dashboardRef.current.getBoundingClientRect().top + window.scrollY : 0
 
-  // A new page starts at the top of the dashboard rather than inheriting the
-  // previous page's scroll position, and a link straight to a page opens there.
-  // Keyed on the path itself (not a first-render flag) so a repeat run of the
-  // same path, such as StrictMode's, does nothing.
-  useEffect(() => {
-    if (prevPath.current === pathname) return
-    const initial = prevPath.current === null
-    prevPath.current = pathname
+  // Keep the address bar honest without re-routing (a router navigation
+  // would be treated as a request to scroll somewhere).
+  const syncUrl = (path) => {
+    if (window.location.pathname !== path) window.history.replaceState(null, '', path)
+  }
 
-    if (initial && pathname === '/') return
-    window.scrollTo(0, dashboardTop())
-  }, [pathname])
+  // A link straight to a page opens already scrolled to its section.
+  useEffect(() => {
+    if (pathname === '/') return
+    const el = getEl(idForPath(pathname))
+    if (!el) return
+    window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - topOffset())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Scroll-spy: the active entry is the last one whose top has passed
+  // roughly a third of the way down the viewport.
+  useEffect(() => {
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const line = window.innerHeight * 0.35
+      let current = NAV[0].id
+      for (const { id } of NAV) {
+        const el = getEl(id)
+        if (el && el.getBoundingClientRect().top <= line) current = id
+      }
+      setActiveId(current)
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    update()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  // Keep the address bar in step with the section being read.
+  useEffect(() => {
+    if (window.scrollY < dashboardTop() - 1) return
+    syncUrl(NAV.find((n) => n.id === activeId).path)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId])
 
   const legacy = LEGACY_HASHES[hash]
   if (pathname === '/' && legacy) return <Navigate to={legacy} replace />
@@ -91,14 +165,26 @@ function DashboardLayout() {
     scrollToTarget(dashboardRef.current)
   }
 
+  const select = (to) => scrollToTarget(getEl(idForPath(to)), { offsetY: -topOffset() })
+
+  const isActive = (to) => idForPath(to) === activeId
+
   return (
     <>
       <Home onReadMore={enter} />
 
       <div ref={dashboardRef}>
-        <DashboardShell onHome={() => scrollToTarget(0)}>
+        <DashboardShell onHome={() => scrollToTarget(0)} isActive={isActive} onSelect={select}>
           <Suspense fallback={<SectionFallback />}>
-            <Outlet context={data} />
+            {SECTIONS.map(({ id, Component }, i) => (
+              <div
+                key={id}
+                id={id === 'projects' ? undefined : id}
+                className={i > 0 ? 'border-t border-border' : undefined}
+              >
+                {Component ? <Component /> : <Project projectsData={data.projects} />}
+              </div>
+            ))}
           </Suspense>
         </DashboardShell>
       </div>
@@ -113,22 +199,6 @@ function DashboardLayout() {
   )
 }
 
-function ProjectsPage() {
-  const { projects } = useOutletContext()
-  const { tab } = useParams()
-  const navigate = useNavigate()
-
-  if (!PROJECT_TABS.includes(tab)) return <Navigate to="/projects/dev" replace />
-
-  return (
-    <Project
-      projectsData={projects}
-      activeTab={tab}
-      onTabChange={(id) => navigate(`/projects/${id}`)}
-    />
-  )
-}
-
 function App() {
   const data = usePortfolioData()
 
@@ -136,15 +206,15 @@ function App() {
     <Routes>
       <Route element={<PublicLayout data={data} />}>
         <Route element={<DashboardLayout />}>
-          <Route index element={<Experience />} />
-          <Route path="/experience" element={<Experience />} />
-          <Route path="/skills" element={<Skills />} />
-          <Route path="/certifications" element={<Certifications />} />
-          <Route path="/education" element={<Education />} />
-          <Route path="/personal" element={<Personal />} />
-          <Route path="/projects" element={<Navigate to="/projects/dev" replace />} />
-          <Route path="/projects/:tab" element={<ProjectsPage />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route index element={null} />
+          <Route path="/experience" element={null} />
+          <Route path="/skills" element={null} />
+          <Route path="/certifications" element={null} />
+          <Route path="/education" element={null} />
+          <Route path="/personal" element={null} />
+          <Route path="/projects" element={null} />
+          <Route path="/projects/:tab" element={null} />
+          <Route path="/contact" element={null} />
         </Route>
       </Route>
 

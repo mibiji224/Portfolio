@@ -6,7 +6,6 @@ import {
   PenTool, X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useLazyLoad } from '../hooks/useLazyLoad';
 import SectionLabel from '@/components/SectionLabel'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -15,7 +14,6 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 // ==========================================
 // 1. CUSTOM COMPONENT: SMART CAROUSEL LOADER
@@ -126,67 +124,90 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
 };
 
 // ==========================================
-// 1b. LAZY MASONRY ITEM - only loads image when scrolled into view
+// 1b. HORIZONTAL RAIL - every subsection is one row you move through sideways
 // ==========================================
-const LazyMasonryItem = ({ item, activeTab, onClick }) => {
-  const [ref, isVisible] = useLazyLoad({ rootMargin: '300px' });
+const Rail = ({ children }) => {
+  const ref = useRef(null);
+  const [edge, setEdge] = useState({ start: true, end: false });
+
+  const sync = () => {
+    const el = ref.current;
+    if (!el) return;
+    setEdge({
+      start: el.scrollLeft <= 4,
+      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4,
+    });
+  };
+
+  useEffect(() => {
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
+  }, []);
+
+  const move = (dir) =>
+    ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
+
+  const arrow = 'absolute top-1/2 z-20 -translate-y-1/2 h-10 w-10 rounded-full border border-primary bg-background text-primary-strong shadow-lift hover:bg-primary-soft disabled:opacity-0 disabled:pointer-events-none';
+
   return (
-    <div
-      ref={ref}
-      onClick={onClick}
-      className="group relative overflow-hidden rounded-xl bg-card border border-border cursor-pointer"
-    >
-      {isVisible ? (
-        <ImageWithLoader
-          src={item.image}
-          alt={item.title}
-          className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-          containerClassName="w-full h-full"
-        />
-      ) : (
-        <div className="w-full aspect-[3/4] bg-secondary" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 z-20 pointer-events-none">
-        <span className="text-primary text-[10px] font-bold uppercase tracking-wider mb-1">{item.category}</span>
-        <h3 className="text-sm font-bold text-white mb-1 leading-tight">{item.title}</h3>
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono border-t border-border pt-2 mt-1">
-          {activeTab === 'art' ? <ImageIcon className="w-3 h-3" /> : <PenTool className="w-3 h-3" />}
-          {item.tools}
-        </div>
+    <div className="relative">
+      <Button variant="ghost" size="icon" aria-label="Scroll left" disabled={edge.start} onClick={() => move(-1)} className={`${arrow} left-2`}>
+        <ChevronLeft />
+      </Button>
+      <Button variant="ghost" size="icon" aria-label="Scroll right" disabled={edge.end} onClick={() => move(1)} className={`${arrow} right-2`}>
+        <ChevronRight />
+      </Button>
+
+      <div
+        ref={ref}
+        onScroll={sync}
+        className="flex gap-4 overflow-x-auto snap-x snap-proximity scrollbar-hide pb-2"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {children}
       </div>
     </div>
+  );
+};
+
+// Art and graphics are image only: no captions, just the work. Opens the lightbox.
+const GalleryImage = ({ item, onClick }) => {
+  const src = Array.isArray(item.image) ? item.image[0] : item.image;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={item.title}
+      className="shrink-0 snap-start min-w-40 h-60 sm:h-72 overflow-hidden rounded-xl border border-border bg-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <img src={src} alt={item.title} loading="lazy" decoding="async" className="h-full w-auto block" />
+    </button>
   );
 };
 
 // ==========================================
 // 2. MAIN COMPONENT
 // ==========================================
-const TAB_ICON = "w-4 h-4 shrink-0";
-
-const PROJECT_TABS = [
-  { id: 'dev', label: 'Development', icon: <Code className={TAB_ICON} /> },
-  { id: 'art', label: 'Creative Arts', icon: <Palette className={TAB_ICON} /> },
-  { id: 'graphics', label: 'Graphics', icon: <PenTool className={TAB_ICON} /> },
+const SUBSECTIONS = [
+  { id: 'dev', title: 'Development', icon: <Code className="w-4 h-4 shrink-0" /> },
+  { id: 'art', title: 'Creative Arts', icon: <Palette className="w-4 h-4 shrink-0" /> },
+  { id: 'graphics', title: 'Graphics', icon: <PenTool className="w-4 h-4 shrink-0" /> },
 ];
 
-// Radix supplies the roving focus and arrow-key navigation; the two lists
-// below are the same triggers rendered in the desktop header and the mobile
-// docked bar.
-const TabTriggers = ({ shape }) =>
-  PROJECT_TABS.map(({ id, label, icon }) => (
-    <TabsTrigger key={id} value={id} className={`${shape} px-2 sm:px-4 py-2.5 text-[11px] sm:text-sm`}>
-      {icon}
-      <span>{label}</span>
-    </TabsTrigger>
-  ));
+// One continuous page: the three subsections stack, and the sidebar scrolls
+// between them (each has the id `projects-<id>`).
+const Subsection = ({ id, title, icon, children }) => (
+  <div id={`projects-${id}`} className="mt-12 first:mt-0">
+    <h2 className="mb-5 flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
+      <span className="text-primary-strong">{icon}</span>
+      {title}
+    </h2>
+    {children}
+  </div>
+);
 
-const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
-  // The dashboard sidebar owns the tab on desktop; standalone use still works.
-  const [localTab, setLocalTab] = useState('dev');
-  const activeTab = controlledTab ?? localTab;
-  const setActiveTab = onTabChange ?? setLocalTab;
-  const sectionRef = useRef(null);
-  const [isSectionInView, setIsSectionInView] = useState(false);
+const Projects = ({ projectsData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isFullView, setIsFullView] = useState(false);
   
@@ -194,44 +215,6 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
   const [currentDevPage, setCurrentDevPage] = useState(1);
   const [direction, setDirection] = useState('right');
   
-  // MASONRY STATE
-  const [numCols, setNumCols] = useState(2);
-
-  // --- RESIZE HANDLER FOR MASONRY ---
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) setNumCols(5);
-      else if (width >= 768) setNumCols(3);
-      else setNumCols(2);
-    };
-    handleResize(); 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // The mobile tab bar floats over the viewport, so it should only be present
-  // while the projects section is the thing being read.
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => setIsSectionInView(entry.isIntersecting),
-      { rootMargin: '-8% 0px -8% 0px' }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const getDistributedColumns = (items) => {
-    const columns = Array.from({ length: numCols }, () => []);
-    items.forEach((item, index) => {
-      columns[index % numCols].push(item);
-    });
-    return columns;
-  };
-
   const itemsPerPage = 6;
 
   useEffect(() => {
@@ -298,7 +281,7 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
       description: "A top-secret project currently under wraps.",
       tags: ["Confidential"],
       links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
+      image: ["https://placehold.co/600x400/FFDBE0/CE3D51?text=Top+Secret"]
     },
     {
       id: 6,
@@ -306,7 +289,7 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
       description: "A top-secret project currently under wraps.",
       tags: ["Confidential"],
       links: { demo: "#", github: "#" },
-      image: ["https://placehold.co/600x400/1a1a1a/db0a0a?text=Top+Secret"]
+      image: ["https://placehold.co/600x400/FFDBE0/CE3D51?text=Top+Secret"]
     }
   ]
 
@@ -372,7 +355,7 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
   };
 
   return (
-    <section ref={sectionRef} className="bg-background text-foreground pt-16 pb-28 md:pb-16 px-4 sm:px-6 lg:px-10 font-sans" id="projects">
+    <section className="text-foreground py-10 lg:py-14 px-4 sm:px-6 lg:px-10 font-sans">
 
       {/* Styles for Animations */}
       <style>{`
@@ -399,7 +382,6 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
       <div className="max-w-[1600px] mx-auto">
 
         {/* --- HEADER --- */}
@@ -408,30 +390,18 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
             <SectionLabel index="06" className="mb-6">projects</SectionLabel>
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Projects</h1>
           </div>
-
-          <TabsList className="hidden md:flex lg:hidden rounded-xl w-auto">
-            <TabTriggers shape="rounded-lg" />
-          </TabsList>
         </div>
 
         {/* --- DEVELOPMENT TAB --- */}
-        <TabsContent value="dev">
-          <div className="overflow-hidden">
-            {/* The Grid of Projects */}
-            <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-            >
+        <Subsection {...SUBSECTIONS[0]}>
+          <Rail>
               {devProjects.map((project) => (
                 <div
                     key={project.id}
                     onClick={() => setSelectedImage(project)}
-                    className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                    className="group w-72 sm:w-80 shrink-0 snap-start self-stretch bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer"
                 >
                   <div className="h-36 overflow-hidden relative">
-                    {/* Sits over artwork, so it stays dark rather than fading to the
-                        card colour, which washed the image out instead of seating it. */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/85 to-transparent z-10 opacity-60 pointer-events-none"></div>
-
                     <ImageWithLoader
                       src={project.image}
                       alt={project.title}
@@ -439,8 +409,8 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
 
-                    <div className="absolute top-3 right-3 z-20 p-1.5 bg-neutral-900/50 backdrop-blur-md rounded-lg border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Maximize2 className="w-3.5 h-3.5 text-primary" />
+                    <div className="absolute top-3 right-3 z-20 p-1.5 bg-background/80 backdrop-blur-md rounded-lg border border-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Maximize2 className="w-3.5 h-3.5 text-primary-strong" />
                     </div>
                   </div>
 
@@ -458,49 +428,22 @@ const Projects = ({ projectsData, activeTab: controlledTab, onTabChange }) => {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </TabsContent>
+          </Rail>
+        </Subsection>
 
         {/* --- ARTS & GRAPHICS TABS (Masonry) --- */}
         {[['art', artProjects], ['graphics', graphicProjects]].map(([tabId, items]) => (
-          <TabsContent key={tabId} value={tabId}>
-            <div className="h-[70vh] lg:h-[800px] overflow-y-auto modern-scrollbar pr-1 sm:pr-2" style={{ overscrollBehavior: 'contain' }}>
-              <div className="flex gap-3 sm:gap-4 items-start animate-in fade-in slide-in-from-bottom-4 duration-500 pb-8">
-                {getDistributedColumns(items).map((columnItems, colIndex) => (
-                  <div key={colIndex} className="flex-1 min-w-0 flex flex-col gap-3 sm:gap-4">
-                    {columnItems.map((item, index) => (
-                      <LazyMasonryItem key={index} item={item} activeTab={tabId} onClick={() => setSelectedImage(item)} />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
+          <Subsection key={tabId} {...SUBSECTIONS.find((x) => x.id === tabId)}>
+            <Rail>
+              {items.map((item, index) => (
+                <GalleryImage key={index} item={item} onClick={() => setSelectedImage(item)} />
+              ))}
+            </Rail>
+          </Subsection>
         ))}
 
       </div>
 
-      {/* --- MOBILE FLOATING TAB BAR --- */}
-      {/* Docked to the bottom so it never fights the floating nav pill up top.
-          Hidden behind the lightbox, which owns the screen while it is open. */}
-      <div
-        className={`md:hidden fixed inset-x-0 bottom-0 z-40 flex justify-center px-4
-          pb-[max(1rem,env(safe-area-inset-bottom))] pointer-events-none
-          transition-[transform,opacity] duration-300 ease-out ${
-            isSectionInView && !selectedImage
-              ? 'translate-y-0 opacity-100'
-              : 'translate-y-[140%] opacity-0'
-          }`}
-      >
-        <TabsList
-          className="pointer-events-auto grid grid-cols-3 gap-1 w-full max-w-sm rounded-full
-            bg-popover/90 backdrop-blur-md backdrop-saturate-150 shadow-nav"
-        >
-          <TabTriggers shape="rounded-full" />
-        </TabsList>
-      </div>
-      </Tabs>
 
       {/* LIGHTBOX MODAL */}
       <Dialog

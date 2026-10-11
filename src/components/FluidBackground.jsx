@@ -741,9 +741,8 @@ const FluidBackground = () => {
       rafId = requestAnimationFrame(update);
     };
 
-    // The canvas is fixed, so "off screen" means the hero has scrolled away:
-    // stop simulating while the dashboard covers it, resume on the way back.
-    const shouldRun = () => !document.hidden && window.scrollY < window.innerHeight
+    // The canvas is fixed behind the whole page, so it only pauses when the tab is hidden.
+    const shouldRun = () => !document.hidden
     const syncRunning = () => {
       if (shouldRun()) {
         if (rafId == null) {
