@@ -20,7 +20,11 @@ export function AuthProvider({ children }) {
     // A Google account that isn't the admin is signed straight back out.
     const accept = (next) => {
       if (next && !isAdminSession(next)) {
-        setAuthError('That Google account is not authorized for admin access.')
+        setAuthError(
+          ADMIN_EMAIL
+            ? `${next.user?.email || 'That Google account'} is not authorized for admin access.`
+            : 'Admin email is not configured (VITE_ADMIN_EMAIL is empty). Set it and restart the dev server.'
+        )
         supabase.auth.signOut()
         setSession(null)
         return
