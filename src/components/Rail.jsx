@@ -22,6 +22,49 @@ const Rail = ({ children }) => {
     return () => window.removeEventListener('resize', sync);
   }, []);
 
+  // Axis lock for trackpad and wheel gestures. A sideways swipe always carries a
+  // little vertical movement, which would otherwise scroll the page while the
+  // row moves. So a gesture that starts sideways is locked to the row: the page
+  // stays still and the row follows the fingers. A gesture that starts vertical,
+  // or a clearly vertical push partway through, hands control back to the page.
+  // A gesture ends when the wheel events go quiet.
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const IDLE_MS = 160
+    const lock = { axis: null, last: 0, timer: 0 }
+
+    const onWheel = (e) => {
+      const now = performance.now()
+      if (now - lock.last > IDLE_MS) lock.axis = null
+      lock.last = now
+
+      const ax = Math.abs(e.deltaX)
+      const ay = Math.abs(e.deltaY)
+      if (!lock.axis) lock.axis = ax > ay ? 'x' : 'y'
+      // Locked sideways, but the person has clearly turned to scroll up or down.
+      else if (lock.axis === 'x' && ay > 20 && ay > ax * 3) lock.axis = 'y'
+
+      if (lock.axis !== 'x') return
+      e.preventDefault()
+      // Keep the event from reaching the page-level smooth scroller too.
+      e.stopPropagation()
+
+      // Snapping would pull each small step straight back to the nearest card,
+      // so it is switched off while the swipe lasts and back on when it ends.
+      el.style.scrollSnapType = 'none'
+      clearTimeout(lock.timer)
+      lock.timer = setTimeout(() => { el.style.scrollSnapType = '' }, IDLE_MS)
+      el.scrollLeft += e.deltaX
+    }
+
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      clearTimeout(lock.timer)
+      el.removeEventListener('wheel', onWheel)
+    }
+  }, [])
+
   const move = (dir) =>
     ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
 
@@ -39,7 +82,7 @@ const Rail = ({ children }) => {
       <div
         ref={ref}
         onScroll={sync}
-        className="flex gap-4 overflow-x-auto snap-x snap-proximity scrollbar-hide pb-2"
+        className="flex gap-4 overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide pb-2"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {children}
