@@ -1,18 +1,20 @@
 import FluidBackground from '../components/FluidBackground';
 import gsap from 'gsap';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 // Ensure these paths match your project structure
 import { Button } from '@/components/ui/button'
 import { useMagnetic } from '@/hooks/useMagnetic'
 
 // --- MAIN HOME COMPONENT ---
-const ROLES = ["a Software Developer", "a Leader", "a Project Manager", "a Designer", "an Innovator", "an Engineer", "a Creative Thinker", "a Project Manager"];
+const DEFAULT_ROLES = ["a Software Developer", "a Leader", "a Project Manager", "a Designer", "an Innovator", "an Engineer", "a Creative Thinker", "a Project Manager"];
 const TYPING_SPEED = 80;
 const DELETING_SPEED = 45;
 const HOLD_AFTER_TYPED = 1800;
 const PAUSE_BEFORE_TYPING = 400;
 
-function Home({ onReadMore }) {
+function Home({ onReadMore, roles }) {
+    // The roles that type out under the name: from the dashboard, else the defaults.
+    const ROLES = useMemo(() => (roles?.length ? roles : DEFAULT_ROLES), [roles]);
     const comp = useRef(null);
     const [roleIndex, setRoleIndex] = useState(0);
     const [typedRole, setTypedRole] = useState("");
@@ -25,7 +27,7 @@ function Home({ onReadMore }) {
     useMagnetic(githubRef);
 
     useEffect(() => {
-        const fullRole = ROLES[roleIndex];
+        const fullRole = ROLES[roleIndex % ROLES.length];
 
         // Finished typing: hold the complete word before erasing it
         if (!isDeleting && typedRole === fullRole) {
@@ -47,7 +49,7 @@ function Home({ onReadMore }) {
             isDeleting ? DELETING_SPEED : TYPING_SPEED
         );
         return () => clearTimeout(tick);
-    }, [typedRole, isDeleting, roleIndex]);
+    }, [typedRole, isDeleting, roleIndex, ROLES]);
 
     useLayoutEffect(() => {
         let ctx = gsap.context(() => {
@@ -78,7 +80,7 @@ function Home({ onReadMore }) {
                             leaves shorter roles parked left of centre on mobile. */}
                         <span
                             className="text-matcha-ink whitespace-nowrap"
-                            aria-label={ROLES[roleIndex]}
+                            aria-label={ROLES[roleIndex % ROLES.length]}
                         >
                             {typedRole}
                             <span

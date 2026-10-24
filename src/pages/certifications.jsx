@@ -1,9 +1,16 @@
 import { Award, ExternalLink } from 'lucide-react'
+import { useOutletContext } from 'react-router-dom'
 import PageShell from '@/components/PageShell'
 import Rail from '@/components/Rail'
 import { CERTIFICATIONS } from '@/data/profile'
 
-const Certifications = () => (
+const Certifications = () => {
+    const { certifications } = useOutletContext()
+    const items = certifications?.length
+        ? certifications.map((c) => ({ ...c, credentialId: c.credential_id }))
+        : CERTIFICATIONS
+
+    return (
     <PageShell
         index="03"
         label="certifications"
@@ -11,9 +18,9 @@ const Certifications = () => (
         description="Courses, credentials and recognition, newest first."
     >
         <Rail>
-            {CERTIFICATIONS.map((cert) => (
+            {items.map((cert) => (
                 <article
-                    key={cert.title}
+                    key={cert.id ?? cert.title}
                     className="group w-[80%] sm:w-80 shrink-0 snap-start self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
                 >
                     <div className="h-40 flex items-center justify-center bg-secondary">
@@ -47,6 +54,7 @@ const Certifications = () => (
             ))}
         </Rail>
     </PageShell>
-)
+    )
+}
 
 export default Certifications

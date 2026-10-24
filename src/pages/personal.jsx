@@ -1,4 +1,5 @@
 import { Coffee, Sparkles } from 'lucide-react'
+import { useOutletContext } from 'react-router-dom'
 import PageShell from '@/components/PageShell'
 import { HOBBIES, TRAITS } from '@/data/profile'
 import { matchaPill } from '@/lib/pillTints'
@@ -19,13 +20,24 @@ const Panel = ({ icon, title, items, offset = 0 }) => (
     </div>
 )
 
-const Personal = () => (
+const labels = (tags, kind, fallback) => {
+    const found = (tags ?? []).filter((t) => t.kind === kind).map((t) => t.label)
+    return found.length ? found : fallback
+}
+
+const Personal = () => {
+    const { tags } = useOutletContext()
+    const hobbies = labels(tags, 'hobby', HOBBIES)
+    const traits = labels(tags, 'trait', TRAITS)
+
+    return (
     <PageShell index="05" label="more about me" title="More About Me">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Panel icon={<Coffee className="w-4 h-4" />} title="Hobbies" items={HOBBIES} />
-            <Panel icon={<Sparkles className="w-4 h-4" />} title="Personality" items={TRAITS} offset={2} />
+            <Panel icon={<Coffee className="w-4 h-4" />} title="Hobbies" items={hobbies} />
+            <Panel icon={<Sparkles className="w-4 h-4" />} title="Personality" items={traits} offset={2} />
         </div>
     </PageShell>
-)
+    )
+}
 
 export default Personal

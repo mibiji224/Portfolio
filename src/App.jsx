@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation, useOutletContext } from 'react-router-dom'
 import Home from './pages/home.jsx'
 import AdminLock from './components/AdminLock.jsx'
@@ -174,6 +174,12 @@ function DashboardLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeId])
 
+  // Homepage roles come from the About me tags; a new array only when they change.
+  const roles = useMemo(
+    () => data.tags?.filter((t) => t.kind === 'role').map((t) => t.label),
+    [data.tags]
+  )
+
   const legacy = LEGACY_HASHES[hash]
   if (pathname === '/' && legacy) return <Navigate to={legacy} replace />
 
@@ -188,7 +194,7 @@ function DashboardLayout() {
 
   return (
     <>
-      <Home onReadMore={enter} />
+      <Home onReadMore={enter} roles={roles} />
 
       {/* Sits just above the fluid canvas (same z-index, later in the DOM). */}
       <div

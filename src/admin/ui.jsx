@@ -223,13 +223,14 @@ const PlusIcon = () => (
   </svg>
 )
 
-export const Row = ({ thumb, title, meta, chip, onEdit, onDelete, deleting, handle, liRef, liStyle, dragging }) => (
+export const Row = ({ noThumb, thumb, title, meta, chip, onEdit, onDelete, deleting, handle, liRef, liStyle, dragging }) => (
   <li
     ref={liRef}
     style={liStyle}
     className={cn(
       'group relative flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5 pr-3 transition-colors hover:border-primary hover:bg-secondary/30 sm:gap-4',
       handle && 'pl-1',
+      noThumb && 'py-4',
       dragging && 'z-10 border-primary-strong bg-background shadow-accent-lg'
     )}
   >
@@ -239,9 +240,11 @@ export const Row = ({ thumb, title, meta, chip, onEdit, onDelete, deleting, hand
       onClick={onEdit}
       className="flex min-w-0 flex-1 items-center gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:gap-4"
     >
-      <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary text-primary-strong">
-        {thumb ? <img src={thumb} alt="" className="h-full w-full object-cover" /> : <ImageIcon size={20} />}
-      </span>
+      {!noThumb && (
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary text-primary-strong">
+          {thumb ? <img src={thumb} alt="" className="h-full w-full object-cover" /> : <ImageIcon size={20} />}
+        </span>
+      )}
       <span className="min-w-0">
         <span className="block truncate text-sm font-semibold text-foreground sm:text-base">{title}</span>
         <span className="mt-0.5 block truncate text-xs text-muted-foreground sm:text-sm">{meta}</span>

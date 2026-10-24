@@ -265,9 +265,27 @@ const Projects = ({ projectsData }) => {
   const devProjects =
     supabaseDevProjects?.length ? supabaseDevProjects : _hardcodedDevProjects
 
-  const artProjects = artProjectsData;
+  // Art and graphics come from the same table, one row per piece. With no rows
+  // yet, the built-in lists below are shown instead.
+  const gallery = (category) => {
+    const rows = projectsData?.filter((p) => p.category === category) ?? []
+    if (!rows.length) return null
+    return rows.map((p) => {
+      const srcs = (Array.isArray(p.images) ? p.images : []).map((img) => (typeof img === 'string' ? img : img.src))
+      return {
+        id: p.id,
+        title: p.title,
+        category: p.subtitle || '',
+        description: p.description || '',
+        tools: Array.isArray(p.tech_stack) ? p.tech_stack.join(', ') : '',
+        image: srcs.length > 1 ? srcs : srcs[0] || '',
+      }
+    })
+  }
 
-  const graphicProjects = [
+  const artProjects = gallery('art') ?? artProjectsData;
+
+  const _hardcodedGraphicProjects = [
     { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/09.jpg" },
     { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/11.jpg" },
     { title: "Marketing", category: "UI Design", tools: "Canva", image: "/graphics/10.jpg" },
@@ -280,6 +298,8 @@ const Projects = ({ projectsData }) => {
     { title: "Mobile App UI Kit", category: "UI Design", tools: "Figma", image: "/graphics/06.jpg" },
     { title: "Mobile App UI Kit v2", category: "UI Design", tools: "Figma", image: ["/graphics/07.jpg", "/graphics/08.jpg"] }
   ];
+
+  const graphicProjects = gallery('graphics') ?? _hardcodedGraphicProjects;
 
   // --- Pagination Logic ---
   const indexOfLastItem = currentDevPage * itemsPerPage;

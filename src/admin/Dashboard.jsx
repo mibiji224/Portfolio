@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Briefcase, ExternalLink, FolderGit2, LayoutDashboard, LogOut, Newspaper, Plus,
+  Award, Briefcase, ExternalLink, FolderGit2, GraduationCap, LayoutDashboard, LogOut, Newspaper, Plus,
+  Sparkles, Wrench,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { db } from '../hooks/usePortfolioData'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import BlogSection from './BlogSection'
-import ExperienceSection from './ExperienceSection'
+import CollectionSection from './CollectionSection'
 import ProjectsSection from './ProjectsSection'
+import TagsSection from './TagsSection'
+import { aboutConfig, certificationsConfig, educationConfig, experienceConfig, skillsConfig } from './configs'
 import { Toast } from './ui'
 
 const ICON = 'h-4 w-4 shrink-0'
@@ -18,6 +21,10 @@ const SECTIONS = [
   { id: 'overview', label: 'Overview', Icon: LayoutDashboard },
   { id: 'projects', label: 'Projects', Icon: FolderGit2 },
   { id: 'experience', label: 'Experience', Icon: Briefcase },
+  { id: 'skills', label: 'Skills', Icon: Wrench },
+  { id: 'certifications', label: 'Certifications', Icon: Award },
+  { id: 'education', label: 'Education', Icon: GraduationCap },
+  { id: 'about', label: 'About me', Icon: Sparkles },
   { id: 'blog', label: 'Blog', Icon: Newspaper },
 ]
 
@@ -28,31 +35,32 @@ const fromHash = () => {
 
 // ─── Overview ──────────────────────────────────────────────────────────────────
 
+const TILES = [
+  { id: 'projects', label: 'Projects', source: db.projects, Icon: FolderGit2 },
+  { id: 'experience', label: 'Experience', source: db.experience, Icon: Briefcase },
+  { id: 'skills', label: 'Skills', source: db.skills, Icon: Wrench, noAdd: true },
+  { id: 'certifications', label: 'Certificates', source: db.certifications, Icon: Award },
+  { id: 'education', label: 'Education', source: db.education, Icon: GraduationCap },
+  { id: 'about', label: 'About me tags', source: db.tags, Icon: Sparkles, noAdd: true },
+  { id: 'blog', label: 'Blog posts', source: db.blog, Icon: Newspaper },
+]
+
 function Overview({ go }) {
-  const [counts, setCounts] = useState(null)
+  const [counts, setCounts] = useState({})
 
   useEffect(() => {
     let live = true
-    Promise.all([db.projects.list(), db.experience.list(), db.blog.list()]).then(([p, e, b]) => {
+    TILES.forEach(async ({ id, source }) => {
+      const { data } = await source.list()
       if (!live) return
-      setCounts({
-        projects: p.data?.length ?? 0,
-        experience: e.data?.length ?? 0,
-        posts: b.data?.length ?? 0,
-        drafts: b.data?.filter((x) => !x.is_published).length ?? 0,
-      })
+      setCounts((c) => ({
+        ...c,
+        [id]: data?.length ?? 0,
+        ...(id === 'blog' && { drafts: data?.filter((x) => !x.is_published).length ?? 0 }),
+      }))
     })
     return () => { live = false }
   }, [])
-
-  const tiles = [
-    { id: 'projects', label: 'Projects', value: counts?.projects, Icon: FolderGit2, add: 'Add new' },
-    { id: 'experience', label: 'Experience', value: counts?.experience, Icon: Briefcase, add: 'Add new' },
-    {
-      id: 'blog', label: 'Blog posts', value: counts?.posts, Icon: Newspaper, add: 'Add new',
-      note: counts?.drafts ? `${counts.drafts} ${counts.drafts === 1 ? 'draft' : 'drafts'} not shown on your site` : null,
-    },
-  ]
 
   return (
     <>
@@ -61,20 +69,26 @@ function Overview({ go }) {
         <p className="mt-1 text-sm text-muted-foreground">Pick what you want to update. Changes show on your site right after you save.</p>
       </header>
 
-      <ul className="grid gap-4 sm:grid-cols-3">
-        {tiles.map(({ id, label, value, Icon, add, note }) => (
+      <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {TILES.map(({ id, label, Icon, noAdd }) => (
           <li key={id} className="flex flex-col rounded-2xl border border-border bg-card p-5">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-primary-strong">
               <Icon size={18} />
             </span>
             <p className="mt-4 text-4xl font-semibold tracking-tight text-foreground">
-              {value ?? <span className="inline-block h-9 w-10 animate-pulse rounded-lg bg-secondary" />}
+              {counts[id] ?? <span className="inline-block h-9 w-10 animate-pulse rounded-lg bg-secondary" />}
             </p>
             <p className="text-sm text-muted-foreground">{label}</p>
-            {note && <p className="mt-1 text-xs text-primary-strong">{note}</p>}
+            {id === 'blog' && counts.drafts > 0 && (
+              <p className="mt-1 text-xs text-primary-strong">
+                {counts.drafts} {counts.drafts === 1 ? 'draft' : 'drafts'} not shown on your site
+              </p>
+            )}
             <div className="mt-5 flex flex-wrap gap-2">
-              <Button size="sm" className="rounded-full" onClick={() => go(id, true)}><Plus /> {add}</Button>
-              <Button size="sm" variant="outline" className="rounded-full" onClick={() => go(id)}>Manage</Button>
+              {!noAdd && (
+                <Button size="sm" className="rounded-full" onClick={() => go(id, true)}><Plus /> Add new</Button>
+              )}
+              <Button size="sm" variant={noAdd ? 'default' : 'outline'} className="rounded-full" onClick={() => go(id)}>Manage</Button>
             </div>
           </li>
         ))}
@@ -133,7 +147,11 @@ export default function Dashboard() {
   const view = {
     overview: <Overview go={go} />,
     projects: <ProjectsSection key={`p${startNew}`} toast={toast} startNew={startNew} />,
-    experience: <ExperienceSection key={`e${startNew}`} toast={toast} startNew={startNew} />,
+    experience: <CollectionSection key={`e${startNew}`} config={experienceConfig} toast={toast} startNew={startNew} />,
+    skills: <TagsSection config={skillsConfig} toast={toast} />,
+    certifications: <CollectionSection key={`c${startNew}`} config={certificationsConfig} toast={toast} startNew={startNew} />,
+    education: <CollectionSection key={`d${startNew}`} config={educationConfig} toast={toast} startNew={startNew} />,
+    about: <TagsSection config={aboutConfig} toast={toast} />,
     blog: <BlogSection key={`b${startNew}`} toast={toast} startNew={startNew} />,
   }[section]
 

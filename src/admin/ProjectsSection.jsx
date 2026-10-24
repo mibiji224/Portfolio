@@ -4,7 +4,7 @@ import { db } from '@/hooks/usePortfolioData'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useCrud } from './crud'
+import { mergeSubset, useCrud } from './crud'
 import SortableList from './SortableList'
 import {
   Chip, ConfirmDialog, DropZone, EmptyState, Field, ListSkeleton, Row, SectionHeader, Segmented,
@@ -105,7 +105,7 @@ function ProjectEditor({ open, row, onClose, onSaved, toast }) {
       <Field label="Title" error={tried && !form.title.trim() ? 'Give the project a title.' : ''}>
         <Input value={form.title} onChange={set('title')} placeholder="BiteTrack" autoFocus />
       </Field>
-      <Field label="Short tagline" hint="A few words under the title.">
+      <Field label="Tagline or type" hint="A few words under the title. For art and graphics, the kind of piece, such as Illustration.">
         <Input value={form.subtitle} onChange={set('subtitle')} placeholder="Nutrition tracker app" />
       </Field>
       <Field label="Which section does it belong to?">
@@ -161,7 +161,8 @@ function ProjectEditor({ open, row, onClose, onSaved, toast }) {
 }
 
 export default function ProjectsSection({ toast, startNew }) {
-  const crud = useCrud({ list: db.projects.list, remove: db.projects.remove, toast, noun: 'Project' })
+  const crud = useCrud({ list: db.projects.list, remove: db.projects.remove, update: db.projects.update, toast, noun: 'Project' })
+  const [category, setCategory] = useState('all')
   const [query, setQuery] = useState('')
 
   // Arriving from an Overview shortcut opens the editor straight away.
@@ -169,22 +170,9 @@ export default function ProjectsSection({ toast, startNew }) {
 
   const searching = query.trim().length > 0
 
-  // Drop = new order everywhere: the list updates at once, then only the rows
-  // whose position changed are written back as display_order 0..n-1.
-  const reorder = async (next) => {
-    const changed = next.filter((p, i) => p.display_order !== i)
-    crud.setItems(next.map((p, i) => ({ ...p, display_order: i })))
-    const results = await Promise.all(changed.map((p) => db.projects.update(p.id, { display_order: next.indexOf(p) })))
-    const failed = results.find((r) => r.error)
-    if (failed) {
-      toast(`Couldn't save the new order: ${failed.error.message}`, 'error')
-      crud.reload()
-    } else {
-      toast('Order saved', 'success')
-    }
-  }
+  const inCategory = (p) => category === 'all' || p.category === category
 
-  const shown = crud.items.filter((p) => p.title.toLowerCase().includes(query.trim().toLowerCase()))
+  const shown = crud.items.filter((p) => inCategory(p) && p.title.toLowerCase().includes(query.trim().toLowerCase()))
 
   return (
     <>
@@ -197,6 +185,12 @@ export default function ProjectsSection({ toast, startNew }) {
         onNew={() => crud.openEditor()}
         newLabel="New project"
       />
+
+      {crud.items.length > 0 && (
+        <div className="mb-4">
+          <Segmented value={category} onChange={setCategory} options={[{ value: 'all', label: 'All' }, ...CATEGORIES]} />
+        </div>
+      )}
 
       {crud.loading ? (
         <ListSkeleton />
@@ -219,7 +213,7 @@ export default function ProjectsSection({ toast, startNew }) {
           <SortableList
             items={shown}
             disabled={searching}
-            onReorder={reorder}
+            onReorder={(next) => crud.reorder(mergeSubset(crud.items, next, inCategory))}
             renderRow={(p) => ({
               label: p.title,
               thumb: p.images?.[0]?.src,

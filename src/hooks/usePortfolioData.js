@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-const EMPTY = { projects: [], experience: [], education: [], skills: [], blog: [] }
+// `null` means "couldn't be loaded" (for example the table doesn't exist yet),
+// which is different from an empty list. The pages fall back to the built-in
+// content when a list is missing or has nothing in it.
+const EMPTY = {
+  projects: [], experience: [], education: [], skills: [], blog: [],
+  certifications: null, tags: null,
+}
+
+const ordered = (table) => supabase.from(table).select('*').order('display_order')
 
 export function usePortfolioData() {
   const [data, setData] = useState(EMPTY)
@@ -13,19 +21,21 @@ export function usePortfolioData() {
 
     async function fetchAll() {
       try {
-        // Blog posts are optional: a missing table (SQL not run yet) must not take
-        // the rest of the site down, so `b` stays out of the error check below.
-        const [p, exp, edu, sk, b] = await Promise.all([
-          supabase.from('projects').select('*').order('display_order'),
-          supabase.from('experience').select('*').order('display_order'),
-          supabase.from('education').select('*').order('display_order'),
-          supabase.from('skills').select('*').order('display_order'),
+        // Optional tables (blog, certifications, tags) must not take the rest of
+        // the site down when they are missing, so they stay out of the error check.
+        const [p, exp, edu, sk, b, cert, tag] = await Promise.all([
+          ordered('projects'),
+          ordered('experience'),
+          ordered('education'),
+          ordered('skills'),
           supabase
             .from('blog_posts')
             .select('*')
             .eq('is_published', true)
             .order('published_at', { ascending: false })
             .order('display_order'),
+          ordered('certifications'),
+          ordered('personal_tags'),
         ])
 
         // Surface the first error if any query failed
@@ -35,6 +45,8 @@ export function usePortfolioData() {
         if (!cancelled) {
           setData({
             blog: b.error ? [] : b.data,
+            certifications: cert.error ? null : cert.data,
+            tags: tag.error ? null : tag.data,
             projects: p.data,
             experience: exp.data,
             education: edu.data,
@@ -55,24 +67,20 @@ export function usePortfolioData() {
   return { ...data, loading, error }
 }
 
-// Thin helpers for per-table fetches used by the CMS
+// Thin helpers for the CMS: list, add, edit and remove rows of one table.
+const table = (name, listOrder = { column: 'display_order' }) => ({
+  list: () => supabase.from(name).select('*').order(listOrder.column, { ascending: listOrder.ascending ?? true }),
+  insert: (row) => supabase.from(name).insert(row).select().single(),
+  update: (id, row) => supabase.from(name).update(row).eq('id', id).select().single(),
+  remove: (id) => supabase.from(name).delete().eq('id', id),
+})
+
 export const db = {
-  projects: {
-    list: () => supabase.from('projects').select('*').order('display_order'),
-    insert: (row) => supabase.from('projects').insert(row).select().single(),
-    update: (id, row) => supabase.from('projects').update(row).eq('id', id).select().single(),
-    remove: (id) => supabase.from('projects').delete().eq('id', id),
-  },
-  experience: {
-    list: () => supabase.from('experience').select('*').order('display_order'),
-    insert: (row) => supabase.from('experience').insert(row).select().single(),
-    update: (id, row) => supabase.from('experience').update(row).eq('id', id).select().single(),
-    remove: (id) => supabase.from('experience').delete().eq('id', id),
-  },
-  blog: {
-    list: () => supabase.from('blog_posts').select('*').order('published_at', { ascending: false }),
-    insert: (row) => supabase.from('blog_posts').insert(row).select().single(),
-    update: (id, row) => supabase.from('blog_posts').update(row).eq('id', id).select().single(),
-    remove: (id) => supabase.from('blog_posts').delete().eq('id', id),
-  },
+  projects: table('projects'),
+  experience: table('experience'),
+  education: table('education'),
+  skills: table('skills'),
+  certifications: table('certifications'),
+  tags: table('personal_tags'),
+  blog: table('blog_posts', { column: 'published_at', ascending: false }),
 }

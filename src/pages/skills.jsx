@@ -3,8 +3,27 @@ import { CORE_SKILLS, TECHNICAL_SKILLS } from '@/data/profile'
 import { pinkPill, plainPill } from '@/lib/pillTints'
 import { TOOL_LOGOS } from '@/lib/toolLogos'
 import { Webhook } from 'lucide-react'
+import { SKILL_GROUPS } from '@/lib/skillGroups'
+import { useOutletContext } from 'react-router-dom'
 
-const Skills = () => (
+// Rows -> the two lists the page shows, or null when the table has nothing yet.
+const fromRows = (rows) => {
+    if (!rows?.length) return null
+    return {
+        core: rows.filter((r) => r.category === 'core').map((r) => r.name),
+        groups: SKILL_GROUPS.map((g) => ({
+            category: g.label,
+            icon: g.icon,
+            items: rows.filter((r) => r.category === g.key).map((r) => r.name),
+        })).filter((g) => g.items.length),
+    }
+}
+
+const Skills = () => {
+    const { skills } = useOutletContext()
+    const { core, groups } = fromRows(skills) ?? { core: CORE_SKILLS, groups: TECHNICAL_SKILLS }
+
+    return (
     <PageShell
         index="02"
         label="skills"
@@ -19,7 +38,7 @@ const Skills = () => (
                 </h2>
                 {/* Pink here, plain white below: the logos carry the colour there. */}
                 <div className="flex flex-wrap gap-2">
-                    {CORE_SKILLS.map((skill) => (
+                    {core.map((skill) => (
                         <span key={skill} className={pinkPill()}>{skill}</span>
                     ))}
                 </div>
@@ -31,7 +50,7 @@ const Skills = () => (
                     Technical Proficiency
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {TECHNICAL_SKILLS.map((group) => (
+                    {groups.map((group) => (
                         <div
                             key={group.category}
                             className="bg-card p-4 rounded-xl shadow-lift transition-transform hover:-translate-y-0.5 group"
@@ -62,6 +81,7 @@ const Skills = () => (
             </div>
         </div>
     </PageShell>
-)
+    )
+}
 
 export default Skills

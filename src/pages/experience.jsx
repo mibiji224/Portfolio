@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useOutletContext } from 'react-router-dom'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -169,7 +170,21 @@ const Group = ({ title, children }) => (
     </div>
 )
 
+// Database rows -> what the cards show. Rows from before the migration have no
+// `kind`, so they count as "nothing there" and the built-in lists are used.
+const fromRows = (rows) => {
+    const usable = (rows ?? []).filter((r) => r.kind)
+    if (!usable.length) return null
+    const shape = (r) => ({ title: r.title, company: r.company, date: r.date, note: r.type, points: r.points ?? [] })
+    return {
+        work: usable.filter((r) => r.kind === 'work').map(shape),
+        leadership: usable.filter((r) => r.kind === 'leadership').map(shape),
+    }
+}
+
 const Experience = () => {
+    const { experience } = useOutletContext()
+    const lists = fromRows(experience) ?? { work: WORK_EXPERIENCE, leadership: LEADERSHIP_ROLES }
     const [shown, setShown] = useState(null)
     // `detail` is kept after closing so the dialog can finish its exit
     // animation and unmount cleanly; `open` is what actually shows it.
@@ -206,10 +221,10 @@ const Experience = () => {
             description="Professional work, then leadership roles and affiliations, newest first. Hover for a preview, or click a role to open the details."
         >
             <Group title="Work Experience">
-                <Timeline items={WORK_EXPERIENCE} tip={tip} first />
+                <Timeline items={lists.work} tip={tip} first />
             </Group>
             <Group title="Leadership Roles & Affiliations">
-                <Timeline items={LEADERSHIP_ROLES} tip={tip} last />
+                <Timeline items={lists.leadership} tip={tip} last />
             </Group>
 
             {shown && !open && <DetailCard id="exp-detail" item={shown} pointRef={point} />}
