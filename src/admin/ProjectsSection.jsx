@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useCrud } from './crud'
+import SortableList from './SortableList'
 import {
   Chip, ConfirmDialog, DropZone, EmptyState, Field, ListSkeleton, Row, SectionHeader, Segmented,
   Sheet, Switch, uploadImage, useObjectUrl,
@@ -166,6 +167,23 @@ export default function ProjectsSection({ toast, startNew }) {
   // Arriving from an Overview shortcut opens the editor straight away.
   useEffect(() => { if (startNew) crud.openEditor() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const searching = query.trim().length > 0
+
+  // Drop = new order everywhere: the list updates at once, then only the rows
+  // whose position changed are written back as display_order 0..n-1.
+  const reorder = async (next) => {
+    const changed = next.filter((p, i) => p.display_order !== i)
+    crud.setItems(next.map((p, i) => ({ ...p, display_order: i })))
+    const results = await Promise.all(changed.map((p) => db.projects.update(p.id, { display_order: next.indexOf(p) })))
+    const failed = results.find((r) => r.error)
+    if (failed) {
+      toast(`Couldn't save the new order: ${failed.error.message}`, 'error')
+      crud.reload()
+    } else {
+      toast('Order saved', 'success')
+    }
+  }
+
   const shown = crud.items.filter((p) => p.title.toLowerCase().includes(query.trim().toLowerCase()))
 
   return (
@@ -192,20 +210,27 @@ export default function ProjectsSection({ toast, startNew }) {
       ) : shown.length === 0 ? (
         <p className="py-10 text-center text-sm text-muted-foreground">No projects match “{query}”.</p>
       ) : (
-        <ul className="space-y-2">
-          {shown.map((p) => (
-            <Row
-              key={p.id}
-              thumb={p.images?.[0]?.src}
-              title={p.title}
-              meta={`${categoryLabel(p.category)} · ${p.images?.length ?? 0} ${p.images?.length === 1 ? 'image' : 'images'}`}
-              chip={p.is_coming_soon && <Chip tone="draft">Coming soon</Chip>}
-              onEdit={() => crud.openEditor(p)}
-              onDelete={() => crud.setToDelete(p)}
-              deleting={crud.deleting && crud.toDelete?.id === p.id}
-            />
-          ))}
-        </ul>
+        <>
+          <p className="mb-3 text-sm text-muted-foreground">
+            {searching
+              ? 'Clear the search to drag projects into a new order.'
+              : 'Drag the grip on the left to change the order. The same order is used on your site.'}
+          </p>
+          <SortableList
+            items={shown}
+            disabled={searching}
+            onReorder={reorder}
+            renderRow={(p) => ({
+              label: p.title,
+              thumb: p.images?.[0]?.src,
+              meta: `${categoryLabel(p.category)} · ${p.images?.length ?? 0} ${p.images?.length === 1 ? 'image' : 'images'}`,
+              chip: p.is_coming_soon && <Chip tone="draft">Coming soon</Chip>,
+              onEdit: () => crud.openEditor(p),
+              onDelete: () => crud.setToDelete(p),
+              deleting: crud.deleting && crud.toDelete?.id === p.id,
+            })}
+          />
+        </>
       )}
 
       {crud.editor.mounted && (

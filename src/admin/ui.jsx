@@ -223,8 +223,17 @@ const PlusIcon = () => (
   </svg>
 )
 
-export const Row = ({ thumb, title, meta, chip, onEdit, onDelete, deleting }) => (
-  <li className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5 pr-3 transition-colors hover:border-primary hover:bg-secondary/30 sm:gap-4">
+export const Row = ({ thumb, title, meta, chip, onEdit, onDelete, deleting, handle, liRef, liStyle, dragging }) => (
+  <li
+    ref={liRef}
+    style={liStyle}
+    className={cn(
+      'group relative flex items-center gap-3 rounded-2xl border border-border bg-card p-2.5 pr-3 transition-colors hover:border-primary hover:bg-secondary/30 sm:gap-4',
+      handle && 'pl-1',
+      dragging && 'z-10 border-primary-strong bg-background shadow-accent-lg'
+    )}
+  >
+    {handle}
     <button
       type="button"
       onClick={onEdit}

@@ -32,7 +32,7 @@ export function useCrud({ list, remove, toast, noun }) {
   }
 
   return {
-    items, loading, reload,
+    items, setItems, loading, reload,
     editor, openEditor, closeEditor,
     toDelete, setToDelete, deleting, confirmDelete,
   }
