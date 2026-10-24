@@ -1,7 +1,7 @@
+import FluidBackground from '../components/FluidBackground';
 import gsap from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 // Ensure these paths match your project structure
-import FluidBackground from '../components/FluidBackground';
 import { Button } from '@/components/ui/button'
 import { useMagnetic } from '@/hooks/useMagnetic'
 
@@ -63,8 +63,6 @@ function Home({ onReadMore }) {
             <style>{`
                 @keyframes caretBlink { 0%, 49% { opacity:1; } 50%, 100% { opacity:0; } }
             `}</style>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 lg:w-96 lg:h-96 bg-primary opacity-30 blur-[100px] lg:blur-[150px] rounded-full z-0"></div>
-
             <section className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-4 sm:px-8 lg:px-20 py-12 lg:py-0" id="home">
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-4xl">
                     <span className="gsap-reveal text-primary-strong font-bold tracking-widest uppercase text-xs sm:text-sm lg:text-base mb-3 lg:mb-4 block">Welcome to my Portfolio</span>

@@ -6,6 +6,7 @@ import {
   PenTool, X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import Rail from '@/components/Rail'
 import SectionLabel from '@/components/SectionLabel'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -119,54 +120,6 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
           {currentSlide} / {images.length}
         </div>
       )}
-    </div>
-  );
-};
-
-// ==========================================
-// 1b. HORIZONTAL RAIL - every subsection is one row you move through sideways
-// ==========================================
-const Rail = ({ children }) => {
-  const ref = useRef(null);
-  const [edge, setEdge] = useState({ start: true, end: false });
-
-  const sync = () => {
-    const el = ref.current;
-    if (!el) return;
-    setEdge({
-      start: el.scrollLeft <= 4,
-      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4,
-    });
-  };
-
-  useEffect(() => {
-    sync();
-    window.addEventListener('resize', sync);
-    return () => window.removeEventListener('resize', sync);
-  }, []);
-
-  const move = (dir) =>
-    ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
-
-  const arrow = 'absolute top-1/2 z-20 -translate-y-1/2 h-10 w-10 rounded-full border border-primary bg-background text-primary-strong shadow-lift hover:bg-primary-soft disabled:opacity-0 disabled:pointer-events-none';
-
-  return (
-    <div className="relative">
-      <Button variant="ghost" size="icon" aria-label="Scroll left" disabled={edge.start} onClick={() => move(-1)} className={`${arrow} left-2`}>
-        <ChevronLeft />
-      </Button>
-      <Button variant="ghost" size="icon" aria-label="Scroll right" disabled={edge.end} onClick={() => move(1)} className={`${arrow} right-2`}>
-        <ChevronRight />
-      </Button>
-
-      <div
-        ref={ref}
-        onScroll={sync}
-        className="flex gap-4 overflow-x-auto snap-x snap-proximity scrollbar-hide pb-2"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {children}
-      </div>
     </div>
   );
 };
@@ -399,9 +352,9 @@ const Projects = ({ projectsData }) => {
                 <div
                     key={project.id}
                     onClick={() => setSelectedImage(project)}
-                    className="group w-72 sm:w-80 shrink-0 snap-start self-stretch bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer"
+                    className="group w-[80%] md:w-[calc((100%-1rem)/1.5)] max-w-[36rem] shrink-0 snap-start self-stretch bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer"
                 >
-                  <div className="h-36 overflow-hidden relative">
+                  <div className="h-48 md:h-64 overflow-hidden relative">
                     <ImageWithLoader
                       src={project.image}
                       alt={project.title}
@@ -414,9 +367,9 @@ const Projects = ({ projectsData }) => {
                     </div>
                   </div>
 
-                  <div className="p-4">
-                    <h3 className="text-base font-bold text-foreground mb-1 group-hover:text-primary-strong transition-colors">{project.title}</h3>
-                    <p className="text-muted-foreground text-xs mb-3 line-clamp-2">{project.description}</p>
+                  <div className="p-5">
+                    <h3 className="text-lg font-bold text-foreground mb-1 group-hover:text-primary-strong transition-colors">{project.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{project.description}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {project.tags.slice(0, 4).map((tag, idx) => (
                         <Badge key={idx} variant="outline" size="sm" className="rounded font-mono">{tag}</Badge>

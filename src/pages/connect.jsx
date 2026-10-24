@@ -100,7 +100,7 @@ const App = () => {
                         {/* --- LEFT COLUMN: Engaging Text & Contact Info --- */}
                         <div className="lg:col-span-7 space-y-8 sm:space-y-10">
                             <div>
-                                <SectionLabel index="07" className="mb-8">contact</SectionLabel>
+                                <SectionLabel index="08" className="mb-8">contact</SectionLabel>
 
                                 <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground leading-[1.1] mb-6">
                                     Let’s build something <br />

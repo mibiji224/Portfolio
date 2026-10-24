@@ -69,6 +69,12 @@
     --input: 352 60% 90%;
     --ring: 353 97% 88%;
 
+    /* A damped spring (ratio 0.7) sampled as a CSS easing: it settles in about
+       0.6s after overshooting by ~5%, which is what gives the sidebar's cut its
+       liquid, iOS-like arrival. */
+    --spring: linear(0.0, 0.0193, 0.0699, 0.142, 0.2276, 0.3202, 0.4146, 0.5069, 0.5942, 0.6745, 0.7467, 0.8101, 0.8646, 0.9104, 0.948, 0.9781, 1.0015, 1.0189, 1.0313, 1.0394, 1.044, 1.0459, 1.0456, 1.0437, 1.0406, 1.0369, 1.0327, 1.0283, 1.0241, 1.02, 1.0161, 1.0127, 1);
+    --spring-duration: 600ms;
+
     --radius: 0.75rem;
 
     /* Cards float on a white page, so the shadow is the only thing giving
@@ -132,4 +138,8 @@ svg,
 video,
 canvas {
   max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --spring-duration: 0ms; }
 }

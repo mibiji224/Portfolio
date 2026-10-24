@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-const EMPTY = { projects: [], experience: [], education: [], skills: [] }
+const EMPTY = { projects: [], experience: [], education: [], skills: [], blog: [] }
 
 export function usePortfolioData() {
   const [data, setData] = useState(EMPTY)
@@ -13,11 +13,19 @@ export function usePortfolioData() {
 
     async function fetchAll() {
       try {
-        const [p, exp, edu, sk] = await Promise.all([
+        // Blog posts are optional: a missing table (SQL not run yet) must not take
+        // the rest of the site down, so `b` stays out of the error check below.
+        const [p, exp, edu, sk, b] = await Promise.all([
           supabase.from('projects').select('*').order('display_order'),
           supabase.from('experience').select('*').order('display_order'),
           supabase.from('education').select('*').order('display_order'),
           supabase.from('skills').select('*').order('display_order'),
+          supabase
+            .from('blog_posts')
+            .select('*')
+            .eq('is_published', true)
+            .order('published_at', { ascending: false })
+            .order('display_order'),
         ])
 
         // Surface the first error if any query failed
@@ -26,6 +34,7 @@ export function usePortfolioData() {
 
         if (!cancelled) {
           setData({
+            blog: b.error ? [] : b.data,
             projects: p.data,
             experience: exp.data,
             education: edu.data,
@@ -59,5 +68,11 @@ export const db = {
     insert: (row) => supabase.from('experience').insert(row).select().single(),
     update: (id, row) => supabase.from('experience').update(row).eq('id', id).select().single(),
     remove: (id) => supabase.from('experience').delete().eq('id', id),
+  },
+  blog: {
+    list: () => supabase.from('blog_posts').select('*').order('published_at', { ascending: false }),
+    insert: (row) => supabase.from('blog_posts').insert(row).select().single(),
+    update: (id, row) => supabase.from('blog_posts').update(row).eq('id', id).select().single(),
+    remove: (id) => supabase.from('blog_posts').delete().eq('id', id),
   },
 }

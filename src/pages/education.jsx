@@ -5,7 +5,15 @@ import { FALLBACK_EDUCATION } from '@/data/profile'
 
 const Education = () => {
     const { education } = useOutletContext()
-    const items = education?.length ? education : FALLBACK_EDUCATION
+    // Supabase rows use institution/period/description; the fallback uses school/year/status.
+    const items = education?.length
+        ? education.map((e) => ({
+            school: e.institution,
+            degree: e.degree,
+            year: e.period,
+            status: e.description,
+        }))
+        : FALLBACK_EDUCATION
 
     return (
         <PageShell index="04" label="education" title="Education">

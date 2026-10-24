@@ -3,92 +3,146 @@ import { Database, FileText, Layout, Palette, Server, Wrench } from 'lucide-reac
 // Fallbacks for when Supabase has no rows yet. Once the tables are populated
 // these can be deleted; the pages prefer the fetched data.
 
-export const FALLBACK_EXPERIENCE = [
+export const WORK_EXPERIENCE = [
     {
-        title: "Executive Assistant & Operations Manager",
-        company: "Inventiv Softwares",
-        date: "December 2025 - Present",
-        type: null,
-        description: "Driving operational efficiency by managing executive software development project workflows, talent acquisition, business and activity proposals, and social media strategy for a growing software firm."
+        title: "Executive Assistant / Operations and Project Manager",
+        company: "Inventiv (Tech Start Up)",
+        date: "June 2025 - October 2026",
+        note: "Independent Contractor · Full Time",
+        points: [
+            "Right-hand assistant to the Technical Director; handled correspondence and led operations and project management across teams",
+            "Carried out quality assurance and software testing on applications in development and production, and provided technical support for the company's software and app",
+            "Managed social media and directed content creation, including multimedia editing (Canva graphics, TikTok/Reels video)",
+            "Handled hiring end to end (screening, interviews, onboarding) and maintained SOPs and HR/attendance documentation",
+            "Verified attendance and hours and calculated payroll before processing; tracked team records and tickets",
+            "Prepared business proposals and reports; managed stakeholder and client communications; maintained Google Sheets trackers for tasks and follow-ups",
+        ],
     },
     {
-        title: "Administrative Secretary - Office of the Regional Director",
+        title: "Administrative Assistant",
         company: "Department of Education Region XI",
-        date: "June 2025 - December 2025",
-        type: null,
-        description: "Supporting administrative operations through document management, scheduling coordination, and office support services."
+        date: "Jun 2025 - Dec 2025",
+        note: "Contract · Morning Shift",
+        points: [
+            "Provided close administrative support to the Assistant Regional Director",
+            "Managed calendar coordination, correspondence, and confidential documentation",
+            "Proofread and routed documents across departments before director approval and signing",
+            "Handled incoming calls and tracked document status through to completion",
+        ],
     },
     {
         title: "Customer Service Representative",
-        company: "Awesome CX & Alorica Davao",
-        date: "April 2025 - October 2025",
-        type: null,
-        description: "Delivered exceptional customer support through inbound voice channels while maintaining high performance standards and customer satisfaction metrics."
+        company: "Awesome CX",
+        date: "July 2025 - October 2025",
+        note: "Seasonal / Contract",
+        points: [
+            "Answered inbound voice calls for a retail fashion brand, greeting customers professionally and finding out the reason for each call",
+            "Resolved customer concerns and answered sales-related inquiries, explaining information and next steps clearly",
+            "Documented each interaction accurately so the case details were complete and easy to follow up on",
+        ],
     },
+    {
+        title: "Marketing and Social Media Manager",
+        company: "Odara Management LLC",
+        date: "Feb 2024 - June 2025",
+        note: "Independent Contractor · Full Time",
+        points: [
+            "Planned social media content strategy across multiple platforms, including bilingual and multi-market content",
+            "Kept a daily Instagram posting schedule across multiple creator accounts",
+            "Researched markets and prepared executive proposals to support business development",
+            "Contributed to go-to-market planning and brand positioning as part of the agency's founding operations team",
+        ],
+    },
+    {
+        title: "Freelance Digital Artist & Illustrator",
+        company: "Self-Employed",
+        date: "2020 - 2023",
+        note: "Freelance · Full Time",
+        points: [
+            "Created custom digital illustrations on commission for clients sourced through Fiverr, Twitter, Discord, and Instagram",
+            "Communicated directly with clients to understand requests, apply revisions, and deliver finished artwork",
+        ],
+    },
+]
+
+export const LEADERSHIP_ROLES = [
     {
         title: "President",
-        company: "College of Computing Education Student Government - University of Mindanao",
-        date: "July 2024 - July 2025",
-        type: "LEADERSHIP",
-        description: "Directed student governance initiatives, organized campus events, and advocated for student interests with faculty leadership."
+        company: "Computing College Department Student Government",
+        date: "2024",
+        points: ["Led student initiatives and addressed student concerns"],
     },
     {
-        title: "External Vice President",
-        company: "Council of College Student Governments - University of Mindanao",
-        date: "July 2024 - July 2025",
-        type: "LEADERSHIP",
-        description: "Managed external relations and student advocacy initiatives, building partnerships to enhance institutional engagement and student welfare programs."
+        title: "Vice President",
+        company: "University of Mindanao Council of College",
+        date: "2024",
+        points: ["Led student initiatives and addressed student concerns"],
     },
     {
-        title: "Assistant Recreational Head",
-        company: "Philippine Society of Information Technology Students Region XI",
-        date: "August 2024 - May 2025",
-        type: null,
-        description: "Coordinated regional recreational events and activities for IT students, managing logistics and participant engagement."
+        title: "Assistant Recreation Head",
+        company: "Philippine Society of IT Students (PSITS) Region XI",
+        date: "2024",
+        points: [
+            "Organized recreational activities to foster engagement and camaraderie",
+            "Strengthened event planning, creativity, and management skills",
+        ],
+    },
+    {
+        title: "Design Team Volunteer",
+        company: "Google Developers Group Davao",
+        date: "2024",
+        points: ["Assisted with media and publication materials"],
+    },
+    {
+        title: "Event Logistics Volunteer",
+        company: "Davao StartUp Week",
+        date: "2024",
+        points: ["Assisted with event logistics and coordination to ensure smooth execution"],
+    },
+    {
+        title: "Photographer & Documentation Staff",
+        company: "Blockchain Campus Conference",
+        date: "2024",
+        points: ["Contributed as a photographer and documentation staff, capturing key moments"],
+    },
+    {
+        title: "Operation Block Committee",
+        company: "Junior Blockchain Consortium of the Philippines",
+        date: "2024",
+        points: [
+            "Hosted events, engaging participants and ensuring a seamless experience",
+            "Managed event documentation and photography",
+        ],
     },
     {
         title: "Secretary",
-        company: "College of Computing Education Student Government - University of Mindanao",
-        date: "July 2023 - July 2024",
-        type: null,
-        description: "Managed official records, coordinated communications, and maintained documentation for student government operations."
+        company: "Computing College Department Student Government",
+        date: "2023",
+        points: ["Handled documentation, correspondence, and administrative tasks using MS Office, Google Suite, and Canva"],
     },
     {
         title: "Assistant Secretary",
-        company: "Philippine Society of Information Technology Students Region XI",
-        date: "October 2023 - March 2024",
-        type: null,
-        description: "Supported regional organization operations through documentation and communication coordination across member institutions."
+        company: "Philippine Society of IT Students (PSITS) Region XI",
+        date: "2023",
+        points: [
+            "Maintained accurate data records and supported organizational documentation",
+            "Improved communication and technical writing skills",
+        ],
     },
     {
-        title: "Publication and Documentation Head",
-        company: "United Nation's Girl Up Organization - Davao Chapter",
-        date: "July 2023 - December 2023",
-        type: null,
-        description: "Directed content creation and digital communications to promote organizational initiatives and community engagement."
+        title: "Publication and Documentations Head",
+        company: "Girl Up Davao",
+        date: "2023",
+        points: ["Led the creation of publication materials and digital media content to amplify organizational initiatives"],
     },
-    {
-        title: "Digital Artist",
-        company: "Freelance",
-        date: "March 2020",
-        type: null,
-        description: "Created custom digital artwork across multiple styles and genres, delivering compelling visual solutions tailored to client specifications using industry-standard software."
-    },
-    {
-        title: "Personal Assistant",
-        company: "Secondary Education English Teacher - Davao City National High School",
-        date: "August 2018 - April 2021",
-        type: null,
-        description: "Provided administrative support including student records management, grade tracking, and instructional materials preparation."
-    }
 ]
 
 export const FALLBACK_EDUCATION = [
     {
         school: "University of Mindanao",
         degree: "Bachelor of Science in Computer Science",
-        year: "2023 - Present",
-        status: "Currently Enrolled"
+        year: "2022 - 2024",
+        status: "Stopped Out (On Hold)",
     },
     {
         school: "Davao City National High School",
@@ -178,3 +232,34 @@ export const CERTIFICATIONS = [
 export const HOBBIES = ['Digital Painting', 'Fitness', 'Reading', 'Cybersecurity']
 
 export const TRAITS = ['INTJ-T', 'Detail-Oriented', 'Creative Strategist', 'Resilient']
+
+export const FALLBACK_BLOG = [
+    {
+        id: "live-for-yourself-too",
+        title: "Live for Yourself, Too",
+        excerpt: "Give generously to the work you believe in, but don’t forget to save a piece for yourself.",
+        cover_image: null,
+        published_at: "2026-10-23",
+        body: `When you start working on something new, it’s easy to give it everything. A new role, a new team, a new mission: there’s a kind of energy that comes with being part of something that’s just beginning. You want to prove yourself. You want it to succeed. And because you believe in it, you keep giving more.
+
+That’s what I did. And somewhere along the way, I realized something I wish I had understood sooner.
+
+The dedication and effort you put into your work should still be proportional to who you are and what you need as a person. Not just what the work asks of you, but what your life asks of you too.
+
+When we pour ourselves into a cause, we often forget to save a piece for ourselves. We skip the rest, push past the signs of exhaustion, and tell ourselves it’s temporary. We think that giving more is the same as doing better. But it isn’t.
+
+Forgetting to give a piece to yourself slowly breaks your foundation. And when your foundation cracks, everything you’re building on top of it starts to shake. Instead of successfully bringing a new idea to life, you end up exhausting yourself. Sometimes the damage goes further than you ever intended: to your health, your relationships, and the very passion that made you say yes in the first place.
+
+I learned that you can’t sustain someone else’s vision if you’re running on empty. Burnout doesn’t make you more committed. It just makes you less of yourself.
+
+So here’s what I want to remind you, and myself:
+
+It’s important to keep yourself alive, especially when you’re working hard to keep someone else’s dream alive. Your effort matters. Your commitment matters. But so do you.
+
+Rest without guilt. Set boundaries without apologizing. Speak up when something doesn’t feel right. Make room for the things that remind you who you are outside of your work.
+
+Because the people and causes worth giving to will be better served by someone who is whole, not someone who is slowly disappearing.
+
+Give generously, but live for yourself as well.`,
+    },
+]

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Briefcase, Image as ImageIcon, LogOut, Plus,
+  Briefcase, Image as ImageIcon, LogOut, Newspaper, Pencil, Plus,
   Trash2, Upload, X, AlertCircle, CheckCircle2
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -35,9 +35,9 @@ function Spinner() {
 
 // ─── image upload to Supabase Storage ─────────────────────────────────────────
 
-async function uploadImage(file) {
+async function uploadImage(file, folder = 'projects') {
   const ext = file.name.split('.').pop()
-  const path = `projects/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const { error } = await supabase.storage.from('portfolio-assets').upload(path, file, {
     cacheControl: '31536000',  // 1 year CDN cache
     upsert: false,
@@ -411,6 +411,237 @@ function ExperienceTab({ toast }) {
   )
 }
 
+// ─── Blog tab ──────────────────────────────────────────────────────────────────
+
+const today = () => new Date().toISOString().slice(0, 10)
+
+const BLANK_POST = {
+  title: '',
+  excerpt: '',
+  body: '',
+  published_at: today(),
+  is_published: true,
+  display_order: 0,
+}
+
+function BlogTab({ toast }) {
+  const [posts, setPosts] = useState([])
+  const [loadingList, setLoadingList] = useState(true)
+  const [form, setForm] = useState(BLANK_POST)
+  const [editingId, setEditingId] = useState(null)
+  // The header photo: a newly picked file, or the URL already saved on the post.
+  const [coverFile, setCoverFile] = useState(null)
+  const [coverUrl, setCoverUrl] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
+  const fileRef = useRef()
+
+  const [pickedUrl, setPickedUrl] = useState('')
+  useEffect(() => {
+    if (!coverFile) return setPickedUrl('')
+    const url = URL.createObjectURL(coverFile)
+    setPickedUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [coverFile])
+  const preview = pickedUrl || coverUrl
+
+  const reload = async () => {
+    setLoadingList(true)
+    const { data, error } = await db.blog.list()
+    if (error) toast(`${error.message} (has supabase/blog_posts.sql been run?)`, 'error')
+    else setPosts(data)
+    setLoadingList(false)
+  }
+
+  useEffect(() => { reload() }, [])
+
+  const reset = () => {
+    setForm({ ...BLANK_POST, published_at: today() })
+    setEditingId(null)
+    setCoverFile(null)
+    setCoverUrl('')
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const startEdit = (post) => {
+    setEditingId(post.id)
+    setForm({
+      title: post.title,
+      excerpt: post.excerpt || '',
+      body: post.body,
+      published_at: post.published_at || today(),
+      is_published: post.is_published,
+      display_order: post.display_order ?? 0,
+    })
+    setCoverFile(null)
+    setCoverUrl(post.cover_image || '')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSubmitting(true)
+    try {
+      const cover_image = coverFile ? await uploadImage(coverFile, 'blog') : coverUrl || null
+      const row = { ...form, cover_image }
+
+      const { error } = editingId
+        ? await db.blog.update(editingId, row)
+        : await db.blog.insert(row)
+      if (error) throw error
+
+      toast(editingId ? 'Post updated!' : 'Post published!', 'success')
+      reset()
+      await reload()
+    } catch (err) {
+      toast(err.message, 'error')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleDelete = async (id) => {
+    if (!confirm('Delete this post?')) return
+    setDeletingId(id)
+    const { error } = await db.blog.remove(id)
+    if (error) toast(error.message, 'error')
+    else { toast('Deleted.', 'success'); if (editingId === id) reset(); await reload() }
+    setDeletingId(null)
+  }
+
+  return (
+    <div className="space-y-10">
+      <section>
+        <h2 className="text-foreground font-semibold mb-5 flex items-center gap-2">
+          {editingId
+            ? <><Pencil size={16} className="text-primary-strong" /> Edit Post</>
+            : <><Plus size={16} className="text-primary-strong" /> Add Blog Post</>}
+        </h2>
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* ── Header photo ── */}
+          <Field label="Header Photo" className="md:col-span-2">
+            {preview ? (
+              <div className="relative overflow-hidden rounded-xl border border-border">
+                <img src={preview} alt="" className="h-48 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => { setCoverFile(null); setCoverUrl(''); if (fileRef.current) fileRef.current.value = '' }}
+                  aria-label="Remove header photo"
+                  className="absolute top-2 right-2 bg-neutral-900/70 rounded-full p-1 text-white hover:text-primary-strong"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => fileRef.current?.click()}
+                className="border-2 border-dashed border-border hover:border-primary/40 rounded-xl p-6 text-center cursor-pointer transition-colors group"
+              >
+                <Upload size={20} className="mx-auto mb-2 text-muted-foreground/70 group-hover:text-primary-strong transition-colors" />
+                <p className="text-muted-foreground/80 text-sm">Click to upload a header photo (JPG, PNG, WebP)</p>
+                <p className="text-muted-foreground/60 text-xs mt-1">Optional. Wide images (16:9) look best.</p>
+              </div>
+            )}
+            <Input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
+            />
+          </Field>
+
+          <Field label="Title *" className="md:col-span-2">
+            <Input required type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Live for Yourself, Too" className={inputCls} />
+          </Field>
+
+          <Field label="Excerpt (shown on the card)" className="md:col-span-2">
+            <Textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="One or two sentences..." className={`${inputCls} resize-none`} />
+          </Field>
+
+          <Field label="Post *" className="md:col-span-2">
+            <Textarea required rows={14} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} placeholder={'Write your post here.\n\nLeave a blank line between paragraphs.'} className={inputCls + ' h-auto py-3'} />
+          </Field>
+
+          <Field label="Date">
+            <Input type="date" value={form.published_at} onChange={(e) => setForm({ ...form, published_at: e.target.value })} className={inputCls} />
+          </Field>
+
+          <Field label="Display Order">
+            <Input type="number" min="0" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: +e.target.value })} className={inputCls} />
+          </Field>
+
+          <div className="md:col-span-2 flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer select-none">
+              <Input
+                type="checkbox"
+                checked={form.is_published}
+                onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
+                className="accent-primary"
+              />
+              Published (untick to keep it as a draft)
+            </label>
+          </div>
+
+          <div className="md:col-span-2 flex flex-wrap gap-3">
+            <Button type="submit" disabled={submitting} className="rounded-lg px-6">
+              {submitting
+                ? <><Spinner /> Saving...</>
+                : editingId ? <><Pencil size={15} /> Save Changes</> : <><Plus size={15} /> Publish Post</>}
+            </Button>
+            {editingId && (
+              <Button type="button" variant="outline" onClick={reset} className="rounded-lg px-6">Cancel</Button>
+            )}
+          </div>
+        </form>
+      </section>
+
+      <section>
+        <h2 className="text-foreground font-semibold mb-5 flex items-center gap-2">
+          <Newspaper size={16} className="text-primary-strong" />
+          Existing Posts
+          <span className="text-muted-foreground/70 font-normal text-sm">({posts.length})</span>
+        </h2>
+
+        {loadingList ? (
+          <div className="flex justify-center py-10"><Spinner /></div>
+        ) : posts.length === 0 ? (
+          <p className="text-muted-foreground/70 text-sm py-6 text-center border border-border rounded-xl">
+            No posts yet. Add one above.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {posts.map((post) => (
+              <div key={post.id} className="flex flex-wrap items-center justify-between gap-3 bg-popover border border-border rounded-xl px-3 sm:px-4 py-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {post.cover_image && (
+                    <img src={post.cover_image} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-border" />
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-foreground text-sm font-medium truncate">{post.title}</p>
+                    <p className="text-muted-foreground/70 text-xs mt-0.5">
+                      {post.published_at} · {post.is_published ? 'published' : 'draft'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 flex-shrink-0">
+                  <button onClick={() => startEdit(post)} aria-label="Edit post" className="text-muted-foreground/70 hover:text-primary-strong transition-colors">
+                    <Pencil size={15} />
+                  </button>
+                  <button onClick={() => handleDelete(post.id)} disabled={deletingId === post.id} aria-label="Delete post" className="text-muted-foreground/70 hover:text-primary-strong disabled:opacity-40 transition-colors">
+                    {deletingId === post.id ? <Spinner /> : <Trash2 size={15} />}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  )
+}
+
 // ─── Shared field wrapper ───────────────────────────────────────────────────────
 
 const inputCls = 'h-10 rounded-lg bg-secondary'
@@ -431,6 +662,7 @@ function Field({ label, children, className = '' }) {
 const TABS = [
   { id: 'projects', label: 'Projects', Icon: ImageIcon },
   { id: 'experience', label: 'Experience', Icon: Briefcase },
+  { id: 'blog', label: 'Blog', Icon: Newspaper },
 ]
 
 export default function Dashboard() {
@@ -492,6 +724,7 @@ export default function Dashboard() {
 
         {tab === 'projects' && <ProjectsTab toast={showToast} />}
         {tab === 'experience' && <ExperienceTab toast={showToast} />}
+        {tab === 'blog' && <BlogTab toast={showToast} />}
       </main>
     </div>
   )

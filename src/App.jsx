@@ -5,10 +5,10 @@ import AdminLock from './components/AdminLock.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import SchemaMarkup from './components/SchemaMarkup.jsx'
 import DashboardShell from './components/DashboardShell.jsx'
-// TEMPORARY: remove with the component once the design is final.
-import UnderConstructionNotice from './components/UnderConstructionNotice.jsx'
 import { usePortfolioData } from './hooks/usePortfolioData'
 import { scrollToTarget } from './lib/scroll'
+import { startSmoothScroll } from './lib/smoothScroll'
+import { cn } from '@/lib/utils'
 
 const Experience     = lazy(() => import('./pages/experience.jsx'))
 const Skills         = lazy(() => import('./pages/skills.jsx'))
@@ -16,6 +16,7 @@ const Certifications = lazy(() => import('./pages/certifications.jsx'))
 const Education      = lazy(() => import('./pages/education.jsx'))
 const Personal       = lazy(() => import('./pages/personal.jsx'))
 const Project        = lazy(() => import('./pages/project.jsx'))
+const Blog           = lazy(() => import('./pages/blog.jsx'))
 const Contact        = lazy(() => import('./pages/connect.jsx'))
 const Dashboard      = lazy(() => import('./admin/Dashboard.jsx'))
 const ReadMoreLoader = lazy(() => import('./components/ReadMoreLoader.jsx'))
@@ -26,6 +27,7 @@ const PROJECT_TABS = ['dev', 'art', 'graphics']
 const LEGACY_HASHES = {
   '#about': '/experience',
   '#projects': '/projects/dev',
+  '#blog': '/blog',
   '#connect': '/contact',
 }
 
@@ -35,7 +37,7 @@ const SectionFallback = () => (
   </div>
 )
 
-// Everything the public site shares: the notice, the JSON-LD, the admin lock,
+// Everything the public site shares: the JSON-LD, the admin lock,
 // and the loader. Portfolio data is fetched once here, so it is usually in
 // hand by the time someone presses Read More.
 function PublicLayout({ data }) {
@@ -43,9 +45,6 @@ function PublicLayout({ data }) {
 
   return (
     <>
-      {/* TEMPORARY: work-in-progress notice, shown on every visit. */}
-      <UnderConstructionNotice />
-
       {/* Inject JSON-LD once data is ready */}
       {!loading && <SchemaMarkup projects={projects} experience={experience} />}
 
@@ -67,6 +66,7 @@ const SECTIONS = [
   { id: 'education', Component: Education },
   { id: 'personal', Component: Personal },
   { id: 'projects', Component: null },
+  { id: 'blog', Component: Blog },
   { id: 'contact', Component: Contact },
 ]
 
@@ -79,6 +79,7 @@ const NAV = [
   { id: 'projects-dev', path: '/projects/dev' },
   { id: 'projects-art', path: '/projects/art' },
   { id: 'projects-graphics', path: '/projects/graphics' },
+  { id: 'blog', path: '/blog' },
   { id: 'contact', path: '/contact' },
 ]
 
@@ -104,6 +105,10 @@ function DashboardLayout() {
   // The loader belongs to the dashboard, so it waits until the visitor is there.
   const [entered, setEntered] = useState(pathname !== '/')
   const [activeId, setActiveId] = useState(idForPath(pathname))
+  // Dims the WebGL background while the content sections are on screen.
+  const [veiled, setVeiled] = useState(false)
+
+  useEffect(() => startSmoothScroll(), [])
 
   const dashboardTop = () =>
     dashboardRef.current ? dashboardRef.current.getBoundingClientRect().top + window.scrollY : 0
@@ -146,6 +151,8 @@ function DashboardLayout() {
         if (el && el.getBoundingClientRect().top <= line) current = id
       }
       setActiveId(current)
+      const dashTop = dashboardRef.current?.getBoundingClientRect().top ?? Infinity
+      setVeiled(dashTop <= window.innerHeight * 0.5 && current !== 'contact')
     }
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update)
@@ -182,6 +189,16 @@ function DashboardLayout() {
   return (
     <>
       <Home onReadMore={enter} />
+
+      {/* Sits just above the fluid canvas (same z-index, later in the DOM). */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          'fixed inset-0 pointer-events-none bg-background/80 transition-opacity duration-500',
+          veiled ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ zIndex: -1 }}
+      />
 
       <div ref={dashboardRef}>
         <DashboardShell onHome={() => scrollToTarget(0)} isActive={isActive} onSelect={select}>
@@ -224,6 +241,7 @@ function App() {
           <Route path="/personal" element={null} />
           <Route path="/projects" element={null} />
           <Route path="/projects/:tab" element={null} />
+          <Route path="/blog" element={null} />
           <Route path="/contact" element={null} />
         </Route>
       </Route>

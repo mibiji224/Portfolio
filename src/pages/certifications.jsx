@@ -1,5 +1,6 @@
-import { CheckCircle2, ExternalLink } from 'lucide-react'
+import { Award, ExternalLink } from 'lucide-react'
 import PageShell from '@/components/PageShell'
+import Rail from '@/components/Rail'
 import { CERTIFICATIONS } from '@/data/profile'
 
 const Certifications = () => (
@@ -9,39 +10,42 @@ const Certifications = () => (
         title="Certifications & Awards"
         description="Courses, credentials and recognition, newest first."
     >
-        <ul className="space-y-3">
+        <Rail>
             {CERTIFICATIONS.map((cert) => (
-                <li
+                <article
                     key={cert.title}
-                    className="group flex items-start gap-3 p-4 bg-card rounded-xl shadow-lift transition-transform hover:-translate-y-0.5 duration-300"
+                    className="group w-[80%] sm:w-80 shrink-0 snap-start self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
                 >
-                    <CheckCircle2 className="w-4 h-4 text-primary-strong mt-0.5 shrink-0" />
-                    <div className="min-w-0 flex-1">
-                        <h2 className="text-sm font-bold text-foreground leading-snug group-hover:text-primary-strong transition-colors">
+                    <div className="h-40 flex items-center justify-center bg-secondary">
+                        <Award className="w-12 h-12 text-primary-strong" />
+                    </div>
+
+                    <div className="flex flex-1 flex-col p-5">
+                        <h2 className="text-base font-bold text-foreground leading-snug group-hover:text-primary-strong transition-colors">
                             {cert.title}
                         </h2>
                         <p className="mt-1 text-xs text-muted-foreground">
                             {cert.issuer} <span className="text-muted-foreground/70">• {cert.date}</span>
                         </p>
                         {cert.credentialId && (
-                            <p className="mt-1 font-mono text-[10px] text-muted-foreground/70 break-all">
+                            <p className="mt-2 font-mono text-[10px] text-muted-foreground/70 break-all">
                                 ID {cert.credentialId}
                             </p>
                         )}
+                        {cert.url && (
+                            <a
+                                href={cert.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-auto pt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary-strong hover:text-foreground transition-colors"
+                            >
+                                Show credential <ExternalLink className="w-3 h-3" />
+                            </a>
+                        )}
                     </div>
-                    {cert.url && (
-                        <a
-                            href={cert.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-primary-strong hover:text-foreground transition-colors"
-                        >
-                            Show credential <ExternalLink className="w-3 h-3" />
-                        </a>
-                    )}
-                </li>
+                </article>
             ))}
-        </ul>
+        </Rail>
     </PageShell>
 )
 

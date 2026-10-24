@@ -3,11 +3,22 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { pauseSmoothScroll, resumeSmoothScroll } from '@/lib/scroll'
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
 const DialogPortal = DialogPrimitive.Portal
 const DialogClose = DialogPrimitive.Close
+
+// Rendered inside Radix's content, which only exists while the dialog is open
+// (DialogContent itself can sit in the tree permanently, as in AdminLock).
+const ScrollLock = () => {
+  React.useEffect(() => {
+    pauseSmoothScroll()
+    return resumeSmoothScroll
+  }, [])
+  return null
+}
 
 const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
@@ -27,12 +38,14 @@ const DialogContent = React.forwardRef(
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
+        data-lenis-prevent
         className={cn(
           'fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 border border-border bg-popover text-popover-foreground shadow-accent-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-2xl',
           className
         )}
         {...props}
       >
+        <ScrollLock />
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-1 text-muted-foreground opacity-80 transition-opacity hover:text-foreground hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none">
