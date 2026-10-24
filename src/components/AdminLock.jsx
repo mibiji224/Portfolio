@@ -11,6 +11,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
+// Set just before leaving for Google, read when the session comes back.
+const LOGIN_FLAG = 'admin-login-started'
+
 export default function AdminLock() {
   const [isOpen, setIsOpen] = useState(false)
   const [error, setError] = useState('')
@@ -21,8 +24,24 @@ export default function AdminLock() {
 
   // Returning from Google with the wrong account: show why.
   useEffect(() => {
-    if (authError) setIsOpen(true)
+    if (!authError) return
+    setIsOpen(true)
+    // The attempt failed, so don't let its flag redirect a later visit.
+    try { sessionStorage.removeItem(LOGIN_FLAG) } catch { /* storage blocked */ }
   }, [authError])
+
+  // Google sends the browser back to the site root, so the dashboard is
+  // opened here once the session arrives, but only for a sign-in started from
+  // this lock (not for a session restored on an ordinary visit).
+  useEffect(() => {
+    if (!session) return
+    let started = false
+    try {
+      started = sessionStorage.getItem(LOGIN_FLAG) === '1'
+      sessionStorage.removeItem(LOGIN_FLAG)
+    } catch { /* storage blocked: the lock click still opens /admin */ }
+    if (started) navigate('/admin', { replace: true })
+  }, [session, navigate])
 
   // Already logged in, so the lock navigates directly to /admin
   const handleLockClick = () => {
@@ -36,9 +55,11 @@ export default function AdminLock() {
   const handleGoogle = async () => {
     setError('')
     setLoading(true)
+    try { sessionStorage.setItem(LOGIN_FLAG, '1') } catch { /* see above */ }
     const { error } = await signInWithGoogle()
     // On success the browser leaves for Google, so there is nothing to close.
     if (error) {
+      try { sessionStorage.removeItem(LOGIN_FLAG) } catch { /* see above */ }
       setLoading(false)
       setError(error.message)
     }
