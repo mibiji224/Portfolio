@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useOutletContext } from 'react-router-dom'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
@@ -184,7 +184,13 @@ const fromRows = (rows) => {
 
 const Experience = () => {
     const { experience } = useOutletContext()
-    const lists = fromRows(experience) ?? { work: WORK_EXPERIENCE, leadership: LEADERSHIP_ROLES }
+    // Memoised: the cards re-create their scroll triggers whenever an item's
+    // identity changes, and a trigger that fires on creation sets state, so a
+    // fresh array on every render would loop forever.
+    const lists = useMemo(
+        () => fromRows(experience) ?? { work: WORK_EXPERIENCE, leadership: LEADERSHIP_ROLES },
+        [experience]
+    )
     const [shown, setShown] = useState(null)
     // `detail` is kept after closing so the dialog can finish its exit
     // animation and unmount cleanly; `open` is what actually shows it.
@@ -211,7 +217,9 @@ const Experience = () => {
         },
     }
 
-    const tip = { item: shown, handlers, spot, setSpot }
+    // Setting the same card again is a no-op, so a trigger firing twice can't loop.
+    const spotOnce = useCallback((item) => setSpot((prev) => (prev === item ? prev : item)), [])
+    const tip = { item: shown, handlers, spot, setSpot: spotOnce }
 
     return (
         <PageShell
