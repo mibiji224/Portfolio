@@ -23,9 +23,9 @@ const Certifications = () => {
                     key={cert.id ?? cert.title}
                     className="group w-[80%] sm:w-80 shrink-0 snap-start self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
                 >
-                    <div className="h-40 flex items-center justify-center bg-secondary">
+                    <div className="h-40 p-3 flex items-center justify-center bg-secondary">
                         {cert.image_url ? (
-                            <img src={cert.image_url} alt={cert.title} className="h-full w-full object-cover" />
+                            <img src={cert.image_url} alt={cert.title} className="h-full w-full object-contain rounded-md" />
                         ) : (
                             <Award className="w-12 h-12 text-primary-strong" />
                         )}
