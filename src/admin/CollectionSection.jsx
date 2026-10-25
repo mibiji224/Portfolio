@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { mergeSubset, useCrud } from './crud'
 import SortableList from './SortableList'
 import {
-  ConfirmDialog, EmptyState, Field, ListSkeleton, Segmented, SectionHeader, Sheet,
+  ConfirmDialog, DropZone, EmptyState, Field, ListSkeleton, Segmented, SectionHeader, Sheet,
+  uploadImage, useObjectUrl,
 } from './ui'
 
 // One section of plain records (experience, certifications, education) described
@@ -33,28 +34,67 @@ const toPayload = (config, form) =>
     })
   )
 
+function ImageField({ value, file, onFile, onRemove, hint }) {
+  const previewUrl = useObjectUrl(file)
+  const src = previewUrl || value
+
+  return (
+    <>
+      {src && (
+        <div className="relative mb-3 h-32 w-full overflow-hidden rounded-xl border border-border bg-secondary">
+          <img src={src} alt="Certification preview" className="h-full w-full object-cover" />
+          <button
+            type="button"
+            onClick={onRemove}
+            aria-label="Remove certification image"
+            className="absolute right-2 top-2 rounded-full bg-foreground/70 p-1.5 text-white hover:bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+      <DropZone
+        onFiles={(files) => onFile(files[0])}
+        title={src ? 'Replace photo' : 'Choose a photo'}
+        hint={hint}
+      />
+    </>
+  )
+}
+
 function Editor({ config, open, row, count, onClose, onSaved, toast }) {
   const initial = useMemo(() => formFor(config, row), [config, row])
   const [form, setForm] = useState(initial)
+  const [imageFiles, setImageFiles] = useState({})
   const [saving, setSaving] = useState(false)
   const [tried, setTried] = useState(false)
 
-  const dirty = JSON.stringify(form) !== JSON.stringify(initial)
+  const dirty = JSON.stringify(form) !== JSON.stringify(initial) || Object.keys(imageFiles).length > 0
   const missing = (f) => (tried && f.required && !String(form[f.key]).trim() ? 'This is required.' : '')
 
   const save = async () => {
     setTried(true)
     if (config.fields.some((f) => f.required && !String(form[f.key]).trim())) return
     setSaving(true)
-    const payload = toPayload(config, form)
-    // A new record goes to the end of the list.
-    const { error } = row
-      ? await config.source.update(row.id, payload)
-      : await config.source.insert({ ...payload, display_order: count })
-    setSaving(false)
-    if (error) return toast(error.message, 'error')
-    toast(row ? `${config.noun} saved` : `${config.noun} added`, 'success')
-    onSaved()
+    try {
+      const payload = toPayload(config, form)
+      for (const field of config.fields.filter((f) => f.type === 'image')) {
+        if (imageFiles[field.key]) {
+          payload[field.key] = await uploadImage(imageFiles[field.key], 'certifications')
+        }
+      }
+      // A new record goes to the end of the list.
+      const { error } = row
+        ? await config.source.update(row.id, payload)
+        : await config.source.insert({ ...payload, display_order: count })
+      if (error) throw error
+      toast(row ? `${config.noun} saved` : `${config.noun} added`, 'success')
+      onSaved()
+    } catch (error) {
+      toast(error.message, 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -70,7 +110,20 @@ function Editor({ config, open, row, count, onClose, onSaved, toast }) {
     >
       {config.fields.map((f, i) => (
         <Field key={f.key} label={f.label} hint={f.hint} error={missing(f)}>
-          {f.type === 'segmented' ? (
+          {f.type === 'image' ? (
+            <ImageField
+              value={form[f.key]}
+              file={imageFiles[f.key]}
+              hint={f.hint}
+              onFile={(file) => setImageFiles({ ...imageFiles, [f.key]: file })}
+              onRemove={() => {
+                const nextFiles = { ...imageFiles }
+                delete nextFiles[f.key]
+                setImageFiles(nextFiles)
+                setForm({ ...form, [f.key]: '' })
+              }}
+            />
+          ) : f.type === 'segmented' ? (
             <Segmented value={form[f.key]} onChange={(v) => setForm({ ...form, [f.key]: v })} options={f.options} />
           ) : f.type === 'textarea' || f.type === 'lines' ? (
             <Textarea

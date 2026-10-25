@@ -60,8 +60,9 @@ export const certificationsConfig = {
     { key: 'date', label: 'When', nullable: true, placeholder: 'Apr 2026' },
     { key: 'credential_id', label: 'Credential ID', nullable: true, hint: 'Optional.' },
     { key: 'url', label: 'Link to verify it', type: 'url', nullable: true, hint: 'Optional. Adds a "Show credential" link.', placeholder: 'https://' },
+    { key: 'image_url', label: 'Photo', type: 'image', nullable: true, hint: 'Optional. Upload a photo or scan to display on the certificate card.' },
   ],
-  rowOf: (r) => ({ noThumb: true, label: r.title, meta: `${r.issuer}${r.date ? ` · ${r.date}` : ''}` }),
+  rowOf: (r) => ({ thumb: r.image_url, label: r.title, meta: `${r.issuer}${r.date ? ` · ${r.date}` : ''}` }),
 }
 
 export const educationConfig = {
