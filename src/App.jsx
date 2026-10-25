@@ -17,6 +17,7 @@ const Education      = lazy(() => import('./pages/education.jsx'))
 const Personal       = lazy(() => import('./pages/personal.jsx'))
 const Project        = lazy(() => import('./pages/project.jsx'))
 const Blog           = lazy(() => import('./pages/blog.jsx'))
+const BlogAll        = lazy(() => import('./pages/blogAll.jsx'))
 const Contact        = lazy(() => import('./pages/connect.jsx'))
 const Dashboard      = lazy(() => import('./admin/Dashboard.jsx'))
 const ReadMoreLoader = lazy(() => import('./components/ReadMoreLoader.jsx'))
@@ -250,6 +251,16 @@ function App() {
           <Route path="/blog" element={null} />
           <Route path="/contact" element={null} />
         </Route>
+
+        {/* The full blog lives outside the one-page scroll, on its own page. */}
+        <Route
+          path="/blog/all"
+          element={
+            <Suspense fallback={<SectionFallback />}>
+              <BlogAll />
+            </Suspense>
+          }
+        />
       </Route>
 
       <Route
