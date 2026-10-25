@@ -1,9 +1,9 @@
-import { ArrowUpRight, Clock, PenLine, X } from 'lucide-react'
+import { ArrowUpRight, Clock, X } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 // Bits shared by the blog bento on the dashboard scroll and the full
-// /blog/all page: the reader dialog, the bento tile and its size cycle.
+// /blog/all page: the reader dialog, the bento tile and its layout plan.
 
 const WORDS_PER_MINUTE = 200
 
@@ -30,9 +30,7 @@ export const Cover = ({ post, className }) =>
     post.cover_image ? (
         <img src={post.cover_image} alt="" loading="lazy" decoding="async" className={`w-full object-cover ${className}`} />
     ) : (
-        <div className={`flex w-full items-center justify-center bg-secondary ${className}`}>
-            <PenLine className="h-10 w-10 text-primary-strong" />
-        </div>
+        <div className={`w-full bg-secondary ${className}`} />
     )
 
 // The reader dialog: cover, meta and the full body, one post at a time.
@@ -68,33 +66,85 @@ export const PostDialog = ({ post, onClose }) => (
     </Dialog>
 )
 
-// The size cycle bento tiles are drawn from. Any window of it tiles a 4-column
-// grid tightly enough that `grid-flow-dense` leaves no obvious holes, and the
-// "big" sizes (anything spanning two axes or rows) carry longer previews.
-export const SIZE_CYCLE = [
-    'sm:col-span-2 sm:row-span-2', // 2x2 hero
-    'sm:col-span-2',               // wide strip
-    '',                            // standard card
-    'sm:row-span-2',               // tall card
-    '',                            // standard card
-    'sm:col-span-2 sm:row-span-2', // 2x2 hero
-    'sm:col-span-2',               // wide strip
-    '',                            // standard card
-    'sm:row-span-2',               // tall card
-    '',                            // standard card
-]
-
-export const bentoSpan = (i, shift) => SIZE_CYCLE[(i + shift) % SIZE_CYCLE.length]
-
-// The grid both blog views lay their tiles into. Dense flow backfills holes
-// left by the 2x2 / tall / wide tiles so the surface never gaps out.
+// The grid both blog views lay their tiles into. Dense flow plus a planned
+// span sequence (below) keep the surface packed edge to edge.
 export const BENTO_GRID =
-    'grid grid-flow-row-dense grid-cols-1 auto-rows-[10.5rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5'
+    'grid grid-cols-1 grid-flow-row-dense auto-rows-[9rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[8rem] sm:gap-5'
+
+// Tile shapes. Hero is 2x2, tall is a full column of the band, wide a full
+// strip, standard a single cell. On sm the grid is 2 columns and every tile
+// just stacks full-width, so holes are impossible below lg.
+const SHAPES = {
+    hero: 'sm:col-span-2 sm:row-span-2',
+    tall: 'sm:col-span-2 sm:row-span-2 lg:col-span-1',
+    wide: 'sm:col-span-2',
+    std: 'sm:col-span-2 lg:col-span-1',
+}
+
+// The layout is planned band by band: each band is an ordered group of tiles
+// that fills one 4-column x 2-row strip exactly, so no whitespace can appear
+// between cards, whatever combination is drawn. Each visit draws a different
+// plan; it stays put while someone reads.
+const HERO_BANDS = [
+    [SHAPES.hero, SHAPES.tall, SHAPES.tall],
+    [SHAPES.tall, SHAPES.hero, SHAPES.tall],
+]
+const HERO_PAIR = [SHAPES.hero, SHAPES.hero]
+const TALL_BAND = [SHAPES.tall, SHAPES.tall, SHAPES.tall, SHAPES.tall]
+const WIDE_BAND = [SHAPES.wide, SHAPES.wide, SHAPES.wide, SHAPES.wide]
+const MIXED_BAND = [SHAPES.wide, SHAPES.std, SHAPES.std, SHAPES.wide, SHAPES.std, SHAPES.std]
+
+const FILLER_BANDS = [HERO_BANDS[0], HERO_BANDS[1], HERO_PAIR, TALL_BAND, WIDE_BAND, MIXED_BAND]
+// The closing band must end on a tall or standard slot, so the CTA tile
+// (always last, bottom-right of the whole grid) stays compact.
+const CLOSING_BAND_LENGTHS = [3, 4, 6]
+
+// Span classes for every tile, CTA included as the final entry.
+export const planBento = (tileCount) => {
+    // Choose the closing band's size first: what's left before it must be
+    // coverable by whole filler bands (i.e. never a lone 1-cell remainder).
+    const lengths = CLOSING_BAND_LENGTHS.filter(
+        (len) => tileCount - len === 0 || tileCount - len >= 2
+    )
+    // With fewer tiles than any closing band needs, a strip of standard
+    // cards still tiles every row exactly — a safe fallback.
+    if (!lengths.length) return Array(tileCount).fill(SHAPES.std)
+
+    const closingLength = lengths[Math.floor(Math.random() * lengths.length)]
+    const closers = { 3: HERO_BANDS, 4: [TALL_BAND], 6: [MIXED_BAND] }
+    const pool = closers[closingLength]
+    const closing = pool[Math.floor(Math.random() * pool.length)]
+
+    const bands = []
+    let remaining = tileCount - closingLength
+    while (remaining > 0) {
+        const eligible = FILLER_BANDS.filter(
+            (band) => band.length <= remaining && remaining - band.length !== 1
+        )
+        const band = eligible[Math.floor(Math.random() * eligible.length)]
+        bands.push(band)
+        remaining -= band.length
+    }
+    bands.push(closing)
+    return bands.flat()
+}
+
+// An empty slot waiting for a future post: just a dashed frame, no content.
+export const BentoSkeleton = ({ span, className }) => (
+    <div
+        aria-hidden="true"
+        className={cn(
+            'rounded-xl border border-dashed border-primary/25 bg-secondary/40',
+            span,
+            className
+        )}
+    />
+)
 
 // One bento box: the cover fills the whole tile, a soft gradient keeps the
 // text legible, and the headline plus excerpt sit at the bottom edge.
 export const BentoTile = ({ post, span, onClick, className }) => {
-    const big = /span-2/.test(span ?? '')
+    const big = /row-span-2/.test(span ?? '')
 
     return (
         <button
@@ -117,9 +167,7 @@ export const BentoTile = ({ post, span, onClick, className }) => {
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
             ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-secondary">
-                    <PenLine className="h-8 w-8 text-primary-strong" />
-                </div>
+                <div className="absolute inset-0 bg-secondary" />
             )}
             <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-background/15" />
 

@@ -2,17 +2,25 @@ import { useMemo, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import PageShell from '@/components/PageShell'
-import { BENTO_GRID, BentoTile, PostDialog, bentoSpan } from '@/components/BlogShared'
+import { BENTO_GRID, BentoSkeleton, BentoTile, PostDialog, planBento } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
 
 // The whole blog, on its own page (/blog/all). It stands alone — no
 // dashboard shell — with just a way back up top, and every entry opens
-// in the same reader dialog as the bento on the dashboard.
+// in the same reader dialog as the bento on the dashboard. Empty slots
+// pad the grid out until real posts fill them.
+const MIN_TILES = 7
+
 const BlogAll = () => {
     const { blog } = useOutletContext()
     const posts = blog?.length ? blog : FALLBACK_BLOG
+    const tiles = [
+        ...posts,
+        ...Array(Math.max(0, MIN_TILES - posts.length)).fill(null),
+    ]
     const [open, setOpen] = useState(null)
-    const shift = useMemo(() => Math.floor(Math.random() * 10), [])
+    // One layout plan per visit; it holds still while someone reads.
+    const spans = useMemo(() => planBento(tiles.length), [])
 
     return (
         <div className="min-h-screen bg-background">
@@ -37,14 +45,18 @@ const BlogAll = () => {
                 description="Every note and story, newest first."
             >
                 <div className={BENTO_GRID}>
-                    {posts.map((post, i) => (
-                        <BentoTile
-                            key={post.id}
-                            post={post}
-                            span={bentoSpan(i, shift)}
-                            onClick={() => setOpen(post)}
-                        />
-                    ))}
+                    {tiles.map((post, i) =>
+                        post ? (
+                            <BentoTile
+                                key={post.id}
+                                post={post}
+                                span={spans[i]}
+                                onClick={() => setOpen(post)}
+                            />
+                        ) : (
+                            <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
+                        )
+                    )}
                 </div>
 
                 <PostDialog post={open} onClose={() => setOpen(null)} />
