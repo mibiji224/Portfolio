@@ -39,12 +39,8 @@ const Preview = ({ form, cover }) => (
   <div>
     <p className="mb-2 text-sm font-medium text-foreground">Preview</p>
     <div className="overflow-hidden rounded-xl border border-border bg-card">
-      {cover ? (
+      {cover && (
         <img src={cover} alt="" className="h-40 w-full object-cover" />
-      ) : (
-        <div className="flex h-40 w-full items-center justify-center bg-secondary">
-          <PenLine className="h-9 w-9 text-primary-strong" />
-        </div>
       )}
       <div className="p-4">
         <p className="flex flex-wrap items-center gap-x-3 text-[11px] text-muted-foreground">

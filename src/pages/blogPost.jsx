@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useOutletContext, useParams } from 'react-router-dom'
 import { ArrowLeft, Check, Copy, Share2 } from 'lucide-react'
 import PageShell from '@/components/PageShell'
-import { Cover, formatDate, MarkdownBody, readingTime } from '@/components/BlogShared'
+import { Cover, formatDate, MarkdownBody, PostByline, readingTime } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
 
 const BlogPost = () => {
@@ -68,13 +68,14 @@ const BlogPost = () => {
 
       <PageShell index="07" label="blog" title="Blog">
         <article className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-border bg-card">
-          <Cover post={post} className="h-52 sm:h-80" />
+          {post.cover_image && <Cover post={post} className="h-52 sm:h-80" />}
           <div className="p-5 sm:p-10">
             <p className="flex flex-wrap items-center gap-x-3 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
               <span>{formatDate(post.published_at)}</span>
               <span>{readingTime(post.body)} min read</span>
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{post.title}</h1>
+            <PostByline />
             {post.excerpt && <p className="mt-4 text-base leading-relaxed text-muted-foreground">{post.excerpt}</p>}
             <div className="mt-8">
               <MarkdownBody body={post.body} />

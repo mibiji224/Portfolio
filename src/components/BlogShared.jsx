@@ -46,13 +46,14 @@ export const Meta = ({ post }) => (
     </p>
 )
 
-// A post with no header photo yet gets a quiet placeholder instead of a gap.
+export const PostByline = () => (
+    <p className="mt-2 text-sm text-muted-foreground">Written by Desiree Soronio</p>
+)
+
 export const Cover = ({ post, className }) =>
-    post.cover_image ? (
-        <img src={post.cover_image} alt="" loading="lazy" decoding="async" className={`w-full object-cover ${className}`} />
-    ) : (
-        <div className={`w-full bg-secondary ${className}`} />
-    )
+    post.cover_image
+        ? <img src={post.cover_image} alt="" loading="lazy" decoding="async" className={`w-full object-cover ${className}`} />
+        : null
 
 // The reader dialog: cover, meta and the full body, one post at a time.
 export const PostDialog = ({ post, onClose }) => (
@@ -71,13 +72,14 @@ export const PostDialog = ({ post, onClose }) => (
                     <X className="h-4 w-4" />
                 </button>
 
-                <Cover post={post} className="h-48 sm:h-64" />
+                {post.cover_image && <Cover post={post} className="h-48 sm:h-64" />}
 
                 <article className="p-5 sm:p-8">
                     <Meta post={post} />
                     <DialogTitle className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                         {post.title}
                     </DialogTitle>
+                    <PostByline />
                     <div className="mt-6">
                         <MarkdownBody body={post.body} />
                     </div>
@@ -178,7 +180,7 @@ export const BentoTile = ({ post, span, to, className }) => {
                 className
             )}
         >
-            {post.cover_image ? (
+            {post.cover_image && (
                 <img
                     src={post.cover_image}
                     alt=""
@@ -186,10 +188,10 @@ export const BentoTile = ({ post, span, to, className }) => {
                     decoding="async"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-            ) : (
-                <div className="absolute inset-0 bg-secondary" />
             )}
-            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-background/15" />
+            {post.cover_image && (
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-background/15" />
+            )}
 
             <div className="relative">
                 <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">

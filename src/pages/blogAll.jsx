@@ -43,6 +43,7 @@ const BlogAll = () => {
                 label="blog"
                 title="All blog entries"
                 description="Every note and story, newest first."
+                hideLabel
             >
                 <div className={BENTO_GRID}>
                     {tiles.map((post, i) =>
