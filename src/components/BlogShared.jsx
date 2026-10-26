@@ -94,27 +94,61 @@ export const PostDialog = ({ post, onClose }) => (
 export const BENTO_GRID =
     'grid grid-cols-1 grid-flow-row-dense auto-rows-[9rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[8rem] sm:gap-5'
 
-// Each tile chooses its own width and height. The mixed spans intentionally
-// avoid a repeated band pattern; dense placement packs the varied shapes.
-const TILE_SHAPES = [
-    'sm:col-span-2 lg:col-span-1',
-    'sm:col-span-2 lg:col-span-2',
-    'sm:col-span-2 lg:col-span-3',
-    'sm:col-span-2 lg:col-span-1 lg:row-span-2',
-    'sm:col-span-2 lg:col-span-2 lg:row-span-2',
-    'sm:col-span-2 lg:col-span-1 lg:row-span-3',
-    'sm:col-span-2 lg:col-span-3 lg:row-span-2',
-]
-
-// Span classes for every tile, including the dashboard's final CTA.
-export const planBento = (tileCount) => {
-    const spans = []
-    for (let i = 0; i < tileCount; i += 1) {
-        const recent = spans.slice(-2)
-        const choices = TILE_SHAPES.filter((shape) => !recent.includes(shape))
-        spans.push(choices[Math.floor(Math.random() * choices.length)])
+const shuffle = (items) => {
+    const result = [...items]
+    for (let i = result.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[result[i], result[j]] = [result[j], result[i]]
     }
-    return spans
+    return result
+}
+
+const bandsForCount = (count) => {
+    const row = {
+        1: 'sm:col-span-2 lg:col-span-1',
+        2: 'sm:col-span-2 lg:col-span-2',
+        3: 'sm:col-span-2 lg:col-span-3',
+        4: 'sm:col-span-2 lg:col-span-4',
+    }
+    const tall = {
+        1: 'sm:col-span-2 lg:col-span-1 lg:row-span-2',
+        2: 'sm:col-span-2 lg:col-span-2 lg:row-span-2',
+        3: 'sm:col-span-2 lg:col-span-3 lg:row-span-2',
+        4: 'sm:col-span-2 lg:col-span-4 lg:row-span-2',
+    }
+    const patterns = {
+        1: [[row[4]], [tall[4]]],
+        2: [[row[1], row[3]], [row[2], row[2]], [tall[1], tall[3]], [tall[2], tall[2]]],
+        3: [[row[2], row[1], row[1]], [tall[2], tall[1], tall[1]]],
+        4: [
+            [row[1], row[1], row[1], row[1]],
+            [tall[1], tall[1], tall[1], tall[1]],
+            [tall[2], tall[2]],
+        ],
+    }
+    return patterns[count].map(shuffle)
+}
+
+// Each band exactly fills four desktop columns, so randomized card sizes do
+// not leave gaps between posts. Mobile/tablet cards remain full-width.
+export const planBento = (tileCount) => {
+    const bands = []
+    let remaining = tileCount
+    while (remaining > 0) {
+        const maxCount = Math.min(4, remaining)
+        const count = maxCount === 1
+            ? 1
+            : maxCount === 2
+                ? 2
+                : Math.floor(Math.random() * (maxCount - 1)) + 2
+        const choices = bandsForCount(count).filter((pattern) => {
+            const previous = bands.at(-1)
+            return !previous || pattern.join('|') !== previous.join('|')
+        })
+        bands.push(choices[Math.floor(Math.random() * choices.length)])
+        remaining -= count
+    }
+    return bands.flat()
 }
 
 // An empty slot waiting for a future post: just a dashed frame, no content.
@@ -132,7 +166,7 @@ export const BentoSkeleton = ({ span, className }) => (
 // One bento box: the cover fills the whole tile, a soft gradient keeps the
 // text legible, and the headline plus excerpt sit at the bottom edge.
 export const BentoTile = ({ post, span, to, className }) => {
-    const roomy = /(?:col-span-[23]|row-span-[23])/.test(span ?? '')
+    const roomy = /(?:col-span-[234]|row-span-2)/.test(span ?? '')
 
     return (
         <Link

@@ -2,25 +2,17 @@ import { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import PageShell from '@/components/PageShell'
-import { BENTO_GRID, BentoSkeleton, BentoTile, planBento } from '@/components/BlogShared'
+import { BENTO_GRID, BentoTile, planBento } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
 import { postPath } from '@/lib/blog'
 
 // The whole blog, on its own page (/blog/all). It stands alone — no
-// dashboard shell — with just a way back up top, and every entry opens
-// in the same reader dialog as the bento on the dashboard. Empty slots
-// pad the grid out until real posts fill them.
-const MIN_TILES = 7
-
+// dashboard shell — with just a way back up top.
 const BlogAll = () => {
     const { blog } = useOutletContext()
     const posts = blog?.length ? blog : FALLBACK_BLOG
-    const tiles = [
-        ...posts,
-        ...Array(Math.max(0, MIN_TILES - posts.length)).fill(null),
-    ]
     // One layout plan per visit; it holds still while someone reads.
-    const spans = useMemo(() => planBento(tiles.length), [])
+    const spans = useMemo(() => planBento(posts.length), [posts.length])
 
     return (
         <div className="min-h-screen bg-background">
@@ -46,18 +38,14 @@ const BlogAll = () => {
                 hideLabel
             >
                 <div className={BENTO_GRID}>
-                    {tiles.map((post, i) =>
-                        post ? (
+                    {posts.map((post, i) => (
                             <BentoTile
                                 key={post.id}
                                 post={post}
                                 span={spans[i]}
                                 to={postPath(post)}
                             />
-                        ) : (
-                            <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
-                        )
-                    )}
+                    ))}
                 </div>
             </PageShell>
         </div>

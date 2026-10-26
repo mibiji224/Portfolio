@@ -7,25 +7,15 @@ import { FALLBACK_BLOG } from '@/data/profile'
 import { postPath } from '@/lib/blog'
 import { cn } from '@/lib/utils'
 
-// The dashboard shows a bento taste of the blog only; the rest of the
-// entries live on /blog/all, which the last tile opens. Empty slots pad the
-// rest of the bento out until real posts fill them. Including the CTA there
-// are 8 tiles — three full bands on desktop, one screen tall.
-const TILE_COUNT = 8
-
 const Blog = () => {
     const { blog } = useOutletContext()
     const posts = blog?.length ? blog : FALLBACK_BLOG
-    const preview = posts.slice(0, TILE_COUNT - 1)
-    const tiles = [
-        ...preview,
-        ...Array(Math.max(0, TILE_COUNT - 1 - preview.length)).fill(null),
-    ]
-    const remaining = Math.max(0, posts.length - (TILE_COUNT - 1))
+    const preview = posts.slice(0, 7)
+    const remaining = Math.max(0, posts.length - preview.length)
     // One layout plan per visit; it holds still while someone reads.
-    const spans = useMemo(() => planBento(TILE_COUNT), [])
-    const ctaSpan = spans[TILE_COUNT - 1]
-    const ctaTall = /(?:col-span-[23]|row-span-[23])/.test(ctaSpan)
+    const spans = useMemo(() => planBento(preview.length + 1), [preview.length])
+    const ctaSpan = spans[preview.length]
+    const ctaTall = /(?:col-span-[234]|row-span-2)/.test(ctaSpan)
 
     return (
     <PageShell
@@ -35,18 +25,14 @@ const Blog = () => {
         description="Notes on work, growth and the things I'm figuring out along the way."
     >
         <div className={BENTO_GRID}>
-            {tiles.map((post, i) =>
-                post ? (
+            {preview.map((post, i) => (
                     <BentoTile
                         key={post.id}
                         post={post}
                         span={spans[i]}
                         to={postPath(post)}
                     />
-                ) : (
-                    <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
-                )
-            )}
+            ))}
 
             <Link
                 to="/blog/all"
