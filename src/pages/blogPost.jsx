@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useOutletContext, useParams } from 'react-router-dom'
 import { ArrowLeft, Check, Copy, Share2 } from 'lucide-react'
-import PageShell from '@/components/PageShell'
 import { Cover, formatDate, MarkdownBody, PostByline, readingTime } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
 
@@ -35,19 +34,21 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background">
-        <PageShell index="07" label="blog" title="Post not found" description="This post may have been removed or the link may be outdated.">
-          <Link to="/blog/all" className="inline-flex items-center gap-2 text-sm font-semibold text-primary-strong hover:text-foreground">
+      <div className="min-h-screen bg-background px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Post not found</h1>
+          <p className="mt-3 text-muted-foreground">This post may have been removed or the link may be outdated.</p>
+          <Link to="/blog/all" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary-strong hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> Browse all posts
           </Link>
-        </PageShell>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link
             to="/blog/all"
@@ -66,8 +67,8 @@ const BlogPost = () => {
         </div>
       </header>
 
-      <PageShell index="07" label="blog" title="Blog">
-        <article className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-border bg-card">
+      <main className="px-4 py-8 font-sans sm:px-6 sm:py-10 lg:px-10">
+        <article className="mx-auto max-w-3xl overflow-hidden bg-card">
           {post.cover_image && <Cover post={post} className="h-52 sm:h-80" />}
           <div className="p-5 sm:p-10">
             <p className="flex flex-wrap items-center gap-x-3 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -91,7 +92,7 @@ const BlogPost = () => {
             </div>
           </div>
         </article>
-      </PageShell>
+      </main>
     </div>
   )
 }
