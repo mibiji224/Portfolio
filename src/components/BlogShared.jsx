@@ -1,4 +1,5 @@
 import { ArrowUpRight, Clock, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
@@ -143,13 +144,12 @@ export const BentoSkeleton = ({ span, className }) => (
 
 // One bento box: the cover fills the whole tile, a soft gradient keeps the
 // text legible, and the headline plus excerpt sit at the bottom edge.
-export const BentoTile = ({ post, span, onClick, className }) => {
+export const BentoTile = ({ post, span, to, className }) => {
     const big = /row-span-2/.test(span ?? '')
 
     return (
-        <button
-            type="button"
-            onClick={onClick}
+        <Link
+            to={to}
             className={cn(
                 'group relative flex flex-col justify-end overflow-hidden rounded-xl border border-border bg-card p-4 text-left sm:p-5',
                 'transition-all duration-300 hover:border-primary/50 hover:shadow-lift',
@@ -194,6 +194,6 @@ export const BentoTile = ({ post, span, onClick, className }) => {
                     <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </span>
             </div>
-        </button>
+        </Link>
     )
 }

@@ -13,9 +13,13 @@ import {
 const today = () => new Date().toISOString().slice(0, 10)
 const words = (text) => (text.trim() ? text.trim().split(/\s+/).length : 0)
 const minutes = (text) => Math.max(1, Math.round(words(text) / 200))
+const slugify = (text) =>
+  text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 const formFor = (row) => ({
   title: row?.title ?? '',
+  slug: row?.slug ?? slugify(row?.title ?? ''),
   excerpt: row?.excerpt ?? '',
   body: row?.body ?? '',
   published_at: row?.published_at ?? today(),
@@ -58,6 +62,7 @@ function BlogEditor({ open, row, onClose, onSaved, toast }) {
   // The header photo: a freshly picked file wins over the one already saved.
   const [file, setFile] = useState(null)
   const [coverUrl, setCoverUrl] = useState(row?.cover_image ?? '')
+  const [slugEdited, setSlugEdited] = useState(Boolean(row))
   const [saving, setSaving] = useState(false)
   const [tried, setTried] = useState(false)
 
@@ -74,7 +79,12 @@ function BlogEditor({ open, row, onClose, onSaved, toast }) {
     setSaving(true)
     try {
       const cover_image = file ? await uploadImage(file, 'blog') : coverUrl || null
-      const payload = { ...form, title: form.title.trim(), cover_image }
+      const payload = {
+        ...form,
+        title: form.title.trim(),
+        slug: slugify(form.slug || form.title),
+        cover_image,
+      }
       const { error } = row ? await db.blog.update(row.id, payload) : await db.blog.insert(payload)
       if (error) throw error
       toast(row ? 'Post saved' : form.is_published ? 'Post published' : 'Draft saved', 'success')
@@ -119,7 +129,28 @@ function BlogEditor({ open, row, onClose, onSaved, toast }) {
       </Field>
 
       <Field label="Title" error={tried && !form.title.trim() ? 'Give the post a title.' : ''}>
-        <Input value={form.title} onChange={set('title')} placeholder="Live for Yourself, Too" />
+        <Input
+          value={form.title}
+          onChange={(e) => {
+            const title = e.target.value
+            setForm({ ...form, title, ...(!slugEdited ? { slug: slugify(title) } : {}) })
+          }}
+          placeholder="Live for Yourself, Too"
+        />
+      </Field>
+
+      <Field label="Share link" hint="This unique slug is part of the post's shareable URL. You can customize it.">
+        <div className="flex items-center gap-2">
+          <span className="shrink-0 text-sm text-muted-foreground">/blog/</span>
+          <Input
+            value={form.slug}
+            onChange={(e) => {
+              setSlugEdited(true)
+              setForm({ ...form, slug: slugify(e.target.value) })
+            }}
+            placeholder="your-post-title"
+          />
+        </div>
       </Field>
 
       <Field label="Summary" hint="One or two sentences shown on the card.">

@@ -236,6 +236,7 @@ export const TRAITS = ['INTJ-T', 'Detail-Oriented', 'Creative Strategist', 'Resi
 export const FALLBACK_BLOG = [
     {
         id: "live-for-yourself-too",
+        slug: "live-for-yourself-too",
         title: "Live for Yourself, Too",
         excerpt: "Give generously to the work you believe in, but don’t forget to save a piece for yourself.",
         cover_image: null,

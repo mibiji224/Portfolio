@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import PageShell from '@/components/PageShell'
-import { BENTO_GRID, BentoSkeleton, BentoTile, PostDialog, planBento } from '@/components/BlogShared'
+import { BENTO_GRID, BentoSkeleton, BentoTile, planBento } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
+import { postPath } from '@/lib/blog'
 
 // The whole blog, on its own page (/blog/all). It stands alone — no
 // dashboard shell — with just a way back up top, and every entry opens
@@ -18,7 +19,6 @@ const BlogAll = () => {
         ...posts,
         ...Array(Math.max(0, MIN_TILES - posts.length)).fill(null),
     ]
-    const [open, setOpen] = useState(null)
     // One layout plan per visit; it holds still while someone reads.
     const spans = useMemo(() => planBento(tiles.length), [])
 
@@ -51,15 +51,13 @@ const BlogAll = () => {
                                 key={post.id}
                                 post={post}
                                 span={spans[i]}
-                                onClick={() => setOpen(post)}
+                                to={postPath(post)}
                             />
                         ) : (
                             <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
                         )
                     )}
                 </div>
-
-                <PostDialog post={open} onClose={() => setOpen(null)} />
             </PageShell>
         </div>
     )

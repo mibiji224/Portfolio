@@ -18,6 +18,7 @@ const Personal       = lazy(() => import('./pages/personal.jsx'))
 const Project        = lazy(() => import('./pages/project.jsx'))
 const Blog           = lazy(() => import('./pages/blog.jsx'))
 const BlogAll        = lazy(() => import('./pages/blogAll.jsx'))
+const BlogPost       = lazy(() => import('./pages/blogPost.jsx'))
 const Contact        = lazy(() => import('./pages/connect.jsx'))
 const Dashboard      = lazy(() => import('./admin/Dashboard.jsx'))
 const ReadMoreLoader = lazy(() => import('./components/ReadMoreLoader.jsx'))
@@ -258,6 +259,14 @@ function App() {
           element={
             <Suspense fallback={<SectionFallback />}>
               <BlogAll />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/blog/:slug"
+          element={
+            <Suspense fallback={<SectionFallback />}>
+              <BlogPost />
             </Suspense>
           }
         />

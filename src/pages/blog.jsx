@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { ArrowUpRight, Newspaper } from 'lucide-react'
 import PageShell from '@/components/PageShell'
-import { BENTO_GRID, BentoSkeleton, BentoTile, PostDialog, planBento } from '@/components/BlogShared'
+import { BENTO_GRID, BentoSkeleton, BentoTile, planBento } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
+import { postPath } from '@/lib/blog'
 import { cn } from '@/lib/utils'
 
 // The dashboard shows a bento taste of the blog only; the rest of the
@@ -21,7 +22,6 @@ const Blog = () => {
         ...Array(Math.max(0, TILE_COUNT - 1 - preview.length)).fill(null),
     ]
     const remaining = Math.max(0, posts.length - (TILE_COUNT - 1))
-    const [open, setOpen] = useState(null)
     // One layout plan per visit; it holds still while someone reads.
     const spans = useMemo(() => planBento(TILE_COUNT), [])
     const ctaSpan = spans[TILE_COUNT - 1]
@@ -41,7 +41,7 @@ const Blog = () => {
                         key={post.id}
                         post={post}
                         span={spans[i]}
-                        onClick={() => setOpen(post)}
+                        to={postPath(post)}
                     />
                 ) : (
                     <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
@@ -81,8 +81,6 @@ const Blog = () => {
                 </span>
             </Link>
         </div>
-
-        <PostDialog post={open} onClose={() => setOpen(null)} />
     </PageShell>
     )
 }
