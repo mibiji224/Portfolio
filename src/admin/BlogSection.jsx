@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Clock, Newspaper, PenLine, Plus, X } from 'lucide-react'
+import { createElement, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Bold, Clock, Code, Eye, Heading2, Italic, Link2, List, ListOrdered, Newspaper, PenLine, Plus, Quote,
+  X,
+} from 'lucide-react'
 import { db } from '@/hooks/usePortfolioData'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { MarkdownBody } from '@/components/BlogShared'
 import { useCrud } from './crud'
 import {
   Chip, ConfirmDialog, DropZone, EmptyState, Field, ListSkeleton, Row, SectionHeader, Sheet, Switch,
@@ -65,11 +69,27 @@ function BlogEditor({ open, row, onClose, onSaved, toast }) {
   const [slugEdited, setSlugEdited] = useState(Boolean(row))
   const [saving, setSaving] = useState(false)
   const [tried, setTried] = useState(false)
+  const [bodyTab, setBodyTab] = useState('write')
+  const bodyRef = useRef(null)
 
   const picked = useObjectUrl(file)
   const cover = picked || coverUrl
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value })
+  const formatBody = (prefix, suffix = '', placeholder = 'Text') => {
+    const textarea = bodyRef.current
+    const start = textarea?.selectionStart ?? form.body.length
+    const end = textarea?.selectionEnd ?? form.body.length
+    const selected = form.body.slice(start, end)
+    const content = selected || placeholder
+    const next = `${form.body.slice(0, start)}${prefix}${content}${suffix}${form.body.slice(end)}`
+    setForm({ ...form, body: next })
+    requestAnimationFrame(() => {
+      textarea?.focus()
+      const selectionStart = start + prefix.length
+      textarea?.setSelectionRange(selectionStart, selectionStart + content.length)
+    })
+  }
   const dirty =
     JSON.stringify(form) !== JSON.stringify(initial) || Boolean(file) || coverUrl !== (row?.cover_image ?? '')
 
@@ -159,10 +179,69 @@ function BlogEditor({ open, row, onClose, onSaved, toast }) {
 
       <Field
         label="Post"
-        hint={`${words(form.body)} words · about ${minutes(form.body)} min read. Leave a blank line between paragraphs.`}
+        hint={`${words(form.body)} words · about ${minutes(form.body)} min read. Markdown supported: headings, bold, italic, links, lists, quotes, code and tables.`}
         error={tried && !form.body.trim() ? 'Write something first.' : ''}
       >
-        <Textarea rows={14} value={form.body} onChange={set('body')} className="leading-relaxed" />
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-1" aria-label="Markdown formatting">
+            {[
+              { label: 'Bold', icon: Bold, prefix: '**', suffix: '**' },
+              { label: 'Italic', icon: Italic, prefix: '*', suffix: '*' },
+              { label: 'Heading', icon: Heading2, prefix: '## ', placeholder: 'Heading' },
+              { label: 'Bulleted list', icon: List, prefix: '- ', placeholder: 'List item' },
+              { label: 'Numbered list', icon: ListOrdered, prefix: '1. ', placeholder: 'List item' },
+              { label: 'Quote', icon: Quote, prefix: '> ', placeholder: 'Quote' },
+              { label: 'Link', icon: Link2, prefix: '[', suffix: '](https://example.com)', placeholder: 'Link text' },
+              { label: 'Code', icon: Code, prefix: '`', suffix: '`' },
+            ].map((format) => (
+              <button
+                key={format.label}
+                type="button"
+                title={format.label}
+                aria-label={format.label}
+                disabled={bodyTab !== 'write'}
+                onClick={() => formatBody(format.prefix, format.suffix, format.placeholder)}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {createElement(format.icon, { size: 15 })}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-1 rounded-full border border-border p-1">
+            <button
+              type="button"
+              onClick={() => setBodyTab('write')}
+              aria-pressed={bodyTab === 'write'}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${bodyTab === 'write' ? 'bg-primary-soft text-primary-strong' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <PenLine size={13} /> Write
+            </button>
+            <button
+              type="button"
+              onClick={() => setBodyTab('preview')}
+              aria-pressed={bodyTab === 'preview'}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${bodyTab === 'preview' ? 'bg-primary-soft text-primary-strong' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <Eye size={13} /> Preview
+            </button>
+          </div>
+        </div>
+        {bodyTab === 'write' ? (
+          <Textarea
+            ref={bodyRef}
+            rows={14}
+            value={form.body}
+            onChange={set('body')}
+            className="leading-relaxed"
+            placeholder={'## A section heading\n\nWrite your post here. Use **bold**, *italic*, lists, links, quotes, and code.'}
+          />
+        ) : (
+          <div className="min-h-64 rounded-xl border border-input bg-card p-4">
+            {form.body.trim()
+              ? <MarkdownBody body={form.body} />
+              : <p className="text-sm text-muted-foreground">Your formatted post preview will appear here.</p>}
+          </div>
+        )}
       </Field>
 
       <Field label="Date">

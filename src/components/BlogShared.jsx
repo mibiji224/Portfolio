@@ -1,4 +1,6 @@
 import { ArrowUpRight, Clock, X } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Link } from 'react-router-dom'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
@@ -11,6 +13,24 @@ const WORDS_PER_MINUTE = 200
 export const paragraphs = (body) => body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
 
 export const readingTime = (body) => Math.max(1, Math.round(body.trim().split(/\s+/).length / WORDS_PER_MINUTE))
+
+export const MarkdownBody = ({ body }) => (
+    <div className="space-y-5 text-sm leading-relaxed text-foreground/90 sm:text-base [&_a]:font-medium [&_a]:text-primary-strong [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l-2 [&_blockquote]:border-primary/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-secondary [&_code]:px-1.5 [&_code]:py-0.5 [&_del]:line-through [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-semibold [&_hr]:border-border [&_li]:ml-5 [&_li]:pl-1 [&_ol]:list-decimal [&_p]:whitespace-pre-wrap [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:bg-secondary [&_pre]:p-4 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_strong]:font-bold [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_th]:border [&_th]:border-border [&_th]:bg-secondary [&_th]:p-2 [&_ul]:list-disc">
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+                a: ({ href, children }) => (
+                    <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>
+                ),
+                img: ({ src, alt }) => (
+                    <img src={src} alt={alt ?? ''} loading="lazy" className="my-4 max-h-[32rem] rounded-xl object-contain" />
+                ),
+            }}
+        >
+            {body}
+        </ReactMarkdown>
+    </div>
+)
 
 export const formatDate = (iso) =>
     iso
@@ -58,8 +78,8 @@ export const PostDialog = ({ post, onClose }) => (
                     <DialogTitle className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                         {post.title}
                     </DialogTitle>
-                    <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/90 sm:text-base">
-                        {paragraphs(post.body).map((text, i) => <p key={i}>{text}</p>)}
+                    <div className="mt-6">
+                        <MarkdownBody body={post.body} />
                     </div>
                 </article>
             </DialogContent>
