@@ -94,62 +94,27 @@ export const PostDialog = ({ post, onClose }) => (
 export const BENTO_GRID =
     'grid grid-cols-1 grid-flow-row-dense auto-rows-[9rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[8rem] sm:gap-5'
 
-// Tile shapes. Hero is 2x2, tall is a full column of the band, wide a full
-// strip, standard a single cell. On sm the grid is 2 columns and every tile
-// just stacks full-width, so holes are impossible below lg.
-const SHAPES = {
-    hero: 'sm:col-span-2 sm:row-span-2',
-    tall: 'sm:col-span-2 sm:row-span-2 lg:col-span-1',
-    wide: 'sm:col-span-2',
-    std: 'sm:col-span-2 lg:col-span-1',
-}
-
-// The layout is planned band by band: each band is an ordered group of tiles
-// that fills one 4-column x 2-row strip exactly, so no whitespace can appear
-// between cards, whatever combination is drawn. Each visit draws a different
-// plan; it stays put while someone reads.
-const HERO_BANDS = [
-    [SHAPES.hero, SHAPES.tall, SHAPES.tall],
-    [SHAPES.tall, SHAPES.hero, SHAPES.tall],
+// Each tile chooses its own width and height. The mixed spans intentionally
+// avoid a repeated band pattern; dense placement packs the varied shapes.
+const TILE_SHAPES = [
+    'sm:col-span-2 lg:col-span-1',
+    'sm:col-span-2 lg:col-span-2',
+    'sm:col-span-2 lg:col-span-3',
+    'sm:col-span-2 lg:col-span-1 lg:row-span-2',
+    'sm:col-span-2 lg:col-span-2 lg:row-span-2',
+    'sm:col-span-2 lg:col-span-1 lg:row-span-3',
+    'sm:col-span-2 lg:col-span-3 lg:row-span-2',
 ]
-const HERO_PAIR = [SHAPES.hero, SHAPES.hero]
-const TALL_BAND = [SHAPES.tall, SHAPES.tall, SHAPES.tall, SHAPES.tall]
-const WIDE_BAND = [SHAPES.wide, SHAPES.wide, SHAPES.wide, SHAPES.wide]
-const MIXED_BAND = [SHAPES.wide, SHAPES.std, SHAPES.std, SHAPES.wide, SHAPES.std, SHAPES.std]
 
-const FILLER_BANDS = [HERO_BANDS[0], HERO_BANDS[1], HERO_PAIR, TALL_BAND, WIDE_BAND, MIXED_BAND]
-// The closing band must end on a tall or standard slot, so the CTA tile
-// (always last, bottom-right of the whole grid) stays compact.
-const CLOSING_BAND_LENGTHS = [3, 4, 6]
-
-// Span classes for every tile, CTA included as the final entry.
+// Span classes for every tile, including the dashboard's final CTA.
 export const planBento = (tileCount) => {
-    // Choose the closing band's size first: what's left before it must be
-    // coverable by whole filler bands (i.e. never a lone 1-cell remainder).
-    const lengths = CLOSING_BAND_LENGTHS.filter(
-        (len) => tileCount - len === 0 || tileCount - len >= 2
-    )
-    // With fewer tiles than any closing band needs, a strip of standard
-    // cards still tiles every row exactly — a safe fallback.
-    if (!lengths.length) return Array(tileCount).fill(SHAPES.std)
-
-    const closingLength = lengths[Math.floor(Math.random() * lengths.length)]
-    const closers = { 3: HERO_BANDS, 4: [TALL_BAND], 6: [MIXED_BAND] }
-    const pool = closers[closingLength]
-    const closing = pool[Math.floor(Math.random() * pool.length)]
-
-    const bands = []
-    let remaining = tileCount - closingLength
-    while (remaining > 0) {
-        const eligible = FILLER_BANDS.filter(
-            (band) => band.length <= remaining && remaining - band.length !== 1
-        )
-        const band = eligible[Math.floor(Math.random() * eligible.length)]
-        bands.push(band)
-        remaining -= band.length
+    const spans = []
+    for (let i = 0; i < tileCount; i += 1) {
+        const recent = spans.slice(-2)
+        const choices = TILE_SHAPES.filter((shape) => !recent.includes(shape))
+        spans.push(choices[Math.floor(Math.random() * choices.length)])
     }
-    bands.push(closing)
-    return bands.flat()
+    return spans
 }
 
 // An empty slot waiting for a future post: just a dashed frame, no content.
@@ -167,7 +132,7 @@ export const BentoSkeleton = ({ span, className }) => (
 // One bento box: the cover fills the whole tile, a soft gradient keeps the
 // text legible, and the headline plus excerpt sit at the bottom edge.
 export const BentoTile = ({ post, span, to, className }) => {
-    const big = /row-span-2/.test(span ?? '')
+    const roomy = /(?:col-span-[23]|row-span-[23])/.test(span ?? '')
 
     return (
         <Link
@@ -203,12 +168,12 @@ export const BentoTile = ({ post, span, to, className }) => {
                 <h2
                     className={cn(
                         'mt-1.5 font-bold leading-snug text-foreground transition-colors group-hover:text-primary-strong',
-                        big ? 'text-lg sm:text-2xl' : 'text-base'
+                        roomy ? 'text-lg sm:text-2xl' : 'text-base'
                     )}
                 >
                     {post.title}
                 </h2>
-                {big && post.excerpt && (
+                {roomy && post.excerpt && (
                     <p className="mt-1.5 text-xs text-muted-foreground sm:text-sm line-clamp-3">{post.excerpt}</p>
                 )}
                 <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary-strong">

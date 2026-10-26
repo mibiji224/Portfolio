@@ -25,7 +25,7 @@ const Blog = () => {
     // One layout plan per visit; it holds still while someone reads.
     const spans = useMemo(() => planBento(TILE_COUNT), [])
     const ctaSpan = spans[TILE_COUNT - 1]
-    const ctaTall = /row-span-2/.test(ctaSpan)
+    const ctaTall = /(?:col-span-[23]|row-span-[23])/.test(ctaSpan)
 
     return (
     <PageShell
