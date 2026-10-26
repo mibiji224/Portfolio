@@ -11,10 +11,14 @@ const Blog = () => {
     const { blog } = useOutletContext()
     const posts = blog?.length ? blog : FALLBACK_BLOG
     const preview = posts.slice(0, 7)
+    const tiles = [
+        ...preview,
+        ...Array(Math.max(0, 7 - preview.length)).fill(null),
+    ]
     const remaining = Math.max(0, posts.length - preview.length)
-    // One layout plan per visit; it holds still while someone reads.
-    const spans = useMemo(() => planBento(preview.length + 1), [preview.length])
-    const ctaSpan = spans[preview.length]
+    const layoutSeed = tiles.map((post, i) => post?.slug || post?.id || `placeholder-${i}`).join('|')
+    const spans = useMemo(() => planBento(tiles.length + 1, layoutSeed), [layoutSeed, tiles.length])
+    const ctaSpan = spans[tiles.length]
     const ctaTall = /(?:col-span-[234]|row-span-2)/.test(ctaSpan)
 
     return (
@@ -25,14 +29,18 @@ const Blog = () => {
         description="Notes on work, growth and the things I'm figuring out along the way."
     >
         <div className={BENTO_GRID}>
-            {preview.map((post, i) => (
+            {tiles.map((post, i) =>
+                post ? (
                     <BentoTile
                         key={post.id}
                         post={post}
                         span={spans[i]}
                         to={postPath(post)}
                     />
-            ))}
+                ) : (
+                    <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
+                )
+            )}
 
             <Link
                 to="/blog/all"

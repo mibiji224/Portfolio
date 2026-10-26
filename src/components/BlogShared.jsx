@@ -92,12 +92,12 @@ export const PostDialog = ({ post, onClose }) => (
 // The grid both blog views lay their tiles into. Dense flow plus a planned
 // span sequence (below) keep the surface packed edge to edge.
 export const BENTO_GRID =
-    'grid grid-cols-1 grid-flow-row-dense auto-rows-[9rem] gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[8rem] sm:gap-5'
+    'grid grid-cols-1 grid-flow-row-dense auto-rows-[minmax(7rem,auto)] gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5'
 
-const shuffle = (items) => {
+const shuffle = (items, random) => {
     const result = [...items]
     for (let i = result.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1))
+        const j = Math.floor(random() * (i + 1))
         ;[result[i], result[j]] = [result[j], result[i]]
     }
     return result
@@ -124,28 +124,45 @@ const bandsForCount = (count) => {
             [row[1], row[1], row[1], row[1]],
             [tall[1], tall[1], tall[1], tall[1]],
             [tall[2], tall[2]],
+            [row[1], row[3], row[2], row[2]],
+            [row[2], row[2], row[1], row[3]],
         ],
     }
-    return patterns[count].map(shuffle)
+    return patterns[count]
 }
 
-// Each band exactly fills four desktop columns, so randomized card sizes do
-// not leave gaps between posts. Mobile/tablet cards remain full-width.
-export const planBento = (tileCount) => {
+// A seeded random sequence keeps each published grid's varied dimensions
+// stable across reloads until its post/placeholder set changes.
+export const planBento = (tileCount, seed = '') => {
+    let state = 2166136261
+    for (const character of seed) {
+        state = Math.imul(state ^ character.charCodeAt(0), 16777619)
+    }
+    const random = () => {
+        state += 0x6D2B79F5
+        let value = state
+        value = Math.imul(value ^ (value >>> 15), value | 1)
+        value ^= value + Math.imul(value ^ (value >>> 7), value | 61)
+        return ((value ^ (value >>> 14)) >>> 0) / 4294967296
+    }
+
     const bands = []
     let remaining = tileCount
     while (remaining > 0) {
         const maxCount = Math.min(4, remaining)
-        const count = maxCount === 1
-            ? 1
-            : maxCount === 2
-                ? 2
-                : Math.floor(Math.random() * (maxCount - 1)) + 2
+        let count = maxCount
+        if (remaining - count === 1) count -= 1
         const choices = bandsForCount(count).filter((pattern) => {
             const previous = bands.at(-1)
             return !previous || pattern.join('|') !== previous.join('|')
         })
-        bands.push(choices[Math.floor(Math.random() * choices.length)])
+        const patterns = choices.length ? choices : bandsForCount(count)
+        const pattern = patterns[Math.floor(random() * patterns.length)]
+        const occupiedColumns = pattern.reduce((total, span) => {
+            const width = Number(span.match(/lg:col-span-(\d)/)?.[1] ?? 1)
+            return total + width
+        }, 0)
+        bands.push(occupiedColumns > 4 ? pattern : shuffle(pattern, random))
         remaining -= count
     }
     return bands.flat()
@@ -156,7 +173,7 @@ export const BentoSkeleton = ({ span, className }) => (
     <div
         aria-hidden="true"
         className={cn(
-            'rounded-xl border border-dashed border-primary/25 bg-secondary/40',
+            'min-h-32 rounded-xl border border-dashed border-primary/25 bg-secondary/40',
             span,
             className
         )}
@@ -172,7 +189,7 @@ export const BentoTile = ({ post, span, to, className }) => {
         <Link
             to={to}
             className={cn(
-                'group relative flex flex-col justify-end overflow-hidden rounded-xl border border-border bg-card p-4 text-left sm:p-5',
+                'group relative flex min-h-32 flex-col justify-end overflow-hidden rounded-xl border border-border bg-card p-4 text-left sm:p-5',
                 'transition-all duration-300 hover:border-primary/50 hover:shadow-lift',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 span,

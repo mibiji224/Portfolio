@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import PageShell from '@/components/PageShell'
-import { BENTO_GRID, BentoTile, planBento } from '@/components/BlogShared'
+import { BENTO_GRID, BentoSkeleton, BentoTile, planBento } from '@/components/BlogShared'
 import { FALLBACK_BLOG } from '@/data/profile'
 import { postPath } from '@/lib/blog'
 
@@ -11,8 +11,12 @@ import { postPath } from '@/lib/blog'
 const BlogAll = () => {
     const { blog } = useOutletContext()
     const posts = blog?.length ? blog : FALLBACK_BLOG
-    // One layout plan per visit; it holds still while someone reads.
-    const spans = useMemo(() => planBento(posts.length), [posts.length])
+    const tiles = [
+        ...posts,
+        ...Array(Math.max(0, 7 - posts.length)).fill(null),
+    ]
+    const layoutSeed = tiles.map((post, i) => post?.slug || post?.id || `placeholder-${i}`).join('|')
+    const spans = useMemo(() => planBento(tiles.length, layoutSeed), [layoutSeed, tiles.length])
 
     return (
         <div className="min-h-screen bg-background">
@@ -38,13 +42,15 @@ const BlogAll = () => {
                 hideLabel
             >
                 <div className={BENTO_GRID}>
-                    {posts.map((post, i) => (
+                    {tiles.map((post, i) => post ? (
                             <BentoTile
                                 key={post.id}
                                 post={post}
                                 span={spans[i]}
                                 to={postPath(post)}
                             />
+                    ) : (
+                        <BentoSkeleton key={`slot-${i}`} span={spans[i]} />
                     ))}
                 </div>
             </PageShell>
