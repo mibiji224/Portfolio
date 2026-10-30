@@ -426,10 +426,11 @@ const Projects = ({ projectsData }) => {
         {selectedImage && (
           <DialogContent
             showCloseButton={false}
-            className={`bg-secondary p-0 overflow-hidden transition-all duration-500 ease-in-out ${
+            style={{ boxShadow: '0 28px 70px -24px rgb(0 0 0 / 0.35)' }}
+            className={`bg-background border-border/70 p-0 overflow-hidden transition-all duration-500 ease-in-out ${
               isFullView
                 ? 'w-[calc(100%-2rem)] max-w-5xl h-[90vh] flex flex-col'
-                : 'w-[calc(100%-2rem)] max-w-md max-h-[90vh] overflow-y-auto modern-scrollbar block'
+                : 'w-[calc(100%-2rem)] max-w-lg max-h-[90vh] overflow-y-auto modern-scrollbar block'
             }`}
           >
             {/* Named for screen readers; the visible heading lives in the body. */}
@@ -438,9 +439,9 @@ const Projects = ({ projectsData }) => {
             <button
               onClick={() => setSelectedImage(null)}
               aria-label="Close"
-              className="absolute top-3 right-3 z-30 p-1.5 bg-neutral-900/55 text-white rounded-full hover:bg-primary transition-colors"
+              className="absolute top-3 right-3 z-30 p-1.5 bg-neutral-900/60 backdrop-blur text-white rounded-full hover:bg-neutral-900 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
             {isFullView ? (
@@ -453,73 +454,86 @@ const Projects = ({ projectsData }) => {
                     className="max-w-full max-h-full object-contain"
                   />
                 </div>
-                <div className="p-3 sm:p-4 bg-secondary border-t border-border flex justify-between items-center gap-3">
-                  <h3 className="text-foreground font-bold text-base sm:text-lg truncate min-w-0">{selectedImage.title}</h3>
-                  <Button variant="ghost" size="sm" onClick={() => setIsFullView(false)} className="shrink-0 font-bold">
+                <div className="px-4 py-3 bg-background border-t border-border flex justify-between items-center gap-3">
+                  <h3 className="text-foreground font-semibold text-base truncate min-w-0">{selectedImage.title}</h3>
+                  <Button variant="outline" size="sm" onClick={() => setIsFullView(false)} className="shrink-0 font-semibold">
                     <ArrowLeft className="w-4 h-4 shrink-0" /> <span className="hidden sm:inline">Back to Details</span><span className="sm:hidden">Back</span>
                   </Button>
                 </div>
               </div>
             ) : (
               <>
-                <div className="relative h-48 sm:h-64 w-full shrink-0 overflow-hidden bg-neutral-950 group">
+                <button
+                  type="button"
+                  onClick={() => setIsFullView(true)}
+                  aria-label="View full image"
+                  className="relative block h-48 sm:h-60 w-full shrink-0 overflow-hidden bg-neutral-950 group cursor-zoom-in"
+                >
                   <ImageWithLoader
                     src={selectedImage.image}
                     alt={selectedImage.title}
                     containerClassName="w-full h-full"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                </div>
-
-                <div className="p-5 sm:p-6">
-                  <span className="text-primary-strong text-xs font-bold uppercase tracking-wider mb-2 block">
-                    {selectedImage.category ? selectedImage.category : "Development"}
+                  <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-neutral-900/60 backdrop-blur px-2.5 py-1 text-[11px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-3 h-3" /> Expand
                   </span>
-                  
-                  <h5 className="mb-2 text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-tight">
-                    {selectedImage.title}
-                  </h5>
-                  
-                  <p className="mb-6 text-muted-foreground text-sm leading-relaxed">
-                    {selectedImage.description || "No description provided."}
-                    <br />
-                    
-                    {selectedImage.tools && (
-                      <span className="inline-block mt-3 text-xs font-mono text-muted-foreground/80 border border-border px-2 py-1 rounded">
-                        Tool: {selectedImage.tools}
-                      </span>
-                    )}
+                </button>
 
-                    {selectedImage.tags && (
-                      <div className="flex flex-wrap gap-2 mt-3">
-                         {selectedImage.tags.map((t, i) => (
-                           <Badge key={i} variant="outline" className="rounded font-mono font-normal">
-                             {t}
-                           </Badge>
-                         ))}
-                      </div>
-                    )}
-                  </p>
+                <div className="p-5 sm:p-6 space-y-5">
+                  <header className="space-y-2">
+                    <span className="inline-flex items-center rounded-full bg-muted/60 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      {selectedImage.category ? selectedImage.category : "Development"}
+                    </span>
+                    <h5 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-tight">
+                      {selectedImage.title}
+                    </h5>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {selectedImage.description || "No description provided."}
+                    </p>
+                  </header>
 
-                  <div className="flex flex-col gap-3">
-                    <Button onClick={() => setIsFullView(true)} className="w-full rounded-lg">
-                        View Full Image
-                        <Maximize2 className="w-4 h-4" />
-                    </Button>
+                  {(selectedImage.tools || selectedImage.tags?.length > 0) && (
+                    <dl className="divide-y divide-border border-y border-border text-sm">
+                      {selectedImage.tools && (
+                        <div className="flex items-baseline gap-4 py-3">
+                          <dt className="w-16 shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tools</dt>
+                          <dd className="font-mono text-xs text-foreground">{selectedImage.tools}</dd>
+                        </div>
+                      )}
+                      {selectedImage.tags?.length > 0 && (
+                        <div className="flex items-start gap-4 py-3">
+                          <dt className="w-16 shrink-0 pt-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tags</dt>
+                          <dd className="flex flex-wrap gap-1.5">
+                            {selectedImage.tags.map((t, i) => (
+                              <span key={i} className="rounded-md border border-border bg-muted/40 px-2 py-0.5 font-mono text-xs text-foreground">
+                                {t}
+                              </span>
+                            ))}
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                  )}
 
-                    {selectedImage.links && (
-                       <div className="flex gap-2">
-                          <Button asChild variant="outline" className="flex-1 rounded-lg font-bold">
-                            <a href={selectedImage.links.github} target="_blank" rel="noreferrer">
-                              <GitBranch className="w-4 h-4" /> Code
-                            </a>
-                          </Button>
-                          <Button asChild variant="outline" className="flex-1 rounded-lg font-bold">
-                            <a href={selectedImage.links.demo} target="_blank" rel="noreferrer">
-                              <ExternalLink className="w-4 h-4" /> Demo
-                            </a>
-                          </Button>
-                       </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {selectedImage.links ? (
+                      <>
+                        <Button asChild className="rounded-lg font-semibold bg-foreground text-background hover:bg-foreground/90">
+                          <a href={selectedImage.links.demo} target="_blank" rel="noreferrer">
+                            <ExternalLink className="w-4 h-4" /> Live Demo
+                          </a>
+                        </Button>
+                        <Button asChild variant="outline" className="rounded-lg font-semibold">
+                          <a href={selectedImage.links.github} target="_blank" rel="noreferrer">
+                            <GitBranch className="w-4 h-4" /> Source Code
+                          </a>
+                        </Button>
+                      </>
+                    ) : (
+                      <Button onClick={() => setIsFullView(true)} className="sm:col-span-2 rounded-lg font-semibold bg-foreground text-background hover:bg-foreground/90">
+                        <Maximize2 className="w-4 h-4" /> View Full Image
+                      </Button>
                     )}
                   </div>
                 </div>
