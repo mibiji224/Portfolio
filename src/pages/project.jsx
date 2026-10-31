@@ -429,8 +429,8 @@ const Projects = ({ projectsData }) => {
             style={{ boxShadow: '0 28px 70px -24px rgb(0 0 0 / 0.35)' }}
             className={`bg-background border-border/70 p-0 overflow-hidden transition-all duration-500 ease-in-out ${
               isFullView
-                ? 'w-[calc(100%-2rem)] max-w-5xl h-[90vh] flex flex-col'
-                : 'w-[calc(100%-2rem)] max-w-lg max-h-[90vh] overflow-y-auto modern-scrollbar block'
+                ? 'w-[calc(100%-2rem)] max-w-5xl h-[90dvh] flex flex-col'
+                : 'w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] overflow-y-auto modern-scrollbar block'
             }`}
           >
             {/* Named for screen readers; the visible heading lives in the body. */}

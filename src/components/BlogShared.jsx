@@ -61,7 +61,7 @@ export const PostDialog = ({ post, onClose }) => (
         {post && (
             <DialogContent
                 showCloseButton={false}
-                className="max-h-[90vh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto p-0"
+                className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto p-0"
             >
                 <button
                     type="button"

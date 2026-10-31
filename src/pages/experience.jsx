@@ -239,7 +239,7 @@ const Experience = () => {
 
             <Dialog open={open} onOpenChange={setOpen}>
                 {detail && (
-                    <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto p-6 sm:p-8">
+                    <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto p-6 sm:p-8">
                         <div className="flex flex-wrap items-center gap-2 pr-8">
                             <span className="whitespace-nowrap text-[10px] font-mono font-medium text-primary-strong border border-primary px-2.5 py-0.5 rounded-full bg-background">
                                 {detail.date}

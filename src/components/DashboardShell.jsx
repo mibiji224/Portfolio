@@ -30,7 +30,7 @@ const CONTACT_LINK = { name: 'Contact', to: '/contact', icon: <Mail className={I
 // plain ink-grey. Each icon rides in its own small round tile.
 const itemClass = (isActive) =>
   cn(
-    'group relative flex w-full items-center gap-3 rounded-full py-1 pl-1.5 pr-4 text-left text-[13px]',
+    'group relative flex w-full items-center gap-3 rounded-full py-1.5 lg:py-1 pl-1.5 pr-4 text-left text-sm lg:text-[13px]',
     'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
     isActive
       ? 'font-semibold text-foreground'
@@ -231,19 +231,19 @@ const DashboardShell = ({ onHome, isActive, onSelect, children }) => {
   }, [drawerOpen])
 
   return (
-    <div className="min-h-screen lg:flex">
-      <aside data-lenis-prevent className="hidden lg:block sticky top-0 h-screen w-64 shrink-0 self-start overflow-y-auto rounded-r-[2rem]">
+    <div className="min-h-[100dvh] lg:flex">
+      <aside data-lenis-prevent className="hidden lg:block sticky top-0 h-[100dvh] w-64 shrink-0 self-start overflow-y-auto rounded-r-[2rem]">
         <SidebarContent onHome={goHome} isActive={isActive} onSelect={select} />
       </aside>
 
       <div className="min-w-0 flex-1">
-        <div className="lg:hidden sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur">
+        <div className="lg:hidden sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/90 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] backdrop-blur">
           <span className="text-base font-medium tracking-tight">Desiree Soronio</span>
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
-            className="rounded-md p-2 text-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="-mr-1 flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -260,12 +260,12 @@ const DashboardShell = ({ onHome, isActive, onSelect, children }) => {
             onClick={() => setDrawerOpen(false)}
             className="absolute inset-0 bg-foreground/30 backdrop-blur-sm animate-in fade-in duration-200"
           />
-          <div data-lenis-prevent className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto rounded-r-[2rem] animate-in slide-in-from-left duration-300">
+          <div data-lenis-prevent className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)] rounded-r-[2rem] animate-in slide-in-from-left duration-300">
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
               aria-label="Close menu"
-              className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>

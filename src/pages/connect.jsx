@@ -90,8 +90,8 @@ const App = () => {
 
 
     return (
-        // Added min-h-screen and bg-background for the preview to look correct
-        <div className="min-h-screen bg-transparent flex items-center justify-center">
+        // Added min-h-[100dvh] and bg-background for the preview to look correct
+        <div className="min-h-[100dvh] bg-transparent flex items-center justify-center">
             <section className="w-full text-foreground py-16 sm:py-20 px-4 sm:px-6 lg:px-10 font-sans relative overflow-hidden" id="connect">
 
                 <div className="max-w-[1400px] mx-auto">

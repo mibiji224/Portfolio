@@ -6,7 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import SchemaMarkup from './components/SchemaMarkup.jsx'
 import DashboardShell from './components/DashboardShell.jsx'
 import { usePortfolioData } from './hooks/usePortfolioData'
-import { scrollToTarget } from './lib/scroll'
+import { lockScroll, scrollToTarget, unlockScroll } from './lib/scroll'
 import { startSmoothScroll } from './lib/smoothScroll'
 import { cn } from '@/lib/utils'
 
@@ -112,6 +112,15 @@ function DashboardLayout() {
 
   useEffect(() => startSmoothScroll(), [])
 
+  // The hero is locked until Read More is pressed (or the visitor arrives on a
+  // deep link). The lock is released synchronously in `enter`, so the scroll
+  // that follows isn't swallowed; this effect only covers mount and unmount.
+  useEffect(() => {
+    if (pathname === '/') lockScroll()
+    return unlockScroll
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const dashboardTop = () =>
     dashboardRef.current ? dashboardRef.current.getBoundingClientRect().top + window.scrollY : 0
 
@@ -186,6 +195,7 @@ function DashboardLayout() {
   if (pathname === '/' && legacy) return <Navigate to={legacy} replace />
 
   const enter = () => {
+    unlockScroll()
     setEntered(true)
     scrollToTarget(dashboardRef.current)
   }
@@ -208,7 +218,9 @@ function DashboardLayout() {
         style={{ zIndex: -1 }}
       />
 
-      <div ref={dashboardRef}>
+      {/* inert while locked: nothing below the hero can be focused, tabbed to
+          or read by assistive tech until Read More is pressed. */}
+      <div ref={dashboardRef} inert={!entered} aria-hidden={!entered || undefined}>
         <DashboardShell onHome={() => scrollToTarget(0)} isActive={isActive} onSelect={select}>
           <Suspense fallback={<SectionFallback />}>
             {SECTIONS.map(({ id, Component }, i) => (

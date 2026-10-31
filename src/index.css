@@ -132,6 +132,16 @@
   background: hsl(var(--primary-strong));
 }
 
+/* Hero lock (see lockScroll in lib/scroll.js). Blocks wheel, touch drag and
+   keyboard scrolling; overscroll-behavior stops iOS rubber-banding the page. */
+html.scroll-locked,
+html.scroll-locked body {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
 /* Media never outgrows its column, whatever its intrinsic size */
 img,
 svg,

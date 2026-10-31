@@ -19,7 +19,7 @@ const BlogAll = () => {
     const spans = useMemo(() => planBento(tiles.length, layoutSeed), [layoutSeed, tiles.length])
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-[100dvh] bg-background">
             <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
                 <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
                     <Link

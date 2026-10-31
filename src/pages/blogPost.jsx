@@ -29,12 +29,12 @@ const BlogPost = () => {
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-background" aria-busy="true" />
+    return <div className="min-h-[100dvh] bg-background" aria-busy="true" />
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background px-4 py-16 sm:px-6">
+      <div className="min-h-[100dvh] bg-background px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">Post not found</h1>
           <p className="mt-3 text-muted-foreground">This post may have been removed or the link may be outdated.</p>
@@ -47,7 +47,7 @@ const BlogPost = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] bg-background">
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link

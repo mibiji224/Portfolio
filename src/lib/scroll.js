@@ -13,6 +13,19 @@ export const registerSmoothScroller = (instance) => { smoothScroller = instance 
 export const pauseSmoothScroll = () => smoothScroller?.stop()
 export const resumeSmoothScroll = () => smoothScroller?.start()
 
+// Hard lock for the hero: the page cannot scroll until the visitor presses
+// Read More. CSS (`.scroll-locked`) blocks wheel, touch and keyboard scrolling
+// on the document; Lenis is paused so it can't move the page behind it.
+const LOCK_CLASS = 'scroll-locked'
+export const lockScroll = () => {
+  document.documentElement.classList.add(LOCK_CLASS)
+  smoothScroller?.stop()
+}
+export const unlockScroll = () => {
+  document.documentElement.classList.remove(LOCK_CLASS)
+  smoothScroller?.start()
+}
+
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
