@@ -152,7 +152,7 @@ const App = () => {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             aria-label={`Follow me on ${link.name}`}
-                                            className="w-10 h-10 rounded-full bg-transparent border border-primary/30 flex items-center justify-center text-muted-foreground hover:text-primary-foreground hover:bg-primary hover:border-primary hover:-translate-y-1 transition-all duration-300"
+                                            className="w-11 h-11 rounded-full bg-transparent border border-primary/30 flex items-center justify-center text-muted-foreground hover:text-primary-foreground hover:bg-primary hover:border-primary hover:-translate-y-1 transition-all duration-300"
                                         >
                                             <link.Icon className="w-4 h-4" />
                                         </a>

@@ -67,7 +67,7 @@ export const PostDialog = ({ post, onClose }) => (
                     type="button"
                     onClick={onClose}
                     aria-label="Close"
-                    className="absolute right-3 top-3 z-10 rounded-full border border-border bg-background/90 p-1.5 text-foreground backdrop-blur hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/90 sm:h-auto sm:w-auto sm:p-1.5 text-foreground backdrop-blur hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                     <X className="h-4 w-4" />
                 </button>

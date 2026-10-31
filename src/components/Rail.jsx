@@ -68,7 +68,8 @@ const Rail = ({ children }) => {
   const move = (dir) =>
     ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
 
-  const arrow = 'absolute top-1/2 z-20 -translate-y-1/2 h-10 w-10 rounded-full border border-primary bg-background text-primary-strong shadow-lift hover:bg-primary-soft disabled:opacity-0 disabled:pointer-events-none';
+  // Touch screens swipe the row, so the arrows (which sit over the cards) are mouse-only.
+  const arrow = '[@media(pointer:coarse)]:hidden absolute top-1/2 z-20 -translate-y-1/2 h-10 w-10 rounded-full border border-primary bg-background text-primary-strong shadow-lift hover:bg-primary-soft disabled:opacity-0 disabled:pointer-events-none';
 
   return (
     <div className="relative">

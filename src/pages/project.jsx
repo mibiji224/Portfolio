@@ -439,7 +439,7 @@ const Projects = ({ projectsData }) => {
             <button
               onClick={() => setSelectedImage(null)}
               aria-label="Close"
-              className="absolute top-3 right-3 z-30 p-1.5 bg-neutral-900/60 backdrop-blur text-white rounded-full hover:bg-neutral-900 transition-colors"
+              className="absolute top-3 right-3 z-30 flex h-11 w-11 items-center justify-center sm:h-auto sm:w-auto sm:p-1.5 bg-neutral-900/60 backdrop-blur text-white rounded-full hover:bg-neutral-900 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
