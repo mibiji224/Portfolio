@@ -1,8 +1,3 @@
-import gsap from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-
-gsap.registerPlugin(ScrollToPlugin)
-
 // Set by smoothScroll.js once Lenis is running; programmatic scrolls go through
 // it so the two don't fight over the scroll position.
 let smoothScroller = null
@@ -41,15 +36,10 @@ export function scrollToTarget(target, { duration = 1.2, offsetY = 0 } = {}) {
     return
   }
 
-  try {
-    gsap.to(window, {
-      duration: prefersReducedMotion() ? 0 : duration,
-      ease: 'power3.inOut',
-      scrollTo: { y: el, offsetY, autoKill: true },
-      overwrite: true,
-    })
-  } catch {
-    if (typeof el === 'number') window.scrollTo({ top: el })
-    else el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
-  }
+  // Native scrolling (touch devices, or Lenis not running). Computed as a plain
+  // page offset so it works the same for an element, a selector or a number.
+  const top = typeof el === 'number'
+    ? el + offsetY
+    : el.getBoundingClientRect().top + window.scrollY + offsetY
+  window.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
 }

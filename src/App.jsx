@@ -203,7 +203,11 @@ function DashboardLayout() {
   const enter = () => {
     unlockScroll()
     setEntered(true)
-    scrollToTarget(dashboardRef.current)
+    // Give the browser two frames to apply the unlocked document (mobile
+    // Safari ignores a scroll issued in the same frame the lock lifts).
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => scrollToTarget(dashboardRef.current))
+    )
   }
 
   const select = (to) => scrollToTarget(getEl(idForPath(to)), { offsetY: -topOffset() })
