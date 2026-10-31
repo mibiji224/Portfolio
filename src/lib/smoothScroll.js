@@ -32,7 +32,9 @@ const verticalOnly = ({ deltaX, deltaY }) => {
 // Starts the smooth scroller and ties it to GSAP's ticker and ScrollTrigger.
 // Returns a cleanup. Skipped entirely for visitors who ask for less motion.
 export function startSmoothScroll() {
-  if (prefersReducedMotion()) return () => {}
+  // Phones and tablets keep native scrolling: it has the platform's own
+  // momentum, and a JS scroller fighting it is what strands the page.
+  if (prefersReducedMotion() || !window.matchMedia('(pointer: fine)').matches) return () => {}
 
   lenis = new Lenis({ wheelMultiplier: WHEEL_MULTIPLIER, lerp: LERP, virtualScroll: verticalOnly })
   registerSmoothScroller(lenis)

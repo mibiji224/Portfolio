@@ -71,6 +71,9 @@ const Card = ({ item, open, spotlit, edge, onSpot, onHover, onMove, onLeave, onO
 
     const grow = (scale, vars) => {
         if (prefersReducedMotion()) return
+        // On phones the cards fill the column, so growing them would push them
+        // past the screen edge; the highlight colour alone marks the spotlight.
+        if (window.matchMedia('(max-width: 639px)').matches) scale = 1
         gsap.to(ref.current, { scale, overwrite: 'auto', ...vars })
     }
 
@@ -122,18 +125,18 @@ const Card = ({ item, open, spotlit, edge, onSpot, onHover, onMove, onLeave, onO
             onKeyDown={openFromKey}
             className={`cursor-pointer rounded-xl border hover:bg-primary-soft ${spotlit ? 'bg-primary-soft' : 'bg-white'} ${spotlit ? 'border-primary-strong ring-2 ring-primary shadow-lift' : 'border-primary'} transition-[background-color,border-color,box-shadow] duration-300 p-4 sm:p-6 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
         >
-            <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <div className="min-w-0 sm:flex-1">
                     <h3 className={`text-base font-bold mb-0.5 transition-colors duration-300 ${spotlit ? 'text-primary-strong' : 'text-foreground'}`}>{item.title}</h3>
                     <p className="text-xs font-medium text-muted-foreground">{item.company}</p>
                 </div>
 
-                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:flex-col sm:items-end">
                     <span className="whitespace-nowrap text-[10px] font-mono font-medium text-primary-strong border border-primary px-2.5 py-0.5 rounded-full bg-background">
                         {item.date}
                     </span>
                     {item.note && (
-                        <span className="whitespace-nowrap text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-secondary text-foreground">
+                        <span className="text-[10px] sm:text-[9px] font-bold px-2 sm:px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-secondary text-foreground sm:whitespace-nowrap">
                             {item.note}
                         </span>
                     )}
@@ -144,10 +147,10 @@ const Card = ({ item, open, spotlit, edge, onSpot, onHover, onMove, onLeave, onO
 }
 
 const Timeline = ({ items, tip, first, last }) => (
-    <ol className="relative border-l border-border ml-2 sm:ml-3 space-y-6">
+    <ol className="relative border-l border-border ml-2 sm:ml-3 space-y-4 sm:space-y-6">
         {items.map((item, i) => (
-            <li key={`${item.title}-${item.company}`} className="relative ml-6 sm:ml-8">
-                <span className="absolute -left-[31px] sm:-left-[43px] top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 bg-background rounded-full border border-primary">
+            <li key={`${item.title}-${item.company}`} className="relative ml-7 sm:ml-8">
+                <span className="absolute -left-[41px] sm:-left-[45px] top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 bg-background rounded-full border border-primary">
                     <div className="w-2 h-2 bg-primary-strong rounded-full"></div>
                 </span>
                 <Card

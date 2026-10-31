@@ -163,6 +163,12 @@ function DashboardLayout() {
       }
       setActiveId(current)
       const dashTop = dashboardRef.current?.getBoundingClientRect().top ?? Infinity
+      // The visitor is already exploring (any of the sections is on screen,
+      // however they got there): the hero lock must never hold them.
+      if (dashTop < window.innerHeight - 1 || window.scrollY > 0) {
+        unlockScroll()
+        setEntered(true)
+      }
       setVeiled(dashTop <= window.innerHeight * 0.5 && current !== 'contact')
     }
     const onScroll = () => {
