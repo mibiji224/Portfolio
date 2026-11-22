@@ -10,6 +10,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+      <script>
+      // Preload the hero photo only on the main page, so a reload on any other page
+      // does not fetch it.
+      if (location.pathname === "/") {
+        var l = document.createElement("link");
+        l.rel = "preload"; l.as = "image"; l.href = "/desiree-hero.webp"; l.type = "image/webp";
+        document.head.appendChild(l);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

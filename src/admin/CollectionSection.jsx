@@ -34,7 +34,7 @@ const toPayload = (config, form) =>
     })
   )
 
-function ImageField({ value, file, onFile, onRemove, hint }) {
+function ImageField({ value, file, onFile, onRemove, hint, noun = 'photo', fit = 'cover' }) {
   const previewUrl = useObjectUrl(file)
   const src = previewUrl || value
 
@@ -42,11 +42,11 @@ function ImageField({ value, file, onFile, onRemove, hint }) {
     <>
       {src && (
         <div className="relative mb-3 h-32 w-full overflow-hidden rounded-xl border border-border bg-secondary">
-          <img src={src} alt="Certification preview" className="h-full w-full object-cover" />
+          <img src={src} alt={`${noun} preview`} className={`h-full w-full ${fit === 'contain' ? 'object-contain p-3' : 'object-cover'}`} />
           <button
             type="button"
             onClick={onRemove}
-            aria-label="Remove certification image"
+            aria-label={`Remove ${noun}`}
             className="absolute right-2 top-2 rounded-full bg-foreground/70 p-1.5 text-white hover:bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <X size={14} />
@@ -55,7 +55,7 @@ function ImageField({ value, file, onFile, onRemove, hint }) {
       )}
       <DropZone
         onFiles={(files) => onFile(files[0])}
-        title={src ? 'Replace photo' : 'Choose a photo'}
+        title={src ? `Replace ${noun}` : `Choose a ${noun}`}
         hint={hint}
       />
     </>
@@ -80,7 +80,7 @@ function Editor({ config, open, row, count, onClose, onSaved, toast }) {
       const payload = toPayload(config, form)
       for (const field of config.fields.filter((f) => f.type === 'image')) {
         if (imageFiles[field.key]) {
-          payload[field.key] = await uploadImage(imageFiles[field.key], 'certifications')
+          payload[field.key] = await uploadImage(imageFiles[field.key], field.folder ?? 'certifications')
         }
       }
       // A new record goes to the end of the list.
@@ -115,6 +115,8 @@ function Editor({ config, open, row, count, onClose, onSaved, toast }) {
               value={form[f.key]}
               file={imageFiles[f.key]}
               hint={f.hint}
+              noun={f.noun}
+              fit={f.fit}
               onFile={(file) => setImageFiles({ ...imageFiles, [f.key]: file })}
               onRemove={() => {
                 const nextFiles = { ...imageFiles }

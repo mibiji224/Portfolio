@@ -6,7 +6,7 @@ import {
   PenTool, X
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import Rail from '@/components/Rail'
+import Ring3D from '@/components/Ring3D'
 import SectionLabel from '@/components/SectionLabel'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -125,76 +125,6 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
 };
 
 // Art and graphics are image only: no captions, just the work. Opens the lightbox.
-// Mouse-tilt wrapper (ported from the reference site's card): the card leans
-// toward the cursor in 3D (max 15deg) and grows to 1.05x, easing back on leave.
-// Fine pointers only; touch and reduced-motion get a plain card.
-const TILT = { max: 15, perspective: 1000, scale: 1.05, speed: 400, easing: 'cubic-bezier(.03,.98,.52,.99)' }
-
-const TiltCard = ({ className, children }) => {
-  const ref = useRef(null)
-  const frame = useRef(null)
-  const [style, setStyle] = useState({})
-
-  const enabled = () =>
-    typeof window !== 'undefined' &&
-    window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-  useEffect(() => () => cancelAnimationFrame(frame.current), [])
-
-  const onEnter = () => {
-    if (!enabled()) return
-    setStyle({ willChange: 'transform', transition: `transform ${TILT.speed}ms ${TILT.easing}` })
-  }
-
-  const onMove = (e) => {
-    if (!enabled() || !ref.current) return
-    const { clientX, clientY } = e
-    cancelAnimationFrame(frame.current)
-    frame.current = requestAnimationFrame(() => {
-      const r = ref.current.getBoundingClientRect()
-      const x = Math.min(Math.max((clientX - r.left) / r.width, 0), 1)
-      const y = Math.min(Math.max((clientY - r.top) / r.height, 0), 1)
-      const rotY = (TILT.max / 2 - x * TILT.max).toFixed(2)
-      const rotX = (y * TILT.max - TILT.max / 2).toFixed(2)
-      setStyle((prev) => ({
-        ...prev,
-        transform: `perspective(${TILT.perspective}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${TILT.scale}, ${TILT.scale}, ${TILT.scale})`,
-      }))
-    })
-  }
-
-  const onLeave = () => {
-    cancelAnimationFrame(frame.current)
-    setStyle({
-      transform: `perspective(${TILT.perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`,
-      transition: `transform ${TILT.speed}ms ${TILT.easing}`,
-    })
-  }
-
-  return (
-    <div ref={ref} data-fluid-block className={className} style={style} onMouseEnter={onEnter} onMouseMove={onMove} onMouseLeave={onLeave}>
-      {children}
-    </div>
-  )
-}
-
-const GalleryImage = ({ item, onClick }) => {
-  const src = Array.isArray(item.image) ? item.image[0] : item.image;
-  return (
-    <TiltCard className="shrink-0 snap-start min-w-40">
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label={item.title}
-        className="block h-60 sm:h-72 overflow-hidden rounded-xl border border-border bg-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <img src={src} alt={item.title} loading="lazy" decoding="async" className="h-full w-auto block" />
-      </button>
-    </TiltCard>
-  );
-};
-
 // ==========================================
 // 2. MAIN COMPONENT
 // ==========================================
@@ -206,15 +136,75 @@ const SUBSECTIONS = [
 
 // One continuous page: the three subsections stack, and the sidebar scrolls
 // between them (each has the id `projects-<id>`).
-const Subsection = ({ id, title, icon, children }) => (
-  <div id={`projects-${id}`} className="mt-12 first:mt-0">
-    <h2 className="mb-5 flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
+// How far a pinned ring sits below the top of the screen, so the sticky "Projects" title
+// (and, on phones, the top bar above it) stays in view.
+const RING_CLEARANCE = { desktop: '5.75rem', phone: '9rem' }
+
+// Creative Arts and Graphics: each card takes the proportions of its own image, so
+// nothing is cropped. Sizes come from the loaded images; until one has loaded its
+// card is a 3:4 portrait.
+const coverOf = (item) => (Array.isArray(item.image) ? item.image[0] : item.image)
+
+const GalleryRing = ({ heading, items, onOpen }) => {
+  const [ratios, setRatios] = useState({})
+
+  useEffect(() => {
+    let cancelled = false
+    items.forEach((item) => {
+      const src = coverOf(item)
+      if (!src) return
+      const img = new Image()
+      img.onload = () => {
+        if (cancelled || !img.naturalHeight) return
+        setRatios((prev) => (prev[src] ? prev : { ...prev, [src]: img.naturalWidth / img.naturalHeight }))
+      }
+      img.src = src
+    })
+    return () => { cancelled = true }
+  }, [items])
+
+  // Fit the image's shape inside the ring's card box: every card is as tall as the box
+  // (the standard height) unless its width would pass the box's width, so a landscape
+  // piece is stretched out sideways instead of being left short.
+  const itemSize = (item, box) => {
+    const ratio = ratios[coverOf(item)] ?? 0.75
+    const width = Math.min(box.width, box.height * ratio)
+    return { width, height: width / ratio }
+  }
+
+  return (
+    <Ring3D
+      heading={heading}
+      clearance={RING_CLEARANCE}
+      items={items}
+      getKey={(item, index) => `${item.title}-${index}`}
+      label={(item) => `Open: ${item.title}`}
+      onOpen={onOpen}
+      hint="Scroll to turn the ring. Click a piece to open it."
+      size={{ desktop: { width: 680, height: 520, radius: 860, lift: 60 }, phone: { width: 300, height: 330, radius: 430, lift: 46 } }}
+      itemSize={itemSize}
+      renderCard={(item) => (
+        <img src={coverOf(item)} alt={item.title} loading="lazy" decoding="async" draggable="false" className="h-full w-full object-cover" />
+      )}
+    />
+  )
+}
+
+// `children` may be a function that receives the heading, so a pinned ring can carry
+// the title with it while it turns.
+const Subsection = ({ id, title, icon, children }) => {
+  const heading = (
+    <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
       <span className="text-primary-strong">{icon}</span>
       {title}
     </h2>
-    {children}
-  </div>
-);
+  )
+  return (
+    <div id={`projects-${id}`} className="mt-8 first:mt-0">
+      {typeof children === 'function' ? children(heading) : <>{heading}{children}</>}
+    </div>
+  )
+}
 
 const Projects = ({ projectsData }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -384,7 +374,7 @@ const Projects = ({ projectsData }) => {
   };
 
   return (
-    <section className="text-foreground py-10 lg:py-14 px-4 sm:px-6 lg:px-10 font-sans">
+    <section className="text-foreground py-5 lg:py-7 px-4 sm:px-6 lg:px-10 font-sans">
 
       {/* Styles for Animations */}
       <style>{`
@@ -414,61 +404,59 @@ const Projects = ({ projectsData }) => {
       <div className="max-w-[1600px] mx-auto">
 
         {/* --- HEADER --- */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+        <div className="sticky top-14 z-30 -mx-4 flex flex-col justify-between gap-6 px-4 pb-2 pt-1 sm:-mx-6 sm:px-6 md:flex-row md:items-end lg:top-0 lg:-mx-10 lg:px-10">
           <div className="flex-1">
-            <SectionLabel index="06" className="mb-6">projects</SectionLabel>
+            <SectionLabel index="06" className="mb-4">projects</SectionLabel>
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Projects</h1>
           </div>
         </div>
 
         {/* --- DEVELOPMENT TAB --- */}
         <Subsection {...SUBSECTIONS[0]}>
-          <Rail>
-              {devProjects.map((project) => (
-                <TiltCard
-                  key={project.id}
-                  className="w-[80%] md:w-[calc((100%-1rem)/1.5)] max-w-[36rem] shrink-0 snap-start self-stretch"
-                >
-                  <div
-                    onClick={() => setSelectedImage(project)}
-                    className="group relative h-full bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 hover:shadow-[0_10px_30px_-15px_rgba(229,108,124,0.4)] transition-[border-color,box-shadow] duration-500 cursor-pointer"
-                  >
-                    <div className="h-48 md:h-64 overflow-hidden relative">
-                      <ImageWithLoader
-                        src={project.image}
-                        alt={project.title}
-                        containerClassName="w-full h-full"
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-
+          {(heading) => (
+          <Ring3D
+            heading={heading}
+            clearance={RING_CLEARANCE}
+            items={devProjects}
+            getKey={(project) => project.id}
+            label={(project) => `Open project: ${project.title}`}
+            onOpen={(project) => setSelectedImage(project)}
+            hint="Scroll to turn the ring. Click a project to open it."
+            size={{ desktop: { width: 660, height: 430, lift: 80 }, phone: { width: 300, height: 360, lift: 56 } }}
+            renderCard={(project) => {
+              const cover = Array.isArray(project.image) ? project.image[0] : project.image
+              return (
+                <div className="flex h-full flex-col">
+                  <div className="relative h-[54%] shrink-0 overflow-hidden bg-secondary">
+                    <img src={cover} alt={project.title} loading="lazy" decoding="async" draggable="false" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  </div>
+                  <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 p-4 sm:p-5">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-base font-bold text-foreground transition-colors duration-300 group-hover:text-primary-strong sm:text-lg">{project.title}</h3>
+                      <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground sm:text-sm">{project.description}</p>
                     </div>
-
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-foreground mb-1 group-hover:text-primary-strong transition-colors duration-300">{project.title}</h3>
-                      <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{project.description}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.tags.slice(0, 4).map((tag, idx) => (
-                          <Badge key={idx} variant="outline" size="sm" className="rounded font-mono">{tag}</Badge>
-                        ))}
-                        {project.tags.length > 4 && (
-                          <span className="text-[10px] font-mono text-muted-foreground/80 px-1.5 py-0.5">+{project.tags.length - 4}</span>
-                        )}
-                      </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {project.tags.slice(0, 3).map((tag, idx) => (
+                        <Badge key={idx} variant="outline" size="sm" className="rounded font-mono">{tag}</Badge>
+                      ))}
+                      {project.tags.length > 3 && (
+                        <span className="px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/80">+{project.tags.length - 3}</span>
+                      )}
                     </div>
                   </div>
-                </TiltCard>
-              ))}
-          </Rail>
+                </div>
+              )
+            }}
+          />
+          )}
         </Subsection>
 
         {/* --- ARTS & GRAPHICS TABS (Masonry) --- */}
         {[['art', artProjects], ['graphics', graphicProjects]].map(([tabId, items]) => (
           <Subsection key={tabId} {...SUBSECTIONS.find((x) => x.id === tabId)}>
-            <Rail>
-              {items.map((item, index) => (
-                <GalleryImage key={index} item={item} onClick={() => setSelectedImage(item)} />
-              ))}
-            </Rail>
+            {(heading) => (
+              <GalleryRing heading={heading} items={items} onOpen={(item) => setSelectedImage(item)} />
+            )}
           </Subsection>
         ))}
 
