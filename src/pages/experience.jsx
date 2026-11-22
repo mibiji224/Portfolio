@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import PageShell from '@/components/PageShell'
+import CompanyLogo from '@/components/CompanyLogo'
 import { LEADERSHIP_ROLES, WORK_EXPERIENCE } from '@/data/profile'
 import { prefersReducedMotion } from '@/lib/scroll'
 
@@ -60,8 +61,13 @@ const DetailCard = ({ item, pointRef, id }) => {
             role="tooltip"
             className="pointer-events-none fixed left-0 top-0 z-50 w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-primary bg-background p-4 shadow-lift transition-none animate-in fade-in zoom-in-75 duration-200"
         >
-            <p className="text-sm font-bold text-foreground">{item.title}</p>
-            <p className="mb-2 text-xs text-muted-foreground">{item.company}</p>
+            <div className="mb-2 flex items-center gap-3">
+                <CompanyLogo item={item} size="sm" />
+                <div className="min-w-0">
+                    <p className="text-sm font-bold leading-snug text-foreground">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.company}</p>
+                </div>
+            </div>
             <ul className="list-disc space-y-1 pl-4 text-xs leading-relaxed text-muted-foreground marker:text-primary-strong">
                 {item.points.map((point) => <li key={point}>{point}</li>)}
             </ul>
@@ -134,6 +140,7 @@ const Card = ({ item, open, spotlit, edge, onSpot, onHover, onMove, onLeave, onO
             className={`cursor-pointer rounded-xl border hover:bg-primary-soft ${spotlit ? 'bg-primary-soft' : 'bg-white'} ${spotlit ? 'border-primary-strong ring-2 ring-primary shadow-lift' : 'border-primary'} transition-[background-color,border-color,box-shadow] duration-300 p-4 sm:p-6 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
         >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <CompanyLogo item={item} />
                 <div className="min-w-0 sm:flex-1">
                     <h3 className={`text-base font-bold mb-0.5 transition-colors duration-300 ${spotlit ? 'text-primary-strong' : 'text-foreground'}`}>{item.title}</h3>
                     <p className="text-xs font-medium text-muted-foreground">{item.company}</p>
@@ -186,7 +193,7 @@ const Group = ({ title, children }) => (
 const fromRows = (rows) => {
     const usable = (rows ?? []).filter((r) => r.kind)
     if (!usable.length) return null
-    const shape = (r) => ({ title: r.title, company: r.company, date: r.date, note: r.type, points: r.points ?? [] })
+    const shape = (r) => ({ title: r.title, company: r.company, date: r.date, note: r.type, points: r.points ?? [], logo: r.logo })
     return {
         work: usable.filter((r) => r.kind === 'work').map(shape),
         leadership: usable.filter((r) => r.kind === 'leadership').map(shape),
@@ -252,6 +259,7 @@ const Experience = () => {
                 {detail && (
                     <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto p-6 sm:p-8">
                         <div className="flex flex-wrap items-center gap-2 pr-8">
+                            <CompanyLogo item={detail} />
                             <span className="whitespace-nowrap text-[10px] font-mono font-medium text-primary-strong border border-primary px-2.5 py-0.5 rounded-full bg-background">
                                 {detail.date}
                             </span>

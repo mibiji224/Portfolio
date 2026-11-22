@@ -1,7 +1,7 @@
 import { Award, ExternalLink } from 'lucide-react'
 import { useOutletContext } from 'react-router-dom'
-import PageShell from '@/components/PageShell'
-import Rail from '@/components/Rail'
+import SectionLabel from '@/components/SectionLabel'
+import ScrollRail from '@/components/ScrollRail'
 import { CERTIFICATIONS } from '@/data/profile'
 
 const Certifications = () => {
@@ -11,17 +11,22 @@ const Certifications = () => {
         : CERTIFICATIONS
 
     return (
-    <PageShell
-        index="03"
-        label="certifications"
-        title="Certifications & Awards"
-        description="Courses, credentials and recognition, newest first."
+    <section className="px-4 sm:px-6 lg:px-10 py-10 lg:py-14 font-sans">
+    <div className="mx-auto w-full max-w-5xl">
+    <ScrollRail
+        count={items.length}
+        heading={
+            <div className="mb-6">
+                <SectionLabel index="03" className="mb-6">certifications</SectionLabel>
+                <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Certifications &amp; Awards</h1>
+                <p className="mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground">Courses, credentials and recognition, newest first. Scroll to move across them.</p>
+            </div>
+        }
     >
-        <Rail>
             {items.map((cert) => (
                 <article
                     key={cert.id ?? cert.title}
-                    className="group w-[80%] sm:w-80 shrink-0 snap-start self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
+                    className="group w-72 sm:w-80 shrink-0 self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
                 >
                     {cert.image_url ? (
                         <img
@@ -61,8 +66,9 @@ const Certifications = () => {
                     </div>
                 </article>
             ))}
-        </Rail>
-    </PageShell>
+    </ScrollRail>
+    </div>
+    </section>
     )
 }
 
