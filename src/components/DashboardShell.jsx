@@ -31,16 +31,20 @@ const CONTACT_LINK = { name: 'Contact', to: '/contact', icon: <Mail className={I
 const itemClass = (isActive) =>
   cn(
     'group relative flex w-full items-center gap-3 rounded-full py-1.5 lg:py-1 pl-1.5 pr-4 text-left text-sm lg:text-[13px]',
-    'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
     isActive
       ? 'font-semibold text-white lg:text-foreground'
-      : 'font-medium text-muted-foreground hover:bg-white/50 hover:text-foreground'
+      : // Hovered: the row lifts into a near-solid white pill with a pink drop shadow and a
+        // bright top edge, and its icon tile grows (see `tileClass`).
+        'font-medium text-muted-foreground transition-[background-color,box-shadow,translate,color] duration-300 hover:-translate-y-px hover:bg-white/90 hover:font-semibold hover:text-foreground hover:shadow-[0_8px_16px_-6px_rgba(229,108,124,0.5),0_2px_5px_rgba(229,108,124,0.2),inset_0_1px_0_rgba(255,255,255,1)] active:translate-y-0 active:shadow-[0_2px_6px_-2px_rgba(229,108,124,0.4)]'
   )
 
 const tileClass = (isActive) =>
   cn(
-    'flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors',
-    isActive ? 'bg-primary text-primary-strong' : 'bg-white/70 text-primary-strong'
+    'flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow,scale] duration-300',
+    isActive
+      ? 'bg-primary text-primary-strong'
+      : 'bg-white/70 text-primary-strong group-hover:scale-110 group-hover:bg-white group-hover:shadow-[0_3px_8px_-1px_rgba(229,108,124,0.55),inset_0_1px_0_rgba(255,255,255,1)]'
   )
 
 // `active` is decided by the page (scroll position), not the URL, because
