@@ -260,7 +260,7 @@ const DashboardShell = ({ onHome, isActive, onSelect, children }) => {
             onClick={() => setDrawerOpen(false)}
             className="absolute inset-0 bg-foreground/30 backdrop-blur-sm animate-in fade-in duration-200"
           />
-          <div data-lenis-prevent className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)] rounded-r-[2rem] animate-in slide-in-from-left duration-300">
+          <div data-lenis-prevent className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto overscroll-contain bg-background pb-[env(safe-area-inset-bottom)] rounded-r-[2rem] animate-in slide-in-from-left duration-300">
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
