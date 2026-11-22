@@ -20,11 +20,15 @@ export default async function (req, res) {
     // 2. Destructure and validate incoming data
     const { name, email, subject, message } = req.body;
 
-    // DEBUGGING: This log will appear in your Vercel Dashboard > Logs.
-    console.log("Processing email submission from:", email);
-
     if (!name || !email || !subject || !message) {
         return res.status(400).json({ message: 'Missing required form fields.' });
+    }
+
+    // Bound the input so the form can't be used to push huge or malformed mail.
+    const tooLong = name.length > 120 || email.length > 254 || subject.length > 200 || message.length > 5000;
+    const badEmail = !/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(String(email));
+    if ([name, email, subject, message].some((v) => typeof v !== 'string') || tooLong || badEmail) {
+        return res.status(400).json({ message: 'Invalid form fields.' });
     }
 
     // Visitors control these fields, so escape them before they go into HTML.
@@ -74,7 +78,6 @@ export default async function (req, res) {
             console.error('Resend Error:', error);
             return res.status(502).json({
                 message: 'Failed to send email due to a server error.',
-                error: error.message,
             });
         }
 
@@ -88,7 +91,6 @@ export default async function (req, res) {
         console.error('Resend Error:', error);
         return res.status(500).json({
             message: 'Failed to send email due to a server error.',
-            error: error.message
         });
     }
 }
