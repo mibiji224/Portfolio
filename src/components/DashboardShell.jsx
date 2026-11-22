@@ -34,13 +34,13 @@ const itemClass = (isActive) =>
     'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
     isActive
       ? 'font-semibold text-white lg:text-foreground'
-      : 'font-medium text-muted-foreground hover:bg-white/50 hover:text-foreground'
+      : 'font-medium text-muted-foreground transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-px hover:bg-white/80 hover:text-foreground hover:shadow-[0_6px_14px_-4px_rgba(229,108,124,0.45),0_2px_4px_rgba(229,108,124,0.18),inset_0_1px_0_rgba(255,255,255,0.9)] active:translate-y-0 active:shadow-[0_2px_6px_-2px_rgba(229,108,124,0.4)]'
   )
 
 const tileClass = (isActive) =>
   cn(
-    'flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors',
-    isActive ? 'bg-primary text-primary-strong' : 'bg-white/70 text-primary-strong'
+    'flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow,transform] duration-300',
+    isActive ? 'bg-primary text-primary-strong' : 'bg-white/70 text-primary-strong group-hover:scale-110 group-hover:bg-white group-hover:shadow-[0_3px_8px_-1px_rgba(229,108,124,0.55),inset_0_1px_0_rgba(255,255,255,1)]'
   )
 
 // `active` is decided by the page (scroll position), not the URL, because
