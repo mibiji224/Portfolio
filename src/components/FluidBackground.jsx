@@ -585,16 +585,6 @@ const FluidBackground = () => {
       dye.swap();
     };
 
-    const multipleSplats = (amount) => {
-      for (let i = 0; i < amount; i++) {
-        const color = generateColor();
-        color.r *= 4;
-        color.g *= 4;
-        color.b *= 4;
-        splat(Math.random(), Math.random(), 1000 * (Math.random() - 0.5), 1000 * (Math.random() - 0.5), color);
-      }
-    };
-
     const step = (dt) => {
       gl.disable(gl.BLEND);
 
@@ -764,7 +754,6 @@ const FluidBackground = () => {
 
     resizeCanvas();
     initFramebuffers();
-    multipleSplats(Math.floor(Math.random() * 3) + 3);
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });

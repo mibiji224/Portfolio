@@ -30,6 +30,11 @@ const socialLinks = [
     { name: 'Tiktok', Icon: TikTokIcon, href: 'https://tiktok.com/hexagrine' },
 ];
 
+// Liquid-glass fields: mostly opaque white so every field looks the same whatever blob is
+// behind it, with a pink hairline, a bright inner edge and a soft pink inner shade.
+const glassField =
+    'rounded-2xl bg-white/75 backdrop-blur-md border-primary/45 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),inset_0_-2px_5px_rgba(229,108,124,0.08)] focus-visible:bg-white/90 focus-visible:border-primary'
+
 const App = () => {
     const submitRef = useRef(null);
     useMagnetic(submitRef);
@@ -163,7 +168,11 @@ const App = () => {
 
                         {/* --- RIGHT COLUMN: Compact Form --- */}
                         <div className="lg:col-span-5">
-                            <Card className="bg-card p-5 sm:p-8 rounded-2xl sm:rounded-3xl relative">
+                            <Card className="liquid-card p-5 sm:p-8 rounded-3xl sm:rounded-[2rem] relative overflow-hidden isolate">
+                                {/* Colour blobs drifting behind the glass: they are what makes it look refractive. */}
+                                <div aria-hidden="true" className="liquid-blob" style={{ width: 200, height: 200, left: 6, top: 20, background: 'radial-gradient(circle at 30% 30%, hsl(var(--primary)), hsl(var(--primary-deep) / 0.55))' }} />
+                                <div aria-hidden="true" className="liquid-blob" style={{ width: 180, height: 180, right: 8, top: '42%', animationDelay: '-6s', background: 'radial-gradient(circle at 60% 40%, hsl(18 100% 86%), hsl(var(--primary) / 0.6))' }} />
+                                <div aria-hidden="true" className="liquid-blob" style={{ width: 170, height: 170, left: '30%', bottom: 14, animationDelay: '-11s', background: 'radial-gradient(circle at 40% 40%, hsl(45 100% 86%), hsl(var(--primary-soft) / 0.7))' }} />
                                 <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                                     <h3 className="text-xl font-bold text-foreground mb-2">Send a Message</h3>
 
@@ -179,6 +188,7 @@ const App = () => {
                                         <Label htmlFor="contact-name" className={focusedField === 'name' ? 'text-primary-strong' : undefined}>Name</Label>
                                         <Input
                                             id="contact-name"
+                                            className={glassField}
                                             type="text" name="name" value={formData.name} onChange={handleChange}
                                             onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField(null)}
                                             required placeholder="Your Name"
@@ -190,6 +200,7 @@ const App = () => {
                                         <Label htmlFor="contact-email" className={focusedField === 'email' ? 'text-primary-strong' : undefined}>Email</Label>
                                         <Input
                                             id="contact-email"
+                                            className={glassField}
                                             type="email" name="email" value={formData.email} onChange={handleChange}
                                             onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)}
                                             required placeholder="your_email@example.com"
@@ -201,6 +212,7 @@ const App = () => {
                                         <Label htmlFor="contact-subject" className={focusedField === 'subject' ? 'text-primary-strong' : undefined}>Subject</Label>
                                         <Input
                                             id="contact-subject"
+                                            className={glassField}
                                             type="text" name="subject" value={formData.subject} onChange={handleChange}
                                             onFocus={() => setFocusedField('subject')} onBlur={() => setFocusedField(null)}
                                             required placeholder="Project Inquiry, Hello, etc."
@@ -215,7 +227,7 @@ const App = () => {
                                             name="message" value={formData.message} onChange={handleChange}
                                             onFocus={() => setFocusedField('message')} onBlur={() => setFocusedField(null)}
                                             required rows="4" placeholder="How can I help you?"
-                                            className="resize-none"
+                                            className={`resize-none ${glassField}`}
                                         />
                                     </div>
 
@@ -224,7 +236,7 @@ const App = () => {
                                         ref={submitRef}
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full bg-gradient-to-r from-primary to-primary-deep text-primary-foreground text-sm font-bold py-4 h-auto rounded-xl mt-2"
+                                        className="liquid-btn w-full text-primary-foreground text-sm font-bold py-4 h-auto rounded-2xl mt-2"
                                     >
                                         <span className="inline-flex items-center justify-center gap-2">
                                         {isSubmitting ? (
