@@ -35,8 +35,8 @@ export const experienceConfig = {
     { key: 'date', label: 'When', required: true, hint: 'Write it the way you want it shown.', placeholder: 'June 2025 - October 2026' },
     { key: 'type', label: 'Note', nullable: true, hint: 'Optional. Shown as a small badge, such as Contract or Full time.', placeholder: 'Contract · Full time' },
     {
-      key: 'logo', label: 'Company logo', type: 'image', nullable: true, noun: 'logo', fit: 'contain', folder: 'logos',
-      hint: 'Optional. A square or transparent PNG, JPG or SVG works best. Shown on the role\'s card; without one, a placeholder is shown.',
+      key: 'logo', label: 'Company logo', type: 'image', nullable: true, noun: 'logo', folder: 'logos',
+      hint: 'Optional. A square image works best: it fills the whole logo frame on the role\'s card. Without one, a placeholder is shown.',
     },
     { key: 'points', label: 'What you did', type: 'lines', rows: 8, hint: 'One point per line. Each becomes a bullet.' },
   ],

@@ -1,7 +1,8 @@
 import { Building2 } from 'lucide-react'
 
 // Company logo tile. Put the image path in the role's `logo` field (profile.jsx, or
-// the dashboard row); until then a neutral dashed placeholder holds its place.
+// the dashboard row); until then a neutral dashed placeholder holds its place. A logo
+// fills the whole tile, edge to edge, with no padding around it.
 const SIZES = {
   sm: { box: 'h-9 w-9', icon: 'h-4 w-4' },
   md: { box: 'h-11 w-11', icon: 'h-5 w-5' },
@@ -16,7 +17,7 @@ const CompanyLogo = ({ item, size = 'md' }) => {
       }`}
     >
       {item.logo ? (
-        <img src={item.logo} alt={`${item.company} logo`} className="h-full w-full object-contain p-1.5" />
+        <img src={item.logo} alt={`${item.company} logo`} className="h-full w-full object-cover" />
       ) : (
         <Building2 className={s.icon} aria-label="Company logo placeholder" />
       )}
