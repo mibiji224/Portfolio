@@ -165,10 +165,28 @@ const DELETING_SPEED = 45;
 const HOLD_AFTER_TYPED = 1800;
 const PAUSE_BEFORE_TYPING = 400;
 
-function Home({ onReadMore, roles }) {
+function Home({ onReadMore, roles, deepLink = false }) {
     // The roles that type out under the name: from the dashboard, else the defaults.
     const ROLES = useMemo(() => (roles?.length ? roles : DEFAULT_ROLES), [roles]);
     const comp = useRef(null);
+    // Reloading on another page must not bring the hero's photo and backdrop with it: they
+    // are not drawn (or fetched) until the visitor scrolls back up to the hero.
+    const [showArt, setShowArt] = useState(!deepLink);
+    useEffect(() => {
+        if (showArt) return;
+        let leftHero = false;
+        const check = () => {
+            if (window.scrollY >= window.innerHeight * 0.9) leftHero = true;
+            // Only after they have been down in the page, so the jump to their section
+            // (which starts from the top) doesn't count as visiting the hero.
+            if (leftHero && window.scrollY < window.innerHeight * 0.8) setShowArt(true);
+        };
+        window.addEventListener('scroll', check, { passive: true });
+        check();
+        return () => window.removeEventListener('scroll', check);
+    }, [showArt]);
+    // On the main page the photo and backdrop make their bounce entrance every time it loads.
+    const animateArt = !deepLink;
     const [roleIndex, setRoleIndex] = useState(0);
     const [typedRole, setTypedRole] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
@@ -250,8 +268,8 @@ function Home({ onReadMore, roles }) {
             <section className="relative z-10 min-h-[100dvh] flex flex-col items-center justify-center px-6 sm:px-8 lg:pl-[14vw] lg:pr-20 pt-12 lg:py-0 pb-[44dvh] lg:pb-0" id="home">
                 {/* Portrait: anchored to the bottom edge and bleeding off it. Beside the
                     text on desktop; under it on small screens. */}
-                <HeroBackdrop className="hero-pop pointer-events-none select-none absolute -bottom-[3dvh] left-1/2 -translate-x-1/2 h-[43dvh] w-auto max-w-none lg:left-auto lg:right-[9%] lg:translate-x-0 lg:h-[104dvh] lg:-bottom-[7dvh]" />
-                <img
+                {showArt && <HeroBackdrop className={`${animateArt ? 'hero-pop' : ''} pointer-events-none select-none absolute -bottom-[3dvh] left-1/2 -translate-x-1/2 h-[43dvh] w-auto max-w-none lg:left-auto lg:right-[9%] lg:translate-x-0 lg:h-[104dvh] lg:-bottom-[7dvh]`} />}
+                {showArt && <img
                     src="/desiree-hero.webp"
                     alt="Desiree Soronio"
                     width="1000"
@@ -259,8 +277,8 @@ function Home({ onReadMore, roles }) {
                     fetchPriority="high"
                     decoding="async"
                     draggable="false"
-                    className="hero-rise pointer-events-none select-none absolute -bottom-[3dvh] left-1/2 -translate-x-1/2 h-[43dvh] w-auto max-w-none lg:left-auto lg:right-[9%] lg:translate-x-0 lg:h-[104dvh] lg:-bottom-[7dvh] drop-shadow-[0_18px_30px_hsl(var(--primary-deep)/0.25)]"
-                />
+                    className={`${animateArt ? 'hero-rise' : ''} pointer-events-none select-none absolute -bottom-[3dvh] left-1/2 -translate-x-1/2 h-[43dvh] w-auto max-w-none lg:left-auto lg:right-[9%] lg:translate-x-0 lg:h-[104dvh] lg:-bottom-[7dvh] drop-shadow-[0_18px_30px_hsl(var(--primary-deep)/0.25)]`}
+                />}
                 <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left w-full max-w-2xl lg:max-w-none lg:w-1/2 lg:mr-auto">
                     <span className="gsap-reveal text-primary-strong font-bold tracking-widest uppercase text-xs sm:text-sm lg:text-base mb-3 lg:mb-4 block">Welcome to my Portfolio</span>
                     <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold leading-tight tracking-tight">

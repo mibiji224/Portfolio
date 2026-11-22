@@ -106,6 +106,9 @@ function DashboardLayout() {
   const dashboardRef = useRef(null)
   // The loader belongs to the dashboard, so it waits until the visitor is there.
   const [entered, setEntered] = useState(pathname !== '/')
+  // Opened straight on another page (a reload from there, or a shared link): the hero
+  // art is held back until the visitor actually scrolls up to it.
+  const [deepLink] = useState(pathname !== '/')
   const [activeId, setActiveId] = useState(idForPath(pathname))
   // Dims the WebGL background while the content sections are on screen.
   const [veiled, setVeiled] = useState(false)
@@ -216,7 +219,7 @@ function DashboardLayout() {
 
   return (
     <>
-      <Home onReadMore={enter} roles={roles} />
+      <Home onReadMore={enter} roles={roles} deepLink={deepLink} />
 
       {/* Sits just above the fluid canvas (same z-index, later in the DOM). */}
       <div
