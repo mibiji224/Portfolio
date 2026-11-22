@@ -33,14 +33,14 @@ const itemClass = (isActive) =>
     'group relative flex w-full items-center gap-3 rounded-full py-1.5 lg:py-1 pl-1.5 pr-4 text-left text-sm lg:text-[13px]',
     'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
     isActive
-      ? 'font-semibold text-foreground'
-      : 'font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+      ? 'font-semibold text-white lg:text-foreground'
+      : 'font-medium text-muted-foreground hover:bg-white/50 hover:text-foreground'
   )
 
 const tileClass = (isActive) =>
   cn(
     'flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors',
-    isActive ? 'bg-primary text-primary-strong' : 'bg-secondary text-primary-strong'
+    isActive ? 'bg-primary text-primary-strong' : 'bg-white/70 text-primary-strong'
   )
 
 // `active` is decided by the page (scroll position), not the URL, because
@@ -64,7 +64,7 @@ const GroupLabel = ({ children }) => (
   <p className="px-3 pb-2 text-xs font-medium text-muted-foreground/80">{children}</p>
 )
 
-const Divider = () => <hr className="my-4 border-t border-border" />
+const Divider = () => <hr className="my-4 border-t border-primary" />
 
 // Corner radius where the cut meets the panel's edge, and the pill's left inset
 // (the nav's side padding, px-4).
@@ -115,15 +115,15 @@ const Notch = ({ top, height }) => (
     }}
   >
     <span
-      className="absolute right-0 top-0 rounded-br-full border-b-2 border-r-2 border-border"
+      className="absolute right-0 top-0 rounded-br-full border-b-2 border-r-2 border-primary"
       style={{ width: CORNER, height: CORNER }}
     />
     <span
-      className="absolute right-0 bottom-0 rounded-tr-full border-r-2 border-t-2 border-border"
+      className="absolute right-0 bottom-0 rounded-tr-full border-r-2 border-t-2 border-primary"
       style={{ width: CORNER, height: CORNER }}
     />
     <span
-      className="absolute rounded-l-full border-y-2 border-l-2 border-border"
+      className="absolute rounded-l-full border-y-2 border-l-2 border-primary"
       style={{ left: PILL_INSET - EDGE, right: CORNER, top: CORNER - EDGE, height: height + EDGE * 2 }}
     />
   </div>
@@ -160,8 +160,8 @@ const SidebarContent = ({ onHome, isActive, onSelect }) => {
   return (
   <div ref={ref} className="relative isolate flex min-h-full flex-col px-4 py-7">
     {/* The panel's fill and its right edge (same rounded corners as the container), both with the hole punched out. */}
-    <div className="pointer-events-none absolute inset-0 -z-10 rounded-r-[2rem] bg-background" style={mask} aria-hidden="true" />
-    <div className="pointer-events-none absolute inset-0 -z-10 rounded-r-[2rem] border-r-2 border-border" style={mask} aria-hidden="true" />
+    <div className="pointer-events-none absolute inset-0 -z-10 rounded-r-[2rem] bg-primary-soft" style={mask} aria-hidden="true" />
+    <div className="pointer-events-none absolute inset-0 -z-10 rounded-r-[2rem] border-r-2 border-primary" style={mask} aria-hidden="true" />
     {slot && <Notch top={slot.top} height={slot.height} />}
 
     <button
@@ -260,7 +260,7 @@ const DashboardShell = ({ onHome, isActive, onSelect, children }) => {
             onClick={() => setDrawerOpen(false)}
             className="absolute inset-0 bg-foreground/30 backdrop-blur-sm animate-in fade-in duration-200"
           />
-          <div data-lenis-prevent className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto overscroll-contain bg-background pb-[env(safe-area-inset-bottom)] rounded-r-[2rem] animate-in slide-in-from-left duration-300">
+          <div data-lenis-prevent className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)] rounded-r-[2rem] animate-in slide-in-from-left duration-300">
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
