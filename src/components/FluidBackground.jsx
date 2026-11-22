@@ -705,13 +705,20 @@ const FluidBackground = () => {
       pointer.active = true;
     };
 
-    const handleMouseMove = (e) => movePointer(e.clientX, e.clientY);
-    const handleTouchMove = (e) => {
-      const t = e.touches[0];
-      if (t) movePointer(t.clientX, t.clientY);
-    };
     // Lift the pointer so re-entering doesn't smear a streak across the page.
     const handleLeave = () => { pointer.active = false; };
+
+    // Anything marked `data-fluid-block` (the project cards) is a subject, not
+    // background: the fluid ignores the cursor while it is over one.
+    const overSubject = (target) => target instanceof Element && target.closest('[data-fluid-block]') !== null;
+
+    const handleMouseMove = (e) => (overSubject(e.target) ? handleLeave() : movePointer(e.clientX, e.clientY));
+    const handleTouchMove = (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+      if (overSubject(e.target)) handleLeave();
+      else movePointer(t.clientX, t.clientY);
+    };
 
     // --- loop -----------------------------------------------------------------
     let rafId = null;

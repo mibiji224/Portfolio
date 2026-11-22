@@ -173,7 +173,7 @@ const TiltCard = ({ className, children }) => {
   }
 
   return (
-    <div ref={ref} className={className} style={style} onMouseEnter={onEnter} onMouseMove={onMove} onMouseLeave={onLeave}>
+    <div ref={ref} data-fluid-block className={className} style={style} onMouseEnter={onEnter} onMouseMove={onMove} onMouseLeave={onLeave}>
       {children}
     </div>
   )
@@ -441,12 +441,6 @@ const Projects = ({ projectsData }) => {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
 
-                      <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="inline-flex items-center gap-2 rounded-lg bg-primary-soft px-5 py-2 text-sm font-medium text-primary-strong shadow-lift -translate-y-10 group-hover:translate-y-0 transition-transform duration-500">
-                          <Maximize2 className="w-4 h-4" />
-                          View Project
-                        </span>
-                      </div>
                     </div>
 
                     <div className="p-5">
