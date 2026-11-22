@@ -35,7 +35,15 @@ const DetailCard = ({ item, pointRef, id }) => {
         if (top + h > window.innerHeight - MARGIN) top = y - GAP - h
         left = Math.max(MARGIN, left)
         top = Math.max(MARGIN, top)
-        el.style.transform = `translate3d(${left}px, ${top}px, 0)`
+        // Positioned with left / top (the entrance animation owns transform), and the
+        // card has `transition-none`: with a duration set, CSS would otherwise glide
+        // `left` and `top` from 0 to the cursor, which is what used to send the card
+        // flying in from the top-left corner of the screen.
+        el.style.left = `${left}px`
+        el.style.top = `${top}px`
+        // The entrance grows from the cursor itself: the origin is the cursor's
+        // position inside the card.
+        el.style.transformOrigin = `${x - left}px ${y - top}px`
     }, [pointRef])
 
     useLayoutEffect(place, [item, place])
@@ -50,7 +58,7 @@ const DetailCard = ({ item, pointRef, id }) => {
             ref={ref}
             id={id}
             role="tooltip"
-            className="pointer-events-none fixed left-0 top-0 z-50 w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-primary bg-background p-4 shadow-lift animate-in fade-in duration-150"
+            className="pointer-events-none fixed left-0 top-0 z-50 w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-primary bg-background p-4 shadow-lift transition-none animate-in fade-in zoom-in-75 duration-200"
         >
             <p className="text-sm font-bold text-foreground">{item.title}</p>
             <p className="mb-2 text-xs text-muted-foreground">{item.company}</p>
