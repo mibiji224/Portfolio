@@ -125,17 +125,73 @@ const ImageWithLoader = ({ src, alt, className, containerClassName, onClick }) =
 };
 
 // Art and graphics are image only: no captions, just the work. Opens the lightbox.
+// Mouse-tilt wrapper (ported from the reference site's card): the card leans
+// toward the cursor in 3D (max 15deg) and grows to 1.05x, easing back on leave.
+// Fine pointers only; touch and reduced-motion get a plain card.
+const TILT = { max: 15, perspective: 1000, scale: 1.05, speed: 400, easing: 'cubic-bezier(.03,.98,.52,.99)' }
+
+const TiltCard = ({ className, children }) => {
+  const ref = useRef(null)
+  const frame = useRef(null)
+  const [style, setStyle] = useState({})
+
+  const enabled = () =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => () => cancelAnimationFrame(frame.current), [])
+
+  const onEnter = () => {
+    if (!enabled()) return
+    setStyle({ willChange: 'transform', transition: `transform ${TILT.speed}ms ${TILT.easing}` })
+  }
+
+  const onMove = (e) => {
+    if (!enabled() || !ref.current) return
+    const { clientX, clientY } = e
+    cancelAnimationFrame(frame.current)
+    frame.current = requestAnimationFrame(() => {
+      const r = ref.current.getBoundingClientRect()
+      const x = Math.min(Math.max((clientX - r.left) / r.width, 0), 1)
+      const y = Math.min(Math.max((clientY - r.top) / r.height, 0), 1)
+      const rotY = (TILT.max / 2 - x * TILT.max).toFixed(2)
+      const rotX = (y * TILT.max - TILT.max / 2).toFixed(2)
+      setStyle((prev) => ({
+        ...prev,
+        transform: `perspective(${TILT.perspective}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(${TILT.scale}, ${TILT.scale}, ${TILT.scale})`,
+      }))
+    })
+  }
+
+  const onLeave = () => {
+    cancelAnimationFrame(frame.current)
+    setStyle({
+      transform: `perspective(${TILT.perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`,
+      transition: `transform ${TILT.speed}ms ${TILT.easing}`,
+    })
+  }
+
+  return (
+    <div ref={ref} className={className} style={style} onMouseEnter={onEnter} onMouseMove={onMove} onMouseLeave={onLeave}>
+      {children}
+    </div>
+  )
+}
+
 const GalleryImage = ({ item, onClick }) => {
   const src = Array.isArray(item.image) ? item.image[0] : item.image;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={item.title}
-      className="shrink-0 snap-start min-w-40 h-60 sm:h-72 overflow-hidden rounded-xl border border-border bg-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <img src={src} alt={item.title} loading="lazy" decoding="async" className="h-full w-auto block" />
-    </button>
+    <TiltCard className="shrink-0 snap-start min-w-40">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={item.title}
+        className="block h-60 sm:h-72 overflow-hidden rounded-xl border border-border bg-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <img src={src} alt={item.title} loading="lazy" decoding="async" className="h-full w-auto block" />
+      </button>
+    </TiltCard>
   );
 };
 
@@ -369,37 +425,44 @@ const Projects = ({ projectsData }) => {
         <Subsection {...SUBSECTIONS[0]}>
           <Rail>
               {devProjects.map((project) => (
-                <div
-                    key={project.id}
-                    onClick={() => setSelectedImage(project)}
-                    className="group w-[80%] md:w-[calc((100%-1rem)/1.5)] max-w-[36rem] shrink-0 snap-start self-stretch bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer"
+                <TiltCard
+                  key={project.id}
+                  className="w-[80%] md:w-[calc((100%-1rem)/1.5)] max-w-[36rem] shrink-0 snap-start self-stretch"
                 >
-                  <div className="h-48 md:h-64 overflow-hidden relative">
-                    <ImageWithLoader
-                      src={project.image}
-                      alt={project.title}
-                      containerClassName="w-full h-full"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                  <div
+                    onClick={() => setSelectedImage(project)}
+                    className="group relative h-full bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 hover:shadow-[0_10px_30px_-15px_rgba(229,108,124,0.4)] transition-[border-color,box-shadow] duration-500 cursor-pointer"
+                  >
+                    <div className="h-48 md:h-64 overflow-hidden relative">
+                      <ImageWithLoader
+                        src={project.image}
+                        alt={project.title}
+                        containerClassName="w-full h-full"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
 
-                    <div className="absolute top-3 right-3 z-20 p-1.5 bg-background/80 backdrop-blur-md rounded-lg border border-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Maximize2 className="w-3.5 h-3.5 text-primary-strong" />
+                      <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="inline-flex items-center gap-2 rounded-lg bg-primary-soft px-5 py-2 text-sm font-medium text-primary-strong shadow-lift -translate-y-10 group-hover:translate-y-0 transition-transform duration-500">
+                          <Maximize2 className="w-4 h-4" />
+                          View Project
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-foreground mb-1 group-hover:text-primary-strong transition-colors duration-300">{project.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{project.description}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tags.slice(0, 4).map((tag, idx) => (
+                          <Badge key={idx} variant="outline" size="sm" className="rounded font-mono">{tag}</Badge>
+                        ))}
+                        {project.tags.length > 4 && (
+                          <span className="text-[10px] font-mono text-muted-foreground/80 px-1.5 py-0.5">+{project.tags.length - 4}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-foreground mb-1 group-hover:text-primary-strong transition-colors">{project.title}</h3>
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{project.description}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.tags.slice(0, 4).map((tag, idx) => (
-                        <Badge key={idx} variant="outline" size="sm" className="rounded font-mono">{tag}</Badge>
-                      ))}
-                      {project.tags.length > 4 && (
-                        <span className="text-[10px] font-mono text-muted-foreground/80 px-1.5 py-0.5">+{project.tags.length - 4}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                </TiltCard>
               ))}
           </Rail>
         </Subsection>
@@ -446,11 +509,11 @@ const Projects = ({ projectsData }) => {
 
             {isFullView ? (
               <div className="relative w-full h-full flex flex-col">
-                <div className="flex-1 bg-neutral-950 flex items-center justify-center overflow-hidden p-2">
+                <div className="flex-1 min-h-0 bg-secondary flex items-center justify-center overflow-hidden">
                   <ImageWithLoader
                     src={selectedImage.image}
                     alt={selectedImage.title}
-                    containerClassName="w-full h-full flex items-center justify-center bg-neutral-950"
+                    containerClassName="w-full h-full flex items-center justify-center"
                     className="max-w-full max-h-full object-contain"
                   />
                 </div>
@@ -467,7 +530,7 @@ const Projects = ({ projectsData }) => {
                   type="button"
                   onClick={() => setIsFullView(true)}
                   aria-label="View full image"
-                  className="relative block h-48 sm:h-60 w-full shrink-0 overflow-hidden bg-neutral-950 group cursor-zoom-in"
+                  className="relative block h-48 sm:h-60 w-full shrink-0 overflow-hidden bg-secondary group cursor-zoom-in"
                 >
                   <ImageWithLoader
                     src={selectedImage.image}

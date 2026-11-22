@@ -83,7 +83,7 @@ const Rail = ({ children }) => {
       <div
         ref={ref}
         onScroll={sync}
-        className="flex gap-4 overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide pb-2"
+        className="flex gap-4 overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide -mx-4 px-4 scroll-px-4 md:-mx-10 md:px-10 md:scroll-px-10 -my-10 py-10"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {children}
