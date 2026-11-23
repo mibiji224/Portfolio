@@ -422,15 +422,15 @@ const Projects = ({ projectsData }) => {
             label={(project) => `Open project: ${project.title}`}
             onOpen={(project) => setSelectedImage(project)}
             hint="Scroll to turn the ring. Click a project to open it."
-            size={{ desktop: { width: 660, height: 430, lift: 80 }, phone: { width: 300, height: 360, lift: 56 } }}
+            size={{ desktop: { width: 660, height: 430, lift: 80 }, phone: { width: 360, height: 235, lift: 48 } }}
             renderCard={(project) => {
               const cover = Array.isArray(project.image) ? project.image[0] : project.image
               return (
                 <div className="flex h-full flex-col">
-                  <div className="relative h-[54%] shrink-0 overflow-hidden bg-secondary">
+                  <div className="relative h-[48%] shrink-0 sm:h-[54%] overflow-hidden bg-secondary">
                     <img src={cover} alt={project.title} loading="lazy" decoding="async" draggable="false" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
-                  <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 p-4 sm:p-5">
+                  <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 p-3 sm:p-5">
                     <div className="min-w-0">
                       <h3 className="truncate text-base font-bold text-foreground transition-colors duration-300 group-hover:text-primary-strong sm:text-lg">{project.title}</h3>
                       <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground sm:text-sm">{project.description}</p>

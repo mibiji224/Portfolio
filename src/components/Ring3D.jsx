@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { prefersReducedMotion } from '@/lib/scroll'
 import ScrollDots from '@/components/ScrollDots'
+import useTilt, { TILT } from '@/hooks/useTilt'
 
 /*
  * A scroll-driven 3D ring of cards, after the "Selected Work" scene on
@@ -34,6 +35,46 @@ const usePhone = () => {
 export const ringSurface =
     'overflow-hidden rounded-2xl border border-primary bg-white shadow-[0_18px_40px_-22px_rgba(229,108,124,0.55)]'
 
+// One card on the ring. Scroll places it on the cylinder; hovering adds the mouse tilt on top.
+const RingCard = ({ dims, visible, away, spacing, calm, base, angle, zig, fade, ariaLabel, onOpen, children }) => {
+    const { ref, tilt, active, bind } = useTilt()
+    return (
+        <div
+            ref={ref}
+            role="button"
+            data-fluid-block
+            tabIndex={visible && away < spacing / 2 + 1 ? 0 : -1}
+            aria-label={ariaLabel}
+            onClick={onOpen}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onOpen()
+                }
+            }}
+            {...bind}
+            className={`group absolute cursor-pointer ${ringSurface} hover:border-primary-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+            style={{
+                width: dims.width,
+                height: dims.height,
+                marginLeft: -dims.width / 2,
+                marginTop: -dims.height / 2,
+                transform: `rotateY(${angle}deg) translateZ(${-base.radius}px) translateY(${zig}px) ${tilt}`,
+                opacity: fade,
+                zIndex: Math.round(100 - away),
+                backfaceVisibility: 'hidden',
+                pointerEvents: visible ? 'auto' : 'none',
+                willChange: active ? 'transform' : undefined,
+                transition: calm
+                    ? 'none'
+                    : `transform ${active ? `${TILT.speed}ms ${TILT.easing}` : '0.15s ease-out'}, opacity 0.25s ease, border-color 0.3s`,
+            }}
+        >
+            {children}
+        </div>
+    )
+}
+
 const Ring3D = ({
     items,
     getKey,
@@ -65,8 +106,8 @@ const Ring3D = ({
     const SPACING = phone ? SPACING_PHONE : SPACING_DESKTOP
     const perspective = phone ? 1000 : 1400
     // As tall as the cards need (the tallest card, plus how far the zigzag takes it, plus
-    // room for the dots), not the whole screen, and centred on screen while pinned.
-    const STAGE = `min(${base.height + base.lift * 2}px, calc(100dvh - 13rem))`
+    // room for the dots and for a hovered card's tilt to grow), not the whole screen, and centred on screen while pinned.
+    const STAGE = `min(${base.height + base.lift * 2 + 32}px, calc(100dvh - 13rem))`
     // The heading and hint ride along in the pinned frame, above the ring, so the section
     // title stays on screen for as long as the ring is turning.
     const HEAD = 60
@@ -164,35 +205,22 @@ const Ring3D = ({
                         // Cards can have their own shape (`itemSize`), e.g. to match a photo's proportions.
                         const dims = sizes[i]
                         return (
-                            <div
+                            <RingCard
                                 key={getKey(item, i)}
-                                role="button"
-                                data-fluid-block
-                                tabIndex={visible && away < SPACING / 2 + 1 ? 0 : -1}
-                                aria-label={label(item)}
-                                onClick={() => onOpen(item, i)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault()
-                                        onOpen(item, i)
-                                    }
-                                }}
-                                className={`group absolute cursor-pointer ${ringSurface} hover:border-primary-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
-                                style={{
-                                    width: dims.width,
-                                    height: dims.height,
-                                    marginLeft: -dims.width / 2,
-                                    marginTop: -dims.height / 2,
-                                    transform: `rotateY(${angle}deg) translateZ(${-base.radius}px) translateY(${zig}px)`,
-                                    opacity: fade,
-                                    zIndex: Math.round(100 - away),
-                                    backfaceVisibility: 'hidden',
-                                    pointerEvents: visible ? 'auto' : 'none',
-                                    transition: calm ? 'none' : 'transform 0.15s ease-out, opacity 0.25s ease, border-color 0.3s',
-                                }}
+                                dims={dims}
+                                visible={visible}
+                                away={away}
+                                spacing={SPACING}
+                                calm={calm}
+                                base={base}
+                                angle={angle}
+                                zig={zig}
+                                fade={fade}
+                                ariaLabel={label(item)}
+                                onOpen={() => onOpen(item, i)}
                             >
-                                {renderCard(item, i)}
-                            </div>
+                                {renderCard(item, i, dims)}
+                            </RingCard>
                         )
                     })}
                 </div>

@@ -1,6 +1,7 @@
 import { Award, ExternalLink } from 'lucide-react'
 import { useOutletContext } from 'react-router-dom'
 import SectionLabel from '@/components/SectionLabel'
+import TiltCard from '@/components/TiltCard'
 import ScrollRail from '@/components/ScrollRail'
 import { CERTIFICATIONS } from '@/data/profile'
 
@@ -24,9 +25,10 @@ const Certifications = () => {
         }
     >
             {items.map((cert) => (
-                <article
+                <TiltCard
+                    as="article"
                     key={cert.id ?? cert.title}
-                    className="group w-72 sm:w-80 shrink-0 self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300"
+                    className="group w-72 sm:w-80 shrink-0 self-stretch flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50"
                 >
                     {cert.image_url ? (
                         <img
@@ -64,7 +66,7 @@ const Certifications = () => {
                             </a>
                         )}
                     </div>
-                </article>
+                </TiltCard>
             ))}
     </ScrollRail>
     </div>

@@ -74,15 +74,16 @@ const ScrollRail = ({ heading, count, children, className = '' }) => {
       >
         {heading}
         {/* The row fades out at both sides, so each card eases in and out of view. The row has
-            matching padding, so the first and last cards still rest in the clear. */}
+            matching padding, so the first and last cards still rest in the clear. The vertical
+            padding (offset by the view's negative margin) leaves room for a card's tilt to grow. */}
         <div
           ref={viewRef}
-          className="overflow-hidden"
+          className="-my-8 overflow-hidden"
           style={{ WebkitMaskImage: FADE, maskImage: FADE }}
         >
           <div
             ref={trackRef}
-            className="flex gap-4 px-12 will-change-transform"
+            className="flex gap-4 px-14 py-8 will-change-transform"
             style={{ transform: `translate3d(${-progress * size.travel}px, 0, 0)` }}
           >
             {children}
