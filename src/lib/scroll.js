@@ -18,6 +18,10 @@ export const lockScroll = () => {
 }
 export const unlockScroll = () => {
   document.documentElement.classList.remove(LOCK_CLASS)
+  // While locked the document is only one viewport tall, and Lenis caches that
+  // as its scroll limit (it re-measures on a debounced resize). Re-measure now,
+  // or the scroll that follows Read More is clamped to 0 and goes nowhere.
+  smoothScroller?.resize()
   smoothScroller?.start()
 }
 
